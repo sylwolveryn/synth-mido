@@ -94,14 +94,14 @@ def example_demo():
     try:
         # Különböző hangszerek bemutatása
         instruments = [
-            (0, "Akusztikus zongora"),
-            (4, "Elektromos zongora 1"),
-            (18, "Rock orgona"),
-            (24, "Akusztikus gitár"),
-            (40, "Hegedű"),
-            (48, "Vonósok"),
-            (56, "Trombita"),
-            (80, "Szintetizátor (Square)")
+            # (0, "Akusztikus zongora"),
+            (4, "Elektromos zongora 1")
+            # (18, "Rock orgona"),
+            # (24, "Akusztikus gitár"),
+            # (40, "Hegedű"),
+            # (48, "Vonósok"),
+            # (56, "Trombita"),
+            # (80, "Szintetizátor (Square)")
         ]
         
         for program_num, name in instruments:
@@ -110,10 +110,10 @@ def example_demo():
             time.sleep(0.5)
             
             # Egyszerű dallam
-            melody = [60, 62, 64, 65, 67, 69, 71, 72]
+            melody = [76, 75, 76, 75, 76, 71, 74, 72, 69, 60, 64, 69, 71, 64, 68, 71, 72, 64, 76, 75, 76, 75, 76, 71, 74, 72, 69, 60, 64, 69, 71, 64, 72, 71, 69, 76, 75, 76, 75, 76, 71, 72, 74, 69, 60, 64, 69, 71, 64, 68, 71, 72, 64, 76, 75, 76, 75, 76, 71, 74, 72, 69, 60, 64, 69, 71, 64, 72, 71, 69, 71, 72, 74, 76, 67, 77, 76, 74, 65, 76, 74, 72, 64, 74, 72, 71, 64, 76, 76, 90, 75, 76, 75, 76, 75, 76, 75, 76, 71, 74, 72, 69, 60, 64, 69, 71, 64, 68, 71, 72, 64, 76, 75, 76, 75, 76, 71, 74, 72, 69]
             for note in melody:
-                controller.send_note(note, velocity=90, duration=0.2)
-                time.sleep(0.1)
+                controller.send_note(note, velocity=90, duration=0.5)
+                time.sleep(0.15)
             
             time.sleep(0.5)
         
