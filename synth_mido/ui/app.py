@@ -35,8 +35,6 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
 
         self.controller = VevorMIDIController()
         self.listening = False
-        self.playing = False
-        self.play_job = None
         self.listen_job = None
         self.active_notes = set()
         self.held_notes = set()
@@ -173,12 +171,8 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
 
         actions = self.actions_row = ttk.Frame(play)
         actions.grid(row=1, column=0, columnspan=6, sticky="w", padx=8, pady=(0, 8))
-        ttk.Button(actions, text="Skála", command=self.play_scale, style="Small.TButton").pack(side="left", padx=3)
-        ttk.Button(actions, text="Akkord", command=self.play_chord, style="Small.TButton").pack(side="left", padx=3)
-        ttk.Button(actions, text="Bemutató", command=self.play_demo, style="Small.TButton").pack(side="left", padx=3)
         ttk.Button(actions, text="Megnyitás…", command=self.open_record_file, style="Small.TButton").pack(side="left", padx=3)
         ttk.Button(actions, text="Leállítás", command=self.stop_playback, style="Small.TButton").pack(side="left", padx=3)
-        ttk.Button(actions, text="Minden hang ki", command=self.panic, style="Small.TButton").pack(side="left", padx=3)
 
         # Lejátszó sáv: betöltött felvétel vezérlése
         bar = ttk.Frame(play)

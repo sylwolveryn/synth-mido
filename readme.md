@@ -132,14 +132,14 @@ Egy mentett felvétel kétféleképpen játszható le:
 - a "Lejátszás" részben a **Felvétel lejátszása…** gombbal: fájlválasztó nyílik a `records/` mappában;
 - a **Felvételek…** ablakban: jelölj ki egy felvételt és nyomd meg a **Lejátszás** gombot (vagy kattints duplán / Enter).
 
-Betöltéskor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** és a **Minden hang ki** gomb azonnal megállítja; új lejátszás (felvétel, skála, akkord, bemutató) indítása leállítja az előzőt. A visszajátszás nem kerül bele egy éppen futó felvételbe.
+Betöltéskor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** gomb azonnal megállítja, és minden szóló hangot elhallgattat; új felvétel lejátszása leállítja az előzőt. A visszajátszás nem kerül bele egy éppen futó felvételbe.
 
 ### Lejátszó vezérlők
 
 A betöltött felvétel a "Lejátszás" rész alsó sorában vezérelhető:
 
 - **▶ / ⏸** — lejátszás és szünet; szünetben a hangok elhallgatnak, folytatáskor ugyanonnan szól tovább (a közben szóló hangok újraindulnak). A végére érve az elejéről indul újra.
-- **■** — leállítás és visszatekerés az elejére (a felvétel betöltve marad). A **Leállítás** és a **Minden hang ki** gomb ugyanígy működik.
+- **■** — leállítás és visszatekerés az elejére (a felvétel betöltve marad). A **Leállítás** gomb ugyanígy működik, és minden szóló hangot is elhallgattat.
 - **Pozíció csúszka** — mutatja, hol tart a lejátszás (`perc:mp / hossz`); rákattintva vagy húzva oda ugrik, lejátszás közben és szünetben is.
 - **Sebesség** — 0.5x … 2x, lejátszás közben is azonnal vált, ugrás nélkül.
 

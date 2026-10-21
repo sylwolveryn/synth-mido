@@ -11,7 +11,6 @@ from typing import Callable, List, NamedTuple
 USER = "user"          # egér / számítógép billentyűzet
 MIDI_IN = "midi_in"    # MIDI bemenet (a zongora)
 PLAYBACK = "playback"  # felvétel visszajátszás
-DEMO = "demo"          # skála / akkord / bemutató
 
 
 class NoteEvent(NamedTuple):

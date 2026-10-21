@@ -1,4 +1,4 @@
-"""Lejátszás: skála / akkord / bemutató, felvétel visszajátszás és a lejátszó sáv."""
+"""Lejátszás: felvétel visszajátszás és a lejátszó sáv."""
 
 from pathlib import Path
 from tkinter import filedialog, messagebox
@@ -6,9 +6,6 @@ from tkinter import filedialog, messagebox
 from synth_mido import config
 from synth_mido.core import events, playback, recorder
 from synth_mido.ui.common import (
-    C_MAJOR_CHORD,
-    C_MAJOR_SCALE,
-    DEMO_MELODY,
     PLAYER_TICK_MS,
     SEEK_MARGIN,
     format_seconds,
@@ -18,73 +15,8 @@ from synth_mido.ui.common import (
 
 class PlaybackMixin:
 
-    def play_scale(self):
-        self._play_sequence(C_MAJOR_SCALE, hold_ms=280, gap_ms=80, label="C-dúr skála")
-
-
-    def play_demo(self):
-        self._play_sequence(DEMO_MELODY, hold_ms=180, gap_ms=40, label="Bemutató")
-
-
-    def play_chord(self):
-        if not self.require_output():
-            return
-        self.stop_playback(quiet=True)
-        self.playing = True
-        vel = int(self.velocity_var.get())
-        for note in C_MAJOR_CHORD:
-            self.controller.note_on(note, vel)
-            self.highlight(note, True, vel, events.DEMO)
-        self.log_line("C-dúr akkord")
-        self.play_job = self.root.after(1600, lambda: self._end_chord(C_MAJOR_CHORD))
-
-
-    def _end_chord(self, notes):
-        for note in notes:
-            self.controller.note_off(note)
-            self.highlight(note, False)
-        self.playing = False
-        self.play_job = None
-
-
-    def _play_sequence(self, notes, hold_ms, gap_ms, label):
-        if not self.require_output():
-            return
-        self.stop_playback(quiet=True)
-        self.playing = True
-        self.log_line(label)
-        self._play_index(notes, 0, hold_ms, gap_ms)
-
-
-    def _play_index(self, notes, index, hold_ms, gap_ms):
-        if not self.playing:
-            return
-        if index >= len(notes):
-            self.playing = False
-            self.play_job = None
-            return
-        note = notes[index]
-        vel = int(self.velocity_var.get())
-        self.controller.note_on(note, vel)
-        self.highlight(note, True, vel, events.DEMO)
-        self.play_job = self.root.after(hold_ms, lambda: self._release_then_next(notes, index, hold_ms, gap_ms))
-
-
-    def _release_then_next(self, notes, index, hold_ms, gap_ms):
-        note = notes[index]
-        self.controller.note_off(note)
-        self.highlight(note, False)
-        if not self.playing:
-            return
-        self.play_job = self.root.after(gap_ms, lambda: self._play_index(notes, index + 1, hold_ms, gap_ms))
-
-
     def stop_playback(self, quiet: bool = False):
-        """Minden lejátszás (skála / akkord / bemutató / felvétel) leállítása."""
-        self.playing = False
-        if self.play_job:
-            self.root.after_cancel(self.play_job)
-            self.play_job = None
+        """Leállítás: a felvétel lejátszása, a pedál és minden szóló hang."""
         self.panic(quiet)
 
 
@@ -104,19 +36,6 @@ class PlaybackMixin:
         if was_active:
             self.log_line(f"Lejátszás leállítva: {self.player.record_name}")
         self.log_line("Minden hang leállítva")
-
-
-    def _stop_sequences(self):
-        """Skála / akkord / bemutató leállítása a betöltött felvétel érintése nélkül."""
-        if not self.playing and not self.play_job:
-            return
-        self.playing = False
-        if self.play_job:
-            self.root.after_cancel(self.play_job)
-            self.play_job = None
-        self.controller.panic()
-        for note in list(self.active_notes):
-            self.highlight(note, False)
 
 
     def open_record_file(self):
@@ -175,7 +94,6 @@ class PlaybackMixin:
         if not self.player.is_playing:
             if not self.require_output():
                 return
-            self._stop_sequences()
         self.player.play_pause()
         self._player_changed()
 
