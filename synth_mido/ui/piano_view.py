@@ -56,6 +56,12 @@ class PianoViewMixin:
             sx0 = x0 + (x1 - x0) * i / segments
             sx1 = x0 + (x1 - x0) * (i + 1) / segments + 1
             self.canvas.create_rectangle(sx0, 0, sx1, 4, fill=color, outline="", state="disabled", tags=("range",))
+        # a többi kiválasztott oktáv: vékonyabb jelölő ugyanakkora tartományon
+        for offset in self.octaves.offsets():
+            notes = [n for n in range(low + offset, high + offset + 1) if n in keys]
+            if notes:
+                self.canvas.create_rectangle(min(keys[n].x0 for n in notes), 0, max(keys[n].x1 for n in notes), 3,
+                                             fill=p["accent2"], outline="", state="disabled", tags=("range-extra",))
         if not self.show_letters_var.get():
             return
         for note, letter in self.keyboard.key_labels().items():
@@ -76,7 +82,23 @@ class PianoViewMixin:
 
     def _on_keyboard_range(self):
         low, high = self.keyboard.range_notes()
-        self.kb_range_var.set(f"Billentyűzet: {note_label(low)}–{note_label(high)}")
+        self.kb_range_var.set(f"{note_label(low)}–{note_label(high)}")
+        self.octaves.set_base(self.keyboard.base)  # a billentyűzet oktávja követi az X / C váltást
+        self._sync_octaves()
+
+    # --- többoktávos játék (TASK-017) ---------------------------------------
+
+    def toggle_octave(self, base: int):
+        """Oktáv be / ki az Oktávok listában; a billentyűzet oktávja mindig marad."""
+        self.octaves.toggle(base)
+        self._sync_octaves()
+        self.root.focus_set()
+
+    def _sync_octaves(self):
+        self.doubler.set_extra_offsets(self.octaves.offsets())
+        for base, var in self.octave_vars.items():
+            var.set(self.octaves.is_selected(base))
+        self.octave_label_var.set(f"Oktávok: {self.octaves.label()}")
         self.draw_piano()
 
 

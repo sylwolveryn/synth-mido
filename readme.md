@@ -35,6 +35,7 @@ A zongora a számítógép billentyűzetéről is játszható (MIDI eszköz nél
 - Szövegmezőben és Ctrl / Alt kombinációkkal nem szól; ha az ablak elveszti a fókuszt, minden lenyomott hang elhallgat.
 - **X** egy oktávval lejjebb, **C** egy oktávval feljebb tolja a tartományt (vagy a zongora feletti ◀ / ▶ gombok); így az A0-tól a C8-ig minden billentyű elérhető. A kék sáv a zongora tetején mutatja az elérhető tartományt, a "Betűk a billentyűkön" kapcsolóval a gombok betűi is megjelennek.
 - **Duplázás** ("két kéz", a "Lejátszás" sorban): Ki / +1 oktáv / −1 oktáv / ±1 oktáv — minden egérrel vagy billentyűzettel játszott hang egy oktávval lejjebb és/vagy feljebb is megszól, a felvétel is így rögzíti. A MIDI bemenet és a visszajátszás nem duplázódik. A választás mentődik.
+- **Oktávok ▾** (a zongora feletti sorban): alapból csak a billentyűzet oktávja (X / C) van bejelölve; további oktávokat bejelölve minden egérrel / billentyűzettel játszott hang az összes bejelölt oktávban szól (pl. C2 · C4 · C6). A Duplázással és a pedállal együtt is működik, a felvétel minden hangot rögzít.
 - **Szóköz** = kitartó pedál: amíg lenyomva tartod, az elengedett billentyűk tovább szólnak (MIDI eszközre CC 64-ként megy ki, a tartalék kimeneten is működik). A "Pedál (Szóköz)" kapcsolóval egérrel is rögzíthető. A felvétel a ténylegesen szóló hosszt rögzíti.
 
 ## Hang MIDI eszköz nélkül

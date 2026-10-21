@@ -108,6 +108,14 @@ class ThemingMixin:
             bordercolor=[("active", p["accent2"])],
         )
 
+        style.configure("TMenubutton", background=p["surface"], foreground=p["fg"], bordercolor=edge,
+                        lightcolor=p["surface"], darkcolor=p["surface"], arrowcolor=p["accent2"],
+                        padding=(8, st.button_padding[1]), relief=button_relief, font=font)
+        style.map("TMenubutton", background=[("active", p["select_bg"])], bordercolor=[("active", p["accent"])])
+        if getattr(self, "octave_menu", None) is not None:
+            self.octave_menu.configure(bg=p["surface"], fg=p["fg"], activebackground=p["select_bg"],
+                                       activeforeground=p["fg"], selectcolor=p["accent"], font=font, bd=1,
+                                       relief="solid")
         style.configure("TCheckbutton", background=p["bg"], foreground=p["fg"], indicatorbackground=p["surface"],
                         indicatorforeground=p["accent"], indicatormargin=(0, 0, 6, 0))
         style.map("TCheckbutton", background=[("active", p["bg"])], foreground=[("disabled", p["muted"])],

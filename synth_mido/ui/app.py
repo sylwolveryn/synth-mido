@@ -96,6 +96,8 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         saved_doubling = theme.load_setting("octave_doubling", doubling.DEFAULT_MODE)
         self.doubler = doubling.OctaveDoubler(saved_doubling)
         self.doubling_var = tk.StringVar(value=doubling.LABELS[self.doubler.mode])
+        self.octaves = doubling.OctaveSelection(self.keyboard.base)
+        self.octave_label_var = tk.StringVar(value=f"Oktávok: {self.octaves.label()}")
 
         self._build()
         self.apply_theme()
@@ -205,7 +207,7 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         octave_row = self.octave_row = ttk.Frame(piano_frame)
         octave_row.pack(fill="x", padx=8, pady=(6, 0))
         ttk.Button(octave_row, text="◀ Oktáv (X)", command=lambda: self.shift_octave(-1), style="Small.TButton").pack(side="left")
-        ttk.Label(octave_row, textvariable=self.kb_range_var, width=20, anchor="center").pack(side="left", padx=6)
+        ttk.Label(octave_row, textvariable=self.kb_range_var, width=8, anchor="center").pack(side="left", padx=6)
         ttk.Button(octave_row, text="Oktáv (C) ▶", command=lambda: self.shift_octave(1), style="Small.TButton").pack(side="left")
         ttk.Checkbutton(
             octave_row, text="Betűk", variable=self.show_letters_var, command=self.draw_piano
@@ -217,6 +219,17 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         ttk.Checkbutton(octave_row, text="Effekt", variable=self.fx_enabled_var, command=self.on_fx_toggle).pack(
             side="left", padx=12
         )
+        # Oktávok (TASK-017): több oktáv egyszerre — a billentyűzet oktávja mindig be van jelölve
+        self.octave_button = ttk.Menubutton(octave_row, textvariable=self.octave_label_var)
+        self.octave_menu = tk.Menu(self.octave_button, tearoff=0)
+        self.octave_vars = {}
+        for base in doubling.OCTAVE_BASES:
+            var = tk.BooleanVar(value=self.octaves.is_selected(base))
+            self.octave_vars[base] = var
+            self.octave_menu.add_checkbutton(label=doubling.octave_label(base), variable=var,
+                                             command=lambda b=base: self.toggle_octave(b))
+        self.octave_button["menu"] = self.octave_menu
+        self.octave_button.pack(side="left")
         self.fx_canvas = tk.Canvas(piano_frame, height=FX_HEIGHT, bg=self.palette["piano_bg"], highlightthickness=0)
         if self.fx_enabled_var.get():
             self.fx_canvas.pack(fill="x", padx=8, pady=(6, 0))

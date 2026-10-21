@@ -70,5 +70,50 @@ class DoublerTests(unittest.TestCase):
         self.assertEqual(x.mode, d.OFF)
 
 
+class MultiOctaveTests(unittest.TestCase):
+    def test_targets_with_extra_offsets_dedup_and_range(self):
+        self.assertEqual(d.targets(60, d.OFF, (-24, 12)), [60, 36, 72])
+        self.assertEqual(d.targets(60, d.UP, (12, 24)), [60, 72, 84])       # a +12 csak egyszer
+        self.assertEqual(d.targets(100, d.OFF, (12, -12)), [100, 88])       # 112 > C8 kimarad
+
+    def test_selection_default_is_only_the_keyboard_octave(self):
+        sel = d.OctaveSelection(60)
+        self.assertEqual(sel.selected(), [60])
+        self.assertEqual(sel.offsets(), ())
+        self.assertEqual(sel.label(), "C4")
+        self.assertEqual(len(d.OCTAVE_BASES), 8)
+        self.assertEqual([d.octave_label(o) for o in (12, 96)], ["C0", "C7"])
+
+    def test_toggle_extras_and_offsets(self):
+        sel = d.OctaveSelection(60)
+        self.assertTrue(sel.toggle(36))
+        self.assertTrue(sel.toggle(84))
+        self.assertEqual(sel.selected(), [36, 60, 84])
+        self.assertEqual(sel.offsets(), (-24, 24))
+        self.assertEqual(sel.label(), "C2 · C4 · C6")
+        self.assertTrue(sel.toggle(36))
+        self.assertEqual(sel.offsets(), (24,))
+
+    def test_keyboard_octave_cannot_be_unticked_and_follows_base(self):
+        sel = d.OctaveSelection(60)
+        self.assertFalse(sel.toggle(60))
+        self.assertFalse(sel.toggle(61))
+        sel.toggle(84)
+        sel.set_base(72)                      # X / C eltolás
+        self.assertEqual(sel.selected(), [72, 84])
+        self.assertEqual(sel.offsets(), (12,))
+        sel.set_base(84)                      # a bejelölt oktávra lép: nincs dupla hang
+        self.assertEqual(sel.offsets(), ())
+        self.assertTrue(sel.is_selected(84))
+
+    def test_doubler_uses_extra_offsets_and_releases_what_it_started(self):
+        x = d.OctaveDoubler(d.OFF)
+        x.set_extra_offsets((-12, 12))
+        self.assertEqual(x.press(60), [60, 48, 72])
+        x.set_extra_offsets(())               # váltás lenyomva
+        self.assertEqual(sorted(x.release(60)), [48, 60, 72])
+        self.assertEqual(x.sounding, set())
+
+
 if __name__ == "__main__":
     unittest.main()
