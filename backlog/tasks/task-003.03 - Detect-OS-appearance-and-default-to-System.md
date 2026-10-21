@@ -4,7 +4,7 @@ title: Detect OS appearance and default to System
 status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
-updated_date: '2026-10-21T16:49:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -25,9 +25,9 @@ Users expect first launch to match Windows or Linux light/dark mode rather than 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 System mode resolves to light or dark from the current OS color scheme
-- [ ] #2 First launch with no saved preference uses System
-- [ ] #3 If the OS scheme cannot be read, a documented fallback is used and the app does not crash
+- [x] #1 System mode resolves to light or dark from the current OS color scheme
+- [x] #2 First launch with no saved preference uses System
+- [x] #3 If the OS scheme cannot be read, a documented fallback is used and the app does not crash
 <!-- AC:END -->
 
 ## Implementation Notes
