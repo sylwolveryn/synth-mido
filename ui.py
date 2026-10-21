@@ -67,6 +67,7 @@ class PianoApp:
         self.save_dialog = None
         self.records_win = None
         self.records_tree = None
+        self.fallback_error_logged = False
 
         self.theme_mode = theme.load_mode()
         self.scheme = theme.resolve_scheme(self.theme_mode)
@@ -86,6 +87,7 @@ class PianoApp:
         self.apply_theme()
         self._schedule_theme_poll()
         self.refresh_devices()
+        self._activate_output()
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def _build(self):
@@ -372,8 +374,8 @@ class PianoApp:
             self.stop_listen()
             self.controller.close()
             self.connect_btn.configure(text="Csatlakozás")
-            self.status_var.set("Kapcsolat bontva")
             self.log_line("Kapcsolat bontva")
+            self._activate_output("Kapcsolat bontva")
             return
 
         inp = self.input_var.get().strip() or None
@@ -385,22 +387,37 @@ class PianoApp:
         ok = self.controller.connect(input_name=inp, output_name=out)
         if not ok:
             messagebox.showerror("Hiba", "Nem sikerült csatlakozni a MIDI eszközhöz.")
-            self.status_var.set("Csatlakozás sikertelen")
+            self._activate_output("Csatlakozás sikertelen")
             return
 
         self.connect_btn.configure(text="Leválasztás")
-        self.status_var.set(f"Csatlakozva: {self.controller.device_name}")
         self.log_line(f"Csatlakozva — be: {inp or '-'} / ki: {out or '-'}")
+        self._activate_output()
+
+    def _activate_output(self, idle_text: str = "Nincs csatlakozás"):
+        """Az aktív hangkimenet kiírása az állapotsorba és a hangszer beállítása rajta."""
+        c = self.controller
+        head = f"Csatlakozva: {c.device_name}" if c.connected else idle_text
+        name = c.output_name
+        if name is None:
+            self.status_var.set(f"{head} — nincs hangkimenet")
+        elif c.using_fallback:
+            self.status_var.set(f"{head} — hang: {name} (alapértelmezett)")
+        else:
+            self.status_var.set(head)
+        if c.fallback_error and not self.fallback_error_logged:
+            self.fallback_error_logged = True
+            self.log_line(c.fallback_error)
         self.on_instrument_change()
 
     def require_output(self) -> bool:
-        if self.controller.connected and self.controller.output_port:
+        if self.controller.active_output is not None:
             return True
-        messagebox.showinfo("Nincs kapcsolat", "Előbb csatlakozz egy MIDI kimenethez.")
+        messagebox.showinfo("Nincs hangkimenet", "Nincs elérhető hangkimenet. Csatlakozz egy MIDI kimenethez.")
         return False
 
     def on_instrument_change(self, _event=None):
-        if not self.controller.connected or not self.controller.output_port:
+        if self.controller.active_output is None:
             return
         label = self.instrument_var.get()
         for name, num in config.INSTRUMENTS.items():
@@ -469,8 +486,7 @@ class PianoApp:
         self.panic()
 
     def panic(self):
-        if self.controller.connected:
-            self.controller.panic()
+        self.controller.panic()
         for note in list(self.active_notes):
             self.highlight(note, False)
         self.active_notes.clear()
@@ -570,13 +586,13 @@ class PianoApp:
         note = self.note_from_event(event)
         if note is None:
             return
-        connected = self.controller.connected and self.controller.output_port
-        if not connected and not self.recorder.is_recording:
+        audible = self.controller.active_output is not None
+        if not audible and not self.recorder.is_recording:
             return
         if note in self.held_notes:
             return
         velocity = int(self.velocity_var.get())
-        if connected:
+        if audible:
             self.controller.note_on(note, velocity)
         self.recorder.note_on(note, velocity)
         self.held_notes.add(note)
@@ -836,8 +852,7 @@ class PianoApp:
             self.theme_job = None
         self.stop_playback()
         self.stop_listen()
-        if self.controller.connected:
-            self.controller.close()
+        self.controller.shutdown()
         self.root.destroy()
 
 

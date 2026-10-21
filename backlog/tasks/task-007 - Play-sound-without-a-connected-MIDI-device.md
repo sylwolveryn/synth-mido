@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T18:23:00Z'
-updated_date: '2026-10-21T18:29:00Z'
+updated_date: '2026-10-21T18:30:00Z'
 labels:
   - feature
 dependencies: []
@@ -20,6 +20,9 @@ modified_files:
   - midi_controller.py
   - ui.py
   - test_audio_output.py
+  - requirements.txt
+  - .pre-commit-config.yaml
+  - readme.md
 priority: medium
 type: feature
 ordinal: 10000
@@ -67,3 +70,9 @@ All app sounds use the fallback, not only record playback, so TASK-005/006 shoul
 6. Pre-commit hook: run the new tests and install mido+numpy as `additional_dependencies` for the hook env. requirements.txt: numpy, sounddevice. readme: fallback section.
 7. Verify: ruff, all unit tests, pre-commit, and an audible smoke test on this PC (GS synth fallback + forced tone fallback).
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Implemented tone_synth.py (ToneSynth: numpy sine voices on a sounddevice stream, mido-port-like), FALLBACK_SYNTH_KEYWORDS in config.py, a single output path in midi_controller.py (active_output / _send, lazy fallback, connect closes the fallback, shutdown), and UI changes (sound without a connection, active output in the status bar, fallback error logged once). Added test_audio_output.py (19 tests), numpy/sounddevice in requirements.txt, hook deps, and a readme section. Verified: ruff clean, 55 unit tests green, pre-commit --all-files green, real-device smoke test on Windows (GS synth fallback, forced tone-generator fallback through the default speakers, panic, explicit connect to the GS synth while the fallback is open, return to the fallback on close). Not verified: Linux/macOS (no machine here).
+<!-- SECTION:NOTES:END -->

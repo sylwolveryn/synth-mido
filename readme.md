@@ -17,6 +17,17 @@ pip install  -r requirements.txt
 
 A program egy egyszerű ablakos felületet nyit: MIDI eszközök csatlakoztatása, hangszer választás, skála/akkord/bemutató, kattintható zongora és billentyűzet-figyelés.
 
+## Hang MIDI eszköz nélkül
+
+Ha nincs csatlakoztatott MIDI kimenet, a program a gép alapértelmezett hangkimenetét használja, így a képernyős zongora, a skála / akkord / bemutató gombok és a felvételek visszajátszása eszköz nélkül is hallható:
+
+- **Windows:** a beépített *Microsoft GS Wavetable Synth* szól, a hangszerválasztás is működik.
+- **Linux / macOS:** ha fut egy szoftveres szintetizátor (FluidSynth, TiMidity), annak a portját használja; különben egy egyszerű beépített hanggenerátor szól az alapértelmezett hangeszközön (`numpy` + `sounddevice`). Ez minden hangszert ugyanúgy szólaltat meg. Linuxon a `sounddevice`-hoz a PortAudio rendszercsomag kell (pl. `sudo apt install libportaudio2`).
+
+Csatlakoztatott MIDI kimenet esetén mindig az szól; leválasztás után a program visszavált az alapértelmezett kimenetre. Az aktív hangkimenet az állapotsorban látható. Ha egyik kimenet sem érhető el, a program hang nélkül is működik (egyszer jelzi a naplóban).
+
+Tesztek: `python -m unittest test_audio_output -v`
+
 ## Téma
 
 A felület Világos, Sötét és Rendszer megjelenést támogat (alapértelmezett: Rendszer, ami az operációs rendszer világos/sötét beállítását követi, akár futás közben is). A választás a "Megjelenés" legördülő listában állítható, és a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`).
@@ -50,7 +61,7 @@ A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárol
 
 ## Fejlesztés: pre-commit
 
-Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme`, `test_recorder` unit tesztek. Egyszeri beállítás:
+Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme`, `test_recorder`, `test_audio_output` unit tesztek. Egyszeri beállítás:
 
 >pip install -r requirements-dev.txt
 >pre-commit install

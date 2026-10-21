@@ -6,6 +6,11 @@ MIDI_CHANNEL = 0
 # Microsoft GS Wavetable Synth használata (a zongora hangja ezen keresztül megy)
 DEVICE_NAME_KEYWORDS = ["GENERAL"]
 
+# Tartalék hangkimenet, ha nincs csatlakoztatott MIDI kimenet: az első ilyen nevű
+# szintetizátor port (Windows beépített GS szintetizátora, Linuxon futó FluidSynth /
+# TiMidity). Ha egyik sincs, a beépített hanggenerátor (tone_synth) szól.
+FALLBACK_SYNTH_KEYWORDS = ["MICROSOFT GS WAVETABLE", "FLUID", "TIMIDITY"]
+
 # Hangszerek listája (Program Change számok)
 INSTRUMENTS = {
     "acoustic_grand_piano": 0,
