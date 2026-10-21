@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:51:00Z'
-updated_date: '2026-10-21T20:14:00Z'
+updated_date: '2026-10-21T20:15:00Z'
 labels:
   - feature
 dependencies:
@@ -19,6 +19,7 @@ modified_files:
   - keyboard_play.py
   - midi_controller.py
   - test_sustain.py
+  - ui.py
 parent_task_id: TASK-008
 priority: low
 type: feature
