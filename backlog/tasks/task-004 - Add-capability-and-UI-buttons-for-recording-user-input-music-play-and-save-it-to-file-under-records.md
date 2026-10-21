@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:00:00Z'
-updated_date: '2026-10-21T17:38:00Z'
+updated_date: '2026-10-21T17:59:00Z'
 labels: []
 dependencies: []
 references:
@@ -25,43 +25,74 @@ ordinal: 4000
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-Goal: record what the user plays (the physical piano via the MIDI input, plus clicks on the on-screen piano) and save it as a Standard MIDI File (.mid) under `records/`. Saving as .mid means TASK-005/006 can load the file with `mido.MidiFile` and play it back with no custom format.
+Goal: record what the user plays (the physical piano via the MIDI input, plus clicks on the on-screen piano) and save it as a simple JSON record under `records/`, named by the user. Add a view that lists all records and can delete them one at a time or several at once. Recording works without a MIDI connection ("blindly").
 
 Research findings:
-- ui.py `PianoApp` reads input only in `poll_midi()` (a 15 ms `after` loop), which runs only while "Figyelés" (listening) is on. On-screen clicks go through `on_piano_press/on_piano_release` -> `controller.note_on/note_off`.
+- ui.py `PianoApp` reads input only in `poll_midi()` (a 15 ms `after` loop), which runs only while "Figyelés" (listening) is on. On-screen clicks go through `on_piano_press/on_piano_release`, which currently do nothing unless an output is connected.
 - midi_controller.py has no recording logic, and no change to it is needed.
 - Tests use unittest (test_theme.py). The pre-commit hook runs only `python -m unittest test_theme`.
-- `records/` doesn't exist yet and isn't in .gitignore.
 
-1. New module `recorder.py` (pure logic, no Tk) with class `MidiRecorder`:
-   - `start()`, `stop()`, `is_recording`, `event_count`, `elapsed()`; takes an injectable clock (default `time.monotonic`) so it can be tested.
-   - `add(msg)` stores (timestamp, copy of msg) for note_on/note_off/control_change (e.g. sustain pedal)/program_change, and ignores clock/active_sensing/sysex.
-   - It tracks held notes. `stop()` appends note_off for any still-held notes so the file never has hanging notes.
-   - `to_midifile()` builds a type-0 MidiFile: ticks_per_beat=480, a set_tempo meta of 500000 (120 BPM), and a program_change of the current instrument at t=0. Times use delta ticks from `mido.second2tick`, and the track ends with end_of_track.
-   - `save(directory)` creates `records/` if needed, writes `felvetel_YYYYMMDD_HHMMSS.mid` (adding `_1`, `_2` on collision), and returns the Path. An empty recording isn't saved (returns None).
-   - The `RECORDS_DIR` constant is the `records` folder next to the source files (Path(__file__).parent), so it doesn't depend on the cwd.
-2. ui.py: add the recording UI.
-   - In the "Billentyűzet figyelése" frame, next to the listen button: a "● Felvétel" / "■ Leállítás és mentés" toggle (Accent style while recording) and a muted label showing "00:12 · 34 esemény", refreshed every 250 ms while recording. There's no new LabelFrame, so the window height and minsize stay the same.
-   - Starting a recording requires a connection. If there's an input port and listening is off, it starts listening automatically, because physical input is read only by `poll_midi`.
-   - `poll_midi` passes each received message to `recorder.add()` while recording. `on_piano_press/on_piano_release` pass the on-screen note_on/note_off (with the current velocity and channel) to the recorder.
-   - The scale/chord/demo buttons are NOT recorded, since only user-played input counts.
-   - Stopping saves the file, logs the path, and shows it in the status bar. If nothing was played, it logs "Üres felvétel, nem mentve".
-   - Disconnecting, closing the window, or a read error in `poll_midi` while recording stops and saves automatically, so nothing is lost.
-   - The instrument chosen at recording start goes into the file as the program_change.
-3. `.gitignore`: add `/records/`.
-4. Tests in new `test_recorder.py` (unittest, fake clock, temp dir): event filtering, delta-tick timing, hanging notes closed on stop, the empty recording not saved, the filename pattern/collision suffix, and a round-trip save -> `mido.MidiFile` load giving the same notes in order with the right total length.
-5. Add `test_recorder` to the pre-commit unit-test hook entry (`python -m unittest test_theme test_recorder`).
-6. readme.md: a short "Felvétel" section on how to record and where files go.
-7. Verify: ruff, `python -m unittest test_theme test_recorder -v`, and pre-commit run --all-files. Then a manual smoke test in the app: record a few on-screen clicks, stop, and check that the .mid appears under records/ and opens with mido.
+Record format (JSON, UTF-8, one file per recording, `records/<name>.json`):
+{
+  "format": "synth-mido-record",
+  "version": 1,
+  "created": "2026-10-21T19:40:12",
+  "instrument": {"name": "acoustic_grand_piano", "program": 0},
+  "duration": 12.48,
+  "notes": [
+    {"note": 60, "velocity": 100, "start": 0.0, "duration": 0.42},
+    ...
+  ]
+}
+- Notes are already-paired events (start + duration in seconds, rounded to milliseconds, sorted by start), so replay in TASK-005/006 is a simple timed loop.
+- "instrument" is only the default for replay. The player (TASK-005) may override it.
+- Only notes, timing, and instrument are stored. No pedal/CC, no MIDI-file details.
+
+1. New module `recorder.py` (pure logic + file storage, no Tk):
+   - `RECORDS_DIR` is the `records` folder next to the source files (Path(__file__).parent / "records"), created on first save.
+   - `Recorder(clock=time.monotonic)`: `start(instrument_name, program)`, `note_on(note, velocity)`, `note_off(note)` (note_on with velocity 0 counts as off), `stop() -> dict`, `is_recording`, `elapsed()`, `note_count`. `stop()` closes still-held notes at the stop time. A repeated note_on of an already-held note closes the previous one first.
+   - `default_name(now=None)` returns `felvetel_YYYYMMDD_HHMMSS`.
+   - `sanitize_name(name)` strips the `.json` suffix and whitespace, and replaces characters illegal in Windows/Linux filenames (`<>:"/\|?*` and control characters) with `_`. It raises ValueError if the result is empty or a reserved Windows name.
+   - `validate_record(data)` checks the shape and types (format/version, instrument name+program 0–127, notes with note 0–127, velocity 1–127, start ≥ 0, duration ≥ 0) and raises ValueError with a readable Hungarian message.
+   - `save_record(record, name, directory=RECORDS_DIR, overwrite=False) -> Path` validates, then writes indented JSON. It raises FileExistsError if the file exists and overwrite is False.
+   - `load_record(path) -> dict` parses and validates, raising ValueError for bad JSON or a bad shape.
+   - `list_records(directory=RECORDS_DIR) -> list[RecordInfo]` returns path, name, created, duration, note count, instrument, newest first. Unreadable or invalid files are still listed (marked "hibás") so they can be deleted.
+   - `delete_records(paths, directory=RECORDS_DIR) -> int` deletes only `.json` files inside `directory`, refusing anything outside it, and returns the number deleted.
+2. ui.py: recording controls in the "Billentyűzet figyelése" frame, next to the listen button:
+   - A "● Felvétel" / "■ Leállítás" toggle (Accent style while recording), a "Felvételek…" button, and a muted label showing "00:12 · 34 hang", refreshed every 250 ms while recording.
+   - Recording does NOT need a connection. If an input port is connected and listening is off, recording starts listening automatically so the physical piano is captured. Without any connection, only on-screen clicks are recorded (silently).
+   - `on_piano_press/on_piano_release` record notes even when not connected; they still send sound only if an output is connected. Key highlighting works either way.
+   - `poll_midi` passes note_on/note_off to the recorder while recording.
+   - The scale/chord/demo buttons are not recorded.
+   - The instrument currently selected in the "Hangszer" combo is stored in the record.
+3. ui.py: save dialog after stopping (a modal themed Toplevel):
+   - A name entry prefilled with `felvetel_YYYYMMDD_HHMMSS`, plus "Mentés" and "Elvetés" (discard / delete the take) buttons.
+   - If the name already exists, it asks before overwriting. An invalid name shows the validation message and keeps the dialog open.
+   - Closing the dialog with X counts as Elvetés, after confirmation.
+   - If nothing was played, it logs "Üres felvétel, nem mentve" and shows no dialog.
+   - Closing the app or disconnecting while recording stops the recording and opens the same dialog first, so nothing is lost silently.
+4. ui.py: "Felvételek" window (a non-modal Toplevel, only one open at a time):
+   - A ttk.Treeview with columns Név, Létrehozva, Hossz, Hangok, Hangszer, and `selectmode="extended"` (Ctrl/Shift multi-select).
+   - Buttons: "Törlés" (deletes the selected records after a confirm showing the count), "Összes kijelölése", "Frissítés", and "Mappa megnyitása" (os.startfile / xdg-open), plus the Delete key as a shortcut for Törlés.
+   - The list refreshes automatically after a new save.
+   - The theme is applied: Treeview/Heading styles go into `apply_theme`, and open Toplevels get re-themed on theme change.
+5. Tests in new `test_recorder.py` (unittest, fake clock, temp directory):
+   - A record created by Recorder has exactly the expected keys/types/ranges, notes sorted, timing from the fake clock, held notes closed on stop, and instrument stored.
+   - save -> file exists with the expected JSON -> load returns an equal record. The default name pattern is correct, overwrite protection works, and sanitize_name works.
+   - Invalid files (bad JSON, missing keys, out-of-range values) are rejected by load_record.
+   - list_records shows saved records (newest first) and marks broken ones.
+   - delete_records removes one file, removes several at once, and refuses paths outside the records directory.
+6. Add `test_recorder` to the pre-commit unit-test hook entry (`python -m unittest test_theme test_recorder`).
+7. readme.md: a short "Felvétel" section covering recording, naming, the records list and deleting, and the JSON format.
+8. Verify: ruff, `python -m unittest test_theme test_recorder -v`, and pre-commit run --all-files. Then a manual smoke test without a connection: click notes, stop, save under a custom name, see it in Felvételek, and delete one and then several.
+
+Not in scope (per review): `.gitignore` is not changed. Playback of records belongs to TASK-005/006.
 
 Proposed acceptance criteria (to add once you approve):
-- A record button starts and stops recording, with elapsed time and event count shown while recording.
-- Notes from the physical MIDI input and from on-screen piano clicks are captured with their timing.
-- Stopping saves a .mid file under records/ (timestamped name). An empty recording is not saved.
-- A recording in progress is saved on disconnect or window close.
-- The new unit tests run in pre-commit and pass.
-
-Open questions:
-- Should the scale/chord/demo buttons also be recorded? (Proposed: no.)
-- Auto-save with a timestamped name (proposed), or a "Save as" dialog?
+- Recording can be started and stopped with a button, with or without a MIDI connection, and shows elapsed time and note count.
+- Notes from the physical MIDI input and from on-screen clicks are captured with start time, duration, and velocity.
+- On stop, the user can save under a default `felvetel_YYYYMMDD_HHMMSS` name or a custom name, or discard the take.
+- Records are saved as JSON under records/ containing only notes, timing, and the instrument used.
+- A records view lists all records and can delete one or several selected records.
+- Unit tests cover the record shape/format, saving, loading, and deleting, and pass in pre-commit.
 <!-- SECTION:PLAN:END -->
