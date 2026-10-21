@@ -3,11 +3,11 @@ id: TASK-019
 title: >-
   Record what is heard: mix playback into the take, record format version 2 with
   per-note instruments
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T22:49:00Z'
+updated_date: '2026-10-21T22:54:00Z'
 labels:
   - recording
   - playback
@@ -26,13 +26,13 @@ A recording only captures the notes the user plays. When the user plays along wi
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 New recordings are saved as version 2: every note has its own instrument (name and General MIDI program)
-- [ ] #2 Version 1 records still load, validate, list and play exactly as before
-- [ ] #3 While recording, notes from a playing record are captured together with the user's notes and live MIDI input
-- [ ] #4 A version 2 record plays each note with its own instrument, simultaneously, without changing the user's selected instrument
-- [ ] #5 The user can play along on the selected instrument while a version 2 record plays its own instruments
-- [ ] #6 Changing the instrument during a take records later notes with the new instrument
-- [ ] #7 Tests cover the version 2 shape, save/load/delete, v1 compatibility, mixing and multi-instrument playback
+- [x] #1 New recordings are saved as version 2: every note has its own instrument (name and General MIDI program)
+- [x] #2 Version 1 records still load, validate, list and play exactly as before
+- [x] #3 While recording, notes from a playing record are captured together with the user's notes and live MIDI input
+- [x] #4 A version 2 record plays each note with its own instrument, simultaneously, without changing the user's selected instrument
+- [x] #5 The user can play along on the selected instrument while a version 2 record plays its own instruments
+- [x] #6 Changing the instrument during a take records later notes with the new instrument
+- [x] #7 Tests cover the version 2 shape, save/load/delete, v1 compatibility, mixing and multi-instrument playback
 <!-- AC:END -->
 
 ## Definition of Done
@@ -49,3 +49,15 @@ A recording only captures the notes the user plays. When the user plays along wi
 4. ui: playing a v2 record assigns a channel per instrument (1..15, skipping drum channel 9) and sends program changes, leaving the user's instrument on channel 0 untouched; v1 keeps the old behaviour (main channel, selected instrument overridable). Player notes are fed into a running recording (v1 notes with the current main instrument); starting a take during playback captures the notes already sounding; instrument change updates the recorder.
 5. songbook stays v1; tests for v2 shape, save/load/delete, v1 compatibility, mixing, per-instrument scheduling, channels; readme + progress page; smoke test in the real window.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Top-level instrument kept in v2 as the instrument selected when the take started (list/summary fallback). Songbook stays v1 so its instrument remains overridable. Channels: user on 0, record instruments on 1-15 skipping drum channel 9; pedal CC64 and panic CC123 go to every used channel; ToneSynth keys voices by (channel, note).
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Recordings now capture everything that sounds: notes of a playing record (with their own instrument), the user's mouse/keyboard notes and live MIDI input. New takes are saved as record format version 2 where every note carries {name, program}; version 1 files (old takes, songbook) still validate, list and play as before. Version 2 records play each instrument on its own MIDI channel at the same time, leaving the user's selected instrument on channel 0 for playing along; changing the instrument during a take records later notes with it. Verified with 207 unit tests (11 new), ruff, and a real-window smoke test (14/14) incl. screenshots.
+<!-- SECTION:FINAL_SUMMARY:END -->
