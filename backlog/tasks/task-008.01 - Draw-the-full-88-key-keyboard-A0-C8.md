@@ -1,9 +1,11 @@
 ---
 id: TASK-008.01
 title: Draw the full 88-key keyboard (A0-C8)
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T19:50:00Z'
+updated_date: '2026-10-21T20:05:00Z'
 labels:
   - feature
 dependencies: []
@@ -36,3 +38,12 @@ Replace the two-octave on-screen piano with the full 88-key range so every note 
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. New Tk-free `piano_layout.py`: the 88-key range (21-108), is_black(), note names, and `layout(width, height)`, which returns key rectangles (white keys evenly across the width, black keys centred on the white-key boundary, 60% wide and 62% high), plus `key_at(x, y)` with black keys on top.
+2. ui.py: draw_piano uses the layout for the full range and rescales on <Configure>. Labels only on C keys (C1...C8), with middle C (C4) marked by an accent dot. Remove START_NOTE/OCTAVES; highlight() and mouse picking work for all 88 keys. Theme colours are unchanged.
+3. Tests `test_piano_layout.py`: key count, range ends, white/black pattern, contiguous white keys, black-key placement, key_at, rescaling, label notes.
+4. Smoke test in the real window: default and minimum width, clicks on A0/C8/black keys, live-input and playback highlighting across the range, both themes; progress page with screenshots.
+<!-- SECTION:PLAN:END -->
