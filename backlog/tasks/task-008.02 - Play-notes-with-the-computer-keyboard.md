@@ -62,6 +62,8 @@ Let the user play the on-screen piano from the computer keyboard, so melodies an
 
 <!-- SECTION:NOTES:BEGIN -->
 Verified: 111 unit tests green (16 keyboard tests), ruff clean, real-window smoke test with generated Tk key events 12/12. Found and fixed: this Tk build reports é/á as the character keysym instead of eacute/aacute, so both forms (and ;/\x27 characters) are mapped.
+
+Correction: the full unit suite at that point was 110 tests, not 111.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
