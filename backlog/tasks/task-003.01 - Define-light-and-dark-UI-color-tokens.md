@@ -4,7 +4,7 @@ title: Define light and dark UI color tokens
 status: Done
 assignee: []
 created_date: '2026-10-21T16:11:00Z'
-updated_date: '2026-10-21T16:48:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies: []
@@ -24,9 +24,9 @@ Widgets currently mix default ttk colors with hardcoded canvas fills, so a theme
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Light and dark palettes exist as named tokens covering window, surfaces, text, borders, accents, piano keys, and log
-- [ ] #2 Tokens can be applied from one place rather than literals scattered through widget construction
-- [ ] #3 Piano idle and active colors are tokens, not hardcoded values in draw or highlight paths
+- [x] #1 Light and dark palettes exist as named tokens covering window, surfaces, text, borders, accents, piano keys, and log
+- [x] #2 Tokens can be applied from one place rather than literals scattered through widget construction
+- [x] #3 Piano idle and active colors are tokens, not hardcoded values in draw or highlight paths
 <!-- AC:END -->
 
 ## Implementation Notes
