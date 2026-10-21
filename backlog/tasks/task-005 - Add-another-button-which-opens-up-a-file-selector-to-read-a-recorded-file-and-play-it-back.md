@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T19:39:00Z'
+updated_date: '2026-10-21T19:40:00Z'
 labels:
   - feature
 dependencies:
@@ -18,6 +18,8 @@ references:
   - ui.py
   - midi_controller.py
   - desktop-ui
+modified_files:
+  - playback.py
 priority: medium
 type: feature
 ordinal: 5000
