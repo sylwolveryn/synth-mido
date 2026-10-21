@@ -1,9 +1,10 @@
 ---
 id: TASK-003.01
 title: Define light and dark UI color tokens
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-10-21T16:11:00Z'
+updated_date: '2026-10-21T16:48:00Z'
 labels:
   - ui theme
 dependencies: []
@@ -12,7 +13,7 @@ references:
 parent_task_id: TASK-003
 priority: medium
 type: feature
-ordinal: 7000
+ordinal: 2000
 ---
 
 ## Description
@@ -27,6 +28,12 @@ Widgets currently mix default ttk colors with hardcoded canvas fills, so a theme
 - [ ] #2 Tokens can be applied from one place rather than literals scattered through widget construction
 - [ ] #3 Piano idle and active colors are tokens, not hardcoded values in draw or highlight paths
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+theme.py: LIGHT and DARK palette dicts with identical keys; ui.py draw_piano/highlight read colors from self.palette (no color literals left in ui.py).
+<!-- SECTION:NOTES:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
