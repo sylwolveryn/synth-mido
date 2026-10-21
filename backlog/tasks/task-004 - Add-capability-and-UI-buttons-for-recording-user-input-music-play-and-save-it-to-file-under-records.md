@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:00:00Z'
-updated_date: '2026-10-21T18:04:00Z'
+updated_date: '2026-10-21T18:06:00Z'
 labels: []
 dependencies: []
 references:
@@ -17,6 +17,7 @@ references:
 modified_files:
   - recorder.py
   - test_recorder.py
+  - ui.py
 ordinal: 4000
 ---
 
