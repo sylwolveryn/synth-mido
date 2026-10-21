@@ -3,9 +3,11 @@ id: TASK-021
 title: >-
   Language selector with English, French, Japanese, German, Swedish, Finnish,
   Spanish and Klingon
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T22:47:00Z'
+updated_date: '2026-10-21T23:17:00Z'
 labels:
   - i18n
   - ui
@@ -34,3 +36,12 @@ Every label is hard-coded in Hungarian. Players who do not read Hungarian need t
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. core/i18n.py: flat key-value JSON per language in synth_mido/lang/ (hu reference + en, fr, ja, de, sv, fi, es, tlh), t(key, **values) with hu -> key fallback, set_language reloads, language_name, upper() that keeps case-sensitive Klingon.
+2. Move every user-visible text out of the UI and core (labels, buttons, titles, lists, status, logs, dialogs, record validation errors, skin/variant/doubling/animation names, header subtitle, illustration captions) into hu.json keys.
+3. ui/language.py mixin: tr()/bind_text() register widget texts; set_language re-applies all live bindings (main window, Records, Equalizer), rebuilds language-dependent lists, status, player bar, sections; choice saved in settings. Language combobox next to Megjelenés; list choices by index.
+4. Write the 8 translations; tests for key/placeholder parity, used keys, fallbacks; real-window smoke for live relabel, persistence and fit at 780 px in all languages; update Groma map, readme and progress.
+<!-- SECTION:PLAN:END -->
