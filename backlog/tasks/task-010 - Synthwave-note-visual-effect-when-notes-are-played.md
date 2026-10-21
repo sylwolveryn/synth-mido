@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T20:17:00Z'
-updated_date: '2026-10-21T20:24:00Z'
+updated_date: '2026-10-21T20:25:00Z'
 labels:
   - feature
   - design
@@ -18,6 +18,7 @@ modified_files:
   - visualizer.py
   - theme.py
   - test_visualizer.py
+  - ui.py
 priority: medium
 type: feature
 ordinal: 18000
