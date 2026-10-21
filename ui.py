@@ -1,8 +1,12 @@
+import os
+import subprocess
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter import font as tkfont
 
 import config
+import recorder
 import theme
 from midi_controller import VevorMIDIController
 
@@ -23,12 +27,18 @@ def pretty_instrument(name: str) -> str:
     return name.replace("_", " ").title()
 
 
+def format_seconds(seconds: float) -> str:
+    minutes, secs = divmod(int(seconds), 60)
+    return f"{minutes:02d}:{secs:02d}"
+
+
 THEME_LABELS = {
     theme.SYSTEM_MODE: "Rendszer",
     theme.LIGHT_MODE: "Világos",
     theme.DARK_MODE: "Sötét",
 }
 THEME_POLL_MS = 2000
+RECORD_TICK_MS = 250
 
 
 class PianoApp:
@@ -52,6 +62,12 @@ class PianoApp:
         self.held_notes = set()
         self.key_ids = {}
 
+        self.recorder = recorder.Recorder()
+        self.record_job = None
+        self.save_dialog = None
+        self.records_win = None
+        self.records_tree = None
+
         self.theme_mode = theme.load_mode()
         self.scheme = theme.resolve_scheme(self.theme_mode)
         self.palette = theme.palette_for(self.scheme)
@@ -64,6 +80,7 @@ class PianoApp:
         self.status_var = tk.StringVar(value="Nincs csatlakozás")
         self.velocity_var = tk.IntVar(value=100)
         self.theme_var = tk.StringVar(value=THEME_LABELS[self.theme_mode])
+        self.record_var = tk.StringVar(value="")
 
         self._build()
         self.apply_theme()
@@ -136,8 +153,14 @@ class PianoApp:
 
         listen = ttk.LabelFrame(self.root, text="Billentyűzet figyelése")
         listen.pack(fill="both", expand=True, **pad)
-        self.listen_btn = ttk.Button(listen, text="Figyelés indítása", command=self.toggle_listen)
-        self.listen_btn.pack(anchor="w", padx=8, pady=6)
+        toolbar = ttk.Frame(listen)
+        toolbar.pack(fill="x", padx=8, pady=6)
+        self.listen_btn = ttk.Button(toolbar, text="Figyelés indítása", command=self.toggle_listen)
+        self.listen_btn.pack(side="left")
+        self.record_btn = ttk.Button(toolbar, text="● Felvétel", command=self.toggle_record)
+        self.record_btn.pack(side="left", padx=(8, 3))
+        ttk.Button(toolbar, text="Felvételek…", command=self.open_records).pack(side="left", padx=3)
+        ttk.Label(toolbar, textvariable=self.record_var, style="Status.TLabel").pack(side="left", padx=8)
 
         self.log = tk.Text(listen, height=10, wrap="word", state="disabled")
         scroll = ttk.Scrollbar(listen, command=self.log.yview)
@@ -218,6 +241,18 @@ class PianoApp:
             background=[("active", p["select_bg"])],
         )
         style.configure("Horizontal.TScale", background=p["bg"], troughcolor=p["border"], bordercolor=p["border"])
+        style.configure("TEntry", fieldbackground=p["surface"], foreground=p["fg"], insertcolor=p["fg"], padding=4)
+        style.configure(
+            "Treeview",
+            background=p["surface"],
+            fieldbackground=p["surface"],
+            foreground=p["fg"],
+            bordercolor=p["border"],
+            rowheight=24,
+        )
+        style.map("Treeview", background=[("selected", p["select_bg"])], foreground=[("selected", p["fg"])])
+        style.configure("Treeview.Heading", background=p["bg"], foreground=p["muted"], bordercolor=p["border"], relief="flat")
+        style.map("Treeview.Heading", background=[("active", p["select_bg"])])
         style.configure(
             "TScrollbar",
             background=p["surface"],
@@ -248,6 +283,11 @@ class PianoApp:
             pady=4,
             font=font,
         )
+        for win in (self.save_dialog, self.records_win):
+            if win is not None and win.winfo_exists():
+                win.configure(bg=p["bg"])
+        if self.records_tree is not None:
+            self.records_tree.tag_configure("error", foreground=p["muted"])
         self.draw_piano()
 
     def _restyle_combobox_popdowns(self):
@@ -327,6 +367,7 @@ class PianoApp:
 
     def toggle_connect(self):
         if self.controller.connected:
+            self._finish_recording()
             self.stop_playback()
             self.stop_listen()
             self.controller.close()
@@ -464,6 +505,10 @@ class PianoApp:
                     action = "ON " if on else "OFF"
                     self.log_line(f"{action} {note_label(msg.note)} ({msg.note}) hangerő {msg.velocity}")
                     self.highlight(msg.note, on)
+                    if on:
+                        self.recorder.note_on(msg.note, msg.velocity)
+                    else:
+                        self.recorder.note_off(msg.note)
                 elif msg.type == "control_change":
                     self.log_line(f"CC {msg.control} -> {msg.value}")
                 elif msg.type == "program_change":
@@ -525,11 +570,15 @@ class PianoApp:
         note = self.note_from_event(event)
         if note is None:
             return
-        if not self.controller.connected or not self.controller.output_port:
+        connected = self.controller.connected and self.controller.output_port
+        if not connected and not self.recorder.is_recording:
             return
         if note in self.held_notes:
             return
-        self.controller.note_on(note, int(self.velocity_var.get()))
+        velocity = int(self.velocity_var.get())
+        if connected:
+            self.controller.note_on(note, velocity)
+        self.recorder.note_on(note, velocity)
         self.held_notes.add(note)
         self.highlight(note, True)
         self.log_line(f"ON  {note_label(note)} ({note})")
@@ -539,6 +588,7 @@ class PianoApp:
             return
         for note in list(self.held_notes):
             self.controller.note_off(note)
+            self.recorder.note_off(note)
             self.highlight(note, False)
         self.held_notes.clear()
 
@@ -557,7 +607,230 @@ class PianoApp:
         else:
             self.canvas.itemconfigure(kid, fill=p["key_black"] if is_black else p["key_white"])
 
+    # --- felvétel ---------------------------------------------------------
+
+    def _current_instrument(self):
+        label = self.instrument_var.get()
+        for name, num in config.INSTRUMENTS.items():
+            if pretty_instrument(name) == label:
+                return name, num
+        return next(iter(config.INSTRUMENTS.items()))
+
+    def toggle_record(self):
+        if self.recorder.is_recording:
+            self._finish_recording()
+            return
+        name, program = self._current_instrument()
+        self.recorder.start(name, program)
+        self.record_btn.configure(text="■ Leállítás", style="Accent.TButton")
+        if self.controller.connected and self.controller.input_port:
+            if not self.listening:
+                self.toggle_listen()
+            self.log_line(f"Felvétel indítva ({pretty_instrument(name)})")
+        else:
+            self.log_line("Felvétel indítva kapcsolat nélkül — a képernyős zongora hangjai rögzülnek")
+        self._tick_recording()
+
+    def _tick_recording(self):
+        self.record_job = None
+        if not self.recorder.is_recording:
+            return
+        self.record_var.set(f"● {format_seconds(self.recorder.elapsed())} · {self.recorder.note_count} hang")
+        self.record_job = self.root.after(RECORD_TICK_MS, self._tick_recording)
+
+    def _finish_recording(self):
+        """Felvétel leállítása, majd mentés / elvetés párbeszéd (üres felvételnél nincs)."""
+        if not self.recorder.is_recording:
+            return
+        record = self.recorder.stop()
+        if self.record_job:
+            self.root.after_cancel(self.record_job)
+            self.record_job = None
+        self.record_btn.configure(text="● Felvétel", style="TButton")
+        self.record_var.set("")
+        if not record["notes"]:
+            self.log_line("Üres felvétel, nem mentve")
+            return
+        self._ask_save(record)
+
+    def _ask_save(self, record: dict):
+        """Modális ablak: név megadása (alapértelmezett: felvetel_YYYYMMDD_HHMMSS), Mentés vagy Elvetés."""
+        dlg = tk.Toplevel(self.root)
+        self.save_dialog = dlg
+        dlg.title("Felvétel mentése")
+        dlg.configure(bg=self.palette["bg"])
+        dlg.resizable(False, False)
+        dlg.transient(self.root)
+
+        body = ttk.Frame(dlg, padding=14)
+        body.pack(fill="both", expand=True)
+        summary = (
+            f"{len(record['notes'])} hang · {format_seconds(record['duration'])} · "
+            f"{pretty_instrument(record['instrument']['name'])}"
+        )
+        ttk.Label(body, text=summary, style="Status.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+        ttk.Label(body, text="Név").grid(row=1, column=0, sticky="w", padx=(0, 8))
+        name_var = tk.StringVar(value=recorder.default_name())
+        entry = ttk.Entry(body, textvariable=name_var, width=38)
+        entry.grid(row=1, column=1, sticky="ew")
+        ttk.Label(body, text=f"Mentés helye: {recorder.RECORDS_DIR}", style="Status.TLabel").grid(
+            row=2, column=0, columnspan=2, sticky="w", pady=(6, 10)
+        )
+
+        def save(_event=None):
+            try:
+                try:
+                    path = recorder.save_record(record, name_var.get())
+                except FileExistsError as e:
+                    if not messagebox.askyesno("Már létezik", f"A(z) „{e.args[0].name}” már létezik. Felülírod?", parent=dlg):
+                        return
+                    path = recorder.save_record(record, name_var.get(), overwrite=True)
+            except ValueError as e:
+                messagebox.showerror("Hibás név", str(e), parent=dlg)
+                return
+            except OSError as e:
+                messagebox.showerror("Mentési hiba", f"Nem sikerült menteni: {e}", parent=dlg)
+                return
+            self.log_line(f"Felvétel mentve: {path}")
+            self.status_var.set(f"Felvétel mentve: {path.name}")
+            dlg.destroy()
+            self.refresh_records()
+
+        def discard(_event=None):
+            if messagebox.askyesno("Elvetés", "Biztosan elveted a felvételt? Nem lesz mentve.", parent=dlg):
+                self.log_line("Felvétel elvetve")
+                dlg.destroy()
+
+        btns = ttk.Frame(body)
+        btns.grid(row=3, column=0, columnspan=2, sticky="e")
+        ttk.Button(btns, text="Elvetés", command=discard).pack(side="left", padx=3)
+        ttk.Button(btns, text="Mentés", command=save, style="Accent.TButton").pack(side="left", padx=3)
+        body.columnconfigure(1, weight=1)
+
+        dlg.protocol("WM_DELETE_WINDOW", discard)
+        dlg.bind("<Return>", save)
+        dlg.bind("<Escape>", discard)
+        entry.focus_set()
+        entry.select_range(0, "end")
+        dlg.grab_set()
+        self.root.wait_window(dlg)
+        self.save_dialog = None
+
+    # --- felvételek listája -----------------------------------------------
+
+    def open_records(self):
+        if self.records_win is not None and self.records_win.winfo_exists():
+            self.records_win.deiconify()
+            self.records_win.lift()
+            self.refresh_records()
+            return
+        win = tk.Toplevel(self.root)
+        self.records_win = win
+        win.title("Felvételek")
+        win.geometry("720x380")
+        win.minsize(520, 260)
+        win.configure(bg=self.palette["bg"])
+
+        body = ttk.Frame(win, padding=10)
+        body.pack(fill="both", expand=True)
+
+        columns = ("name", "created", "duration", "notes", "instrument")
+        headings = ("Név", "Létrehozva", "Hossz", "Hangok", "Hangszer")
+        widths = (200, 140, 60, 60, 180)
+        tree = ttk.Treeview(body, columns=columns, show="headings", selectmode="extended")
+        for col, text, width in zip(columns, headings, widths):
+            tree.heading(col, text=text)
+            tree.column(col, width=width, anchor="e" if col in ("duration", "notes") else "w")
+        tree.tag_configure("error", foreground=self.palette["muted"])
+        self.records_tree = tree
+        scroll = ttk.Scrollbar(body, command=tree.yview)
+        tree.configure(yscrollcommand=scroll.set)
+        tree.grid(row=0, column=0, sticky="nsew")
+        scroll.grid(row=0, column=1, sticky="ns")
+
+        btns = ttk.Frame(body)
+        btns.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        ttk.Button(btns, text="Összes kijelölése", command=self.select_all_records).pack(side="left", padx=(0, 3))
+        ttk.Button(btns, text="Törlés", command=self.delete_selected_records).pack(side="left", padx=3)
+        ttk.Button(btns, text="Frissítés", command=self.refresh_records).pack(side="left", padx=3)
+        ttk.Button(btns, text="Mappa megnyitása", command=self.open_records_folder).pack(side="left", padx=3)
+        ttk.Button(btns, text="Bezárás", command=win.destroy).pack(side="right")
+        body.columnconfigure(0, weight=1)
+        body.rowconfigure(0, weight=1)
+
+        tree.bind("<Delete>", lambda _e: self.delete_selected_records())
+        tree.bind("<Control-a>", lambda _e: self.select_all_records())
+        win.bind("<Escape>", lambda _e: win.destroy())
+        win.bind("<Destroy>", self._on_records_destroy)
+        self.refresh_records()
+        tree.focus_set()
+
+    def _on_records_destroy(self, event):
+        if event.widget is self.records_win:
+            self.records_win = None
+            self.records_tree = None
+
+    def refresh_records(self):
+        tree = self.records_tree
+        if tree is None:
+            return
+        tree.delete(*tree.get_children())
+        for info in recorder.list_records():
+            if info.error:
+                values = (info.name, "—", "—", "—", f"hibás: {info.error}")
+                tree.insert("", "end", iid=str(info.path), values=values, tags=("error",))
+            else:
+                values = (
+                    info.name,
+                    info.created.replace("T", " "),
+                    format_seconds(info.duration),
+                    info.note_count,
+                    pretty_instrument(info.instrument),
+                )
+                tree.insert("", "end", iid=str(info.path), values=values)
+
+    def select_all_records(self):
+        if self.records_tree is not None:
+            self.records_tree.selection_set(self.records_tree.get_children())
+        return "break"
+
+    def delete_selected_records(self):
+        tree = self.records_tree
+        if tree is None:
+            return
+        selected = tree.selection()
+        if not selected:
+            messagebox.showinfo("Nincs kijelölés", "Jelölj ki egy vagy több felvételt a törléshez.", parent=self.records_win)
+            return
+        if len(selected) == 1:
+            question = f"Biztosan törlöd a(z) „{tree.set(selected[0], 'name')}” felvételt?"
+        else:
+            question = f"Biztosan törlöd a kijelölt {len(selected)} felvételt?"
+        if not messagebox.askyesno("Törlés", question, parent=self.records_win):
+            return
+        try:
+            count = recorder.delete_records(selected)
+        except (ValueError, OSError) as e:
+            messagebox.showerror("Törlési hiba", str(e), parent=self.records_win)
+            count = 0
+        self.log_line(f"{count} felvétel törölve")
+        self.refresh_records()
+
+    def open_records_folder(self):
+        folder = recorder.RECORDS_DIR
+        try:
+            folder.mkdir(parents=True, exist_ok=True)
+            if sys.platform.startswith("win"):
+                os.startfile(folder)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(folder)])
+            else:
+                subprocess.Popen(["xdg-open", str(folder)])
+        except OSError as e:
+            messagebox.showerror("Hiba", f"A mappa nem nyitható meg: {e}", parent=self.records_win)
+
     def on_close(self):
+        self._finish_recording()
         if self.theme_job:
             self.root.after_cancel(self.theme_job)
             self.theme_job = None

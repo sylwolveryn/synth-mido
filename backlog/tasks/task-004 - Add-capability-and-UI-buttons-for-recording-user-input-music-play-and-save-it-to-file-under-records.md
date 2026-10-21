@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:00:00Z'
-updated_date: '2026-10-21T18:06:00Z'
+updated_date: '2026-10-21T18:07:00Z'
 labels: []
 dependencies: []
 references:
@@ -18,6 +18,8 @@ modified_files:
   - recorder.py
   - test_recorder.py
   - ui.py
+  - .pre-commit-config.yaml
+  - readme.md
 ordinal: 4000
 ---
 
@@ -110,3 +112,9 @@ Proposed acceptance criteria (to add once you approve):
 - A records view lists all records and can delete one or several selected records.
 - Unit tests cover the record shape/format, saving, loading, and deleting, and pass in pre-commit.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Implemented recorder.py (Recorder + JSON save/load/validate/list/delete), the recording toolbar, save/discard dialog and Felvételek window in ui.py, test_recorder.py (20 tests), the pre-commit hook entry and the readme section. Verified: ruff clean, 36 unit tests green, pre-commit run --all-files green, and a scripted Tk smoke test without a MIDI connection (15/15: blind recording, custom/default name, discard, empty take not saved, list, single + mass delete, theme switch). Not verified: recording from a physical MIDI keyboard (no device here).
+<!-- SECTION:NOTES:END -->
