@@ -1,9 +1,11 @@
 ---
 id: TASK-020
 title: Flame-like glowing note effect above the piano
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T22:47:00Z'
+updated_date: '2026-10-21T22:58:00Z'
 labels:
   - fx
   - ui
@@ -32,3 +34,11 @@ The note effect above the keys shows bars with small sparks; it feels thin. Play
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Rewrite fx/visualizer.py as a flame model: per note a 3-layer halo, a flickering smoothed flame polygon and a bright core; velocity drives height/brightness; attack 80 ms, fade 0.55 s; embers burst on note-on and stream while held; caps 40 flames / 70 embers.
+2. ui/fx_view.py: per-layer canvas pools (polygons/ovals), layer order halo, ember, flame, core restored only when items are created; colours from the skin sun gradient (dark/light variants).
+3. Replace the bar/spark unit tests with flame tests; real-window smoke incl. frame cost and four-skin screenshot.
+<!-- SECTION:PLAN:END -->
