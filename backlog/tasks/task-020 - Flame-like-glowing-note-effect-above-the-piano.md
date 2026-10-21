@@ -5,11 +5,21 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T22:58:00Z'
+updated_date: '2026-10-21T23:18:00Z'
 labels:
   - fx
   - ui
 dependencies: []
+modified_files:
+  - progress/README.md
+  - progress/task-020-flames.png
+  - progress/task-020-skins.png
+  - progress/task-020.md
+  - readme.md
+  - synth_mido/fx/visualizer.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/fx_view.py
+  - tests/test_visualizer.py
 priority: medium
 type: feature
 ordinal: 31000
