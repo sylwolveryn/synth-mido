@@ -3,11 +3,11 @@ id: TASK-005
 title: >-
   Add another button which opens up a file selector to read a recorded file and
   play it back
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T19:42:00Z'
+updated_date: '2026-10-21T19:46:00Z'
 labels:
   - feature
 dependencies:
@@ -26,7 +26,7 @@ modified_files:
   - readme.md
 priority: medium
 type: feature
-ordinal: 5000
+ordinal: 11000
 ---
 
 ## Description
