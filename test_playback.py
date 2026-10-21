@@ -197,5 +197,133 @@ class PlayerTests(unittest.TestCase):
         self.assertEqual(self.log, [])
 
 
+class TransportTests(unittest.TestCase):
+    """Szünet, ugrás, sebesség és leállítás."""
+
+    def setUp(self):
+        self.timer = FakeTimer()
+        self.log = []
+        self.finished = 0
+        self.player = Player(
+            after=self.timer.after,
+            cancel=self.timer.cancel,
+            on_note=lambda note, vel, on: self.log.append((round(self.timer.now, 3), note, on)),
+            on_finish=self._finish,
+            clock=self.timer.clock,
+        )
+        # C4 0.0-1.0, E4 0.5-1.5, G4 2.0-2.5
+        self.rec = record((60, 100, 0.0, 1.0), (64, 90, 0.5, 1.0), (67, 80, 2.0, 0.5))
+
+    def _finish(self):
+        self.finished += 1
+
+    def test_pause_silences_and_keeps_position(self):
+        self.player.play(self.rec)
+        self.timer.advance(0.75)
+        self.player.pause()
+        self.assertTrue(self.player.is_paused)
+        self.assertAlmostEqual(self.player.position(), 0.75)
+        self.assertEqual(self.player.sounding, set())
+        self.assertEqual(self.log[-2:], [(0.75, 60, False), (0.75, 64, False)])
+        count = len(self.log)
+        self.timer.advance(5)
+        self.assertEqual(len(self.log), count)
+        self.assertAlmostEqual(self.player.position(), 0.75)
+
+    def test_resume_restarts_sounding_notes_and_continues(self):
+        self.player.play(self.rec)
+        self.timer.advance(0.75)
+        self.player.pause()
+        self.timer.advance(3)
+        self.log.clear()
+        self.player.play_pause()
+        self.assertTrue(self.player.is_playing)
+        self.assertEqual(self.log, [(3.75, 60, True), (3.75, 64, True)])
+        self.timer.advance(2)
+        self.assertEqual([(n, on) for _, n, on in self.log[2:]], [(60, False), (64, False), (67, True), (67, False)])
+        self.assertEqual(self.log[-1][0], 5.5)  # 0.75 + 1.75 hátralévő idő
+        self.assertEqual(self.finished, 1)
+
+    def test_seek_while_playing_into_held_note(self):
+        self.player.play(self.rec)
+        self.timer.advance(0.1)
+        self.log.clear()
+        self.player.seek(1.2)
+        self.assertEqual(self.log, [(0.1, 60, False), (0.1, 64, True)])
+        self.assertEqual(self.player.sounding, {64})
+        self.assertAlmostEqual(self.player.position(), 1.2)
+        self.timer.advance(2)
+        self.assertEqual(self.player.sounding, set())
+        self.assertEqual(self.finished, 1)
+
+    def test_seek_while_paused_or_stopped_does_not_sound(self):
+        self.player.load(self.rec, "dal")
+        self.player.seek(2.1)
+        self.assertTrue(self.player.is_paused)
+        self.assertEqual(self.log, [])
+        self.assertAlmostEqual(self.player.position(), 2.1)
+        self.player.play_pause()
+        self.assertEqual(self.log, [(0.0, 67, True)])
+
+    def test_seek_is_clamped(self):
+        self.player.load(self.rec)
+        self.player.seek(-3)
+        self.assertEqual(self.player.position(), 0.0)
+        self.player.seek(99)
+        self.assertEqual(self.player.position(), self.player.duration)
+
+    def test_speed_change_keeps_position_and_changes_tempo(self):
+        self.player.play(self.rec)
+        self.timer.advance(0.5)
+        self.player.set_speed(2.0)
+        self.assertAlmostEqual(self.player.position(), 0.5)
+        self.timer.advance(0.25)
+        self.assertAlmostEqual(self.player.position(), 1.0)
+        self.timer.advance(1)
+        self.assertEqual(self.finished, 1)
+        self.assertEqual(self.log[-1], (1.5, 67, False))  # 0.5 + (2.5 - 0.5) / 2
+
+    def test_slow_speed(self):
+        self.player.set_speed(0.5)
+        self.player.play(record((60, 100, 0.0, 1.0)))
+        self.timer.advance(1.9)
+        self.assertEqual(self.player.sounding, {60})
+        self.timer.advance(0.2)
+        self.assertEqual(self.player.sounding, set())
+
+    def test_invalid_speed(self):
+        with self.assertRaises(ValueError):
+            self.player.set_speed(0)
+
+    def test_stop_rewinds_but_keeps_record_loaded(self):
+        self.player.play(self.rec, "dal")
+        self.timer.advance(0.75)
+        self.player.stop()
+        self.assertEqual(self.player.position(), 0.0)
+        self.assertTrue(self.player.is_loaded)
+        self.assertEqual(self.player.sounding, set())
+        self.log.clear()
+        self.player.play_pause()
+        self.assertEqual(self.log, [(0.75, 60, True)])
+
+    def test_play_after_end_restarts_from_beginning(self):
+        self.player.play(self.rec)
+        self.timer.advance(3)
+        self.assertEqual(self.finished, 1)
+        self.assertAlmostEqual(self.player.position(), self.player.duration)
+        self.log.clear()
+        self.player.play_pause()
+        self.assertEqual(self.log, [(3.0, 60, True)])
+
+    def test_controls_without_record_are_harmless(self):
+        self.player.play_pause()
+        self.player.pause()
+        self.player.seek(1)
+        self.player.set_speed(1.5)
+        self.player.stop()
+        self.assertFalse(self.player.is_loaded)
+        self.assertEqual(self.log, [])
+
+
 if __name__ == "__main__":
     unittest.main()

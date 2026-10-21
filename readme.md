@@ -15,7 +15,27 @@ pip install  -r requirements.txt
 
 >py main.py
 
-A program egy egyszerű ablakos felületet nyit: MIDI eszközök csatlakoztatása, hangszer választás, skála/akkord/bemutató, kattintható zongora és billentyűzet-figyelés.
+A program egy egyszerű ablakos felületet nyit: MIDI eszközök csatlakoztatása, hangszer választás, skála/akkord/bemutató, kattintható 88 billentyűs zongora (A0–C8, a C-k feliratozva, a középső C kiemelve) és billentyűzet-figyelés.
+
+A haladás képernyőképekkel a [progress](progress/README.md) mappában követhető.
+
+## Zongorázás a billentyűzettel
+
+A zongora a számítógép billentyűzetéről is játszható (MIDI eszköz nélkül is), a zenei programokban megszokott két sorral:
+
+```
+   W   E       T   Z/Y  U       O   P
+ A   S   D   F   G    H   J   K   L   É/;  Á/'
+ C4  D4  E4  F4  G4   A4  B4  C5  D5  E5   F5
+```
+
+- Magyar QWERTZ és amerikai QWERTY kiosztáson is ugyanazokon a fizikai gombokon szól (a Z és Y is a G#).
+- Több gomb együtt lenyomva akkordot ad; a lenyomva tartott gomb nem ismétel.
+- A hangerő a "Hangerő" csúszkából jön; futó felvétel a billentyűzettel játszott hangokat is rögzíti.
+- Szövegmezőben és Ctrl / Alt kombinációkkal nem szól; ha az ablak elveszti a fókuszt, minden lenyomott hang elhallgat.
+- **X** egy oktávval lejjebb, **C** egy oktávval feljebb tolja a tartományt (vagy a zongora feletti ◀ / ▶ gombok); így az A0-tól a C8-ig minden billentyű elérhető. A kék sáv a zongora tetején mutatja az elérhető tartományt, a "Betűk a billentyűkön" kapcsolóval a gombok betűi is megjelennek.
+- **Duplázás** ("két kéz", a "Lejátszás" sorban): Ki / +1 oktáv / −1 oktáv / ±1 oktáv — minden egérrel vagy billentyűzettel játszott hang egy oktávval lejjebb és/vagy feljebb is megszól, a felvétel is így rögzíti. A MIDI bemenet és a visszajátszás nem duplázódik. A választás mentődik.
+- **Szóköz** = kitartó pedál: amíg lenyomva tartod, az elengedett billentyűk tovább szólnak (MIDI eszközre CC 64-ként megy ki, a tartalék kimeneten is működik). A "Pedál (Szóköz)" kapcsolóval egérrel is rögzíthető. A felvétel a ténylegesen szóló hosszt rögzíti.
 
 ## Hang MIDI eszköz nélkül
 
@@ -30,7 +50,19 @@ Tesztek: `python -m unittest test_audio_output -v`
 
 ## Téma
 
-A felület Világos, Sötét és Rendszer megjelenést támogat (alapértelmezett: Rendszer, ami az operációs rendszer világos/sötét beállítását követi, akár futás közben is). A választás a "Megjelenés" legördülő listában állítható, és a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`).
+A felület négy megjelenést támogat, a "Megjelenés" legördülő listában választható, futás közben is:
+
+- **Synthwave** (alapértelmezett) — 80-as évek retró-futurisztikus éjszakai stílusa: lila égbolt, neon magenta és cián, naplemente nap perspektivikus neon ráccsal a fejlécben, nagybetűs neon szakaszcímek, naplemente színátmenetű billentyűzet sáv. Betűtípus: Bahnschrift (ha nincs, Segoe UI / DejaVu Sans).
+- **Rendszer** — az operációs rendszer világos/sötét beállítását követi, akár futás közben is.
+- **Világos** és **Sötét**.
+
+A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`); a korábban mentett választás megmarad.
+
+![Synthwave](progress/task-010-fx-synthwave.png)
+
+### Hangvizualizáció
+
+A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a billentyűje fölé (fehér billentyű: cián, fekete: magenta, a fényerő a hangerőtől függ); elengedéskor az oszlop tovább emelkedik és elhalványul, hangindításkor szikrák pattannak. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet, felvétel lejátszás és a bemutató gombok. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
 
 Tesztek: `python -m unittest test_theme -v`
 
@@ -68,11 +100,20 @@ Egy mentett felvétel kétféleképpen játszható le:
 
 Betöltéskor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** és a **Minden hang ki** gomb azonnal megállítja; új lejátszás (felvétel, skála, akkord, bemutató) indítása leállítja az előzőt. A visszajátszás nem kerül bele egy éppen futó felvételbe.
 
+### Lejátszó vezérlők
+
+A betöltött felvétel a "Lejátszás" rész alsó sorában vezérelhető:
+
+- **▶ / ⏸** — lejátszás és szünet; szünetben a hangok elhallgatnak, folytatáskor ugyanonnan szól tovább (a közben szóló hangok újraindulnak). A végére érve az elejéről indul újra.
+- **■** — leállítás és visszatekerés az elejére (a felvétel betöltve marad). A **Leállítás** és a **Minden hang ki** gomb ugyanígy működik.
+- **Pozíció csúszka** — mutatja, hol tart a lejátszás (`perc:mp / hossz`); rákattintva vagy húzva oda ugrik, lejátszás közben és szünetben is.
+- **Sebesség** — 0.5x … 2x, lejátszás közben is azonnal vált, ugrás nélkül.
+
 Tesztek: `python -m unittest test_playback -v`
 
 ## Fejlesztés: pre-commit
 
-Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme`, `test_recorder`, `test_audio_output`, `test_playback` unit tesztek. Egyszeri beállítás:
+Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és az összes unit teszt (`test_theme`, `test_recorder`, `test_audio_output`, `test_playback`, `test_piano_layout`, `test_keyboard_play`, `test_sustain`, `test_visualizer`, `test_doubling`; a `test_midi` valódi eszközt igényel, ezért kimarad). Egyszeri beállítás:
 
 >pip install -r requirements-dev.txt
 >pre-commit install

@@ -305,6 +305,11 @@ class VevorMIDIController:
         except Exception as e:
             print(f"❌ Hiba a hang küldésekor: {e}")
 
+    def sustain(self, on: bool) -> None:
+        """Kitartó pedál (CC 64) az aktív kimenetre; felengedéshez nem nyit tartalék kimenetet"""
+        msg = mido.Message('control_change', channel=self.channel, control=64, value=127 if on else 0)
+        self._send(msg, open_fallback=on)
+
     def change_instrument(self, instrument_number: int) -> None:
         """Hangszer váltása Program Change üzenettel"""
         pc = mido.Message('program_change', channel=self.channel, program=instrument_number)

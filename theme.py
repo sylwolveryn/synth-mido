@@ -1,4 +1,4 @@
-"""Téma (világos / sötét / rendszer) — színpaletták, OS-észlelés és beállítások mentése."""
+"""Téma (synthwave / világos / sötét / rendszer) — színpaletták, OS-észlelés és beállítások mentése."""
 
 import json
 import os
@@ -6,17 +6,20 @@ import subprocess
 import sys
 from pathlib import Path
 
+SYNTHWAVE_MODE = "synthwave"
 LIGHT_MODE = "light"
 DARK_MODE = "dark"
 SYSTEM_MODE = "system"
-MODES = (SYSTEM_MODE, LIGHT_MODE, DARK_MODE)
-DEFAULT_MODE = SYSTEM_MODE
+MODES = (SYNTHWAVE_MODE, SYSTEM_MODE, LIGHT_MODE, DARK_MODE)
+DEFAULT_MODE = SYNTHWAVE_MODE  # TASK-009: az új dizájn az alapértelmezett
 
 # Ha az OS színsémája nem olvasható, világos témát használunk.
 FALLBACK_SCHEME = LIGHT_MODE
 
 FONT_FAMILY = "Segoe UI"
 FONT_SIZE = 10
+# Synthwave: retró, keskeny betűtípus, ha a rendszerben van (Windows 10+: Bahnschrift)
+DISPLAY_FONTS = ("Bahnschrift", "Segoe UI", "DejaVu Sans")
 
 LIGHT = {
     "bg": "#f3f4f6",
@@ -36,6 +39,14 @@ LIGHT = {
     "key_label": "#4b5563",
     "log_bg": "#ffffff",
     "log_fg": "#1f2328",
+    "accent2": "#0ea5e9",
+    "section_fg": "#59636e",
+    "header_bg": "#f3f4f6",
+    "title_fg": "#1f2328",
+    "sun_top": "#2563eb",
+    "sun_mid": "#3b82f6",
+    "sun_bottom": "#60a5fa",
+    "grid": "#d0d7de",
 }
 
 DARK = {
@@ -56,14 +67,79 @@ DARK = {
     "key_label": "#555555",
     "log_bg": "#17181a",
     "log_fg": "#d4d4d4",
+    "accent2": "#38bdf8",
+    "section_fg": "#a0a4ab",
+    "header_bg": "#1e1f22",
+    "title_fg": "#e6e6e6",
+    "sun_top": "#5b8def",
+    "sun_mid": "#7aa2ff",
+    "sun_bottom": "#a9c4ff",
+    "grid": "#3f4248",
 }
 
-PALETTES = {LIGHT_MODE: LIGHT, DARK_MODE: DARK}
+# 80-as évek retró-futurisztikus éjszakai égbolt: neon magenta és cián, naplemente, rács
+SYNTHWAVE = {
+    "bg": "#0d0221",
+    "surface": "#261447",
+    "fg": "#f5e9ff",
+    "muted": "#b8a6d9",
+    "border": "#4d2a85",
+    "accent": "#ff2a6d",
+    "accent_fg": "#0d0221",
+    "select_bg": "#3d1f6e",
+    "piano_bg": "#120530",
+    "key_white": "#efe8ff",
+    "key_black": "#2a1153",
+    "key_white_active": "#05d9e8",
+    "key_black_active": "#ff2a6d",
+    "key_outline": "#3a1d6b",
+    "key_label": "#4b2c80",
+    "log_bg": "#100427",
+    "log_fg": "#d9c8ff",
+    "accent2": "#05d9e8",
+    "section_fg": "#05d9e8",
+    "header_bg": "#0d0221",
+    "title_fg": "#f5e9ff",
+    "sun_top": "#fdd835",
+    "sun_mid": "#ff9e00",
+    "sun_bottom": "#ff2a6d",
+    "grid": "#b026ff",
+}
+
+PALETTES = {SYNTHWAVE_MODE: SYNTHWAVE, LIGHT_MODE: LIGHT, DARK_MODE: DARK}
 
 
 def palette_for(scheme: str) -> dict:
-    """A 'light' / 'dark' sémához tartozó paletta (ismeretlen esetén a fallback)."""
+    """A 'synthwave' / 'light' / 'dark' sémához tartozó paletta (ismeretlen esetén a fallback)."""
     return PALETTES.get(scheme, PALETTES[FALLBACK_SCHEME])
+
+
+def display_font(families) -> str:
+    """Az első elérhető betűtípus a DISPLAY_FONTS listából (különben FONT_FAMILY)."""
+    available = set(families)
+    return next((f for f in DISPLAY_FONTS if f in available), FONT_FAMILY)
+
+
+def _luminance(color: str) -> float:
+    def channel(value: int) -> float:
+        c = value / 255
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+    r, g, b = (int(color[i:i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+
+
+def contrast(fg: str, bg: str) -> float:
+    """WCAG kontrasztarány két #rrggbb szín között (1 … 21)."""
+    hi, lo = sorted((_luminance(fg), _luminance(bg)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def mix(a: str, b: str, t: float) -> str:
+    """Két #rrggbb szín keveréke (t = 0 → a, t = 1 → b)."""
+    ca = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
+    cb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(x + (y - x) * t):02x}" for x, y in zip(ca, cb))
 
 
 def _detect_windows():
@@ -120,7 +196,7 @@ def detect_system_theme() -> str:
 
 
 def resolve_scheme(mode: str) -> str:
-    """Mód ('system'/'light'/'dark') -> konkrét séma ('light'/'dark')."""
+    """Mód ('synthwave'/'system'/'light'/'dark') -> konkrét séma ('synthwave'/'light'/'dark')."""
     if mode == SYSTEM_MODE:
         return detect_system_theme()
     if mode in PALETTES:
@@ -136,21 +212,31 @@ def settings_path() -> Path:
 
 
 def load_mode(path=None) -> str:
-    """Mentett téma-mód; hiányzó / hibás fájl esetén System."""
-    try:
-        data = json.loads(Path(path or settings_path()).read_text(encoding="utf-8"))
-        mode = data.get("theme")
-        if mode in MODES:
-            return mode
-    except Exception:
-        pass
-    return DEFAULT_MODE
+    """Mentett téma-mód; hiányzó / hibás fájl esetén az alapértelmezett (Synthwave)."""
+    mode = load_setting("theme", DEFAULT_MODE, path)
+    return mode if mode in MODES else DEFAULT_MODE
 
 
 def save_mode(mode: str, path=None) -> bool:
     """Téma-mód mentése; True, ha sikerült."""
     if mode not in MODES:
         return False
+    return save_setting("theme", mode, path)
+
+
+def load_setting(key: str, default=None, path=None):
+    """Egy beállítás a settings.json-ból; hiányzó / hibás fájl esetén `default`."""
+    try:
+        data = json.loads(Path(path or settings_path()).read_text(encoding="utf-8"))
+        if isinstance(data, dict) and key in data:
+            return data[key]
+    except Exception:
+        pass
+    return default
+
+
+def save_setting(key: str, value, path=None) -> bool:
+    """Egy beállítás mentése a többi megtartásával; True, ha sikerült."""
     target = Path(path or settings_path())
     try:
         data = {}
@@ -160,7 +246,7 @@ def save_mode(mode: str, path=None) -> bool:
                 data = loaded
         except Exception:
             pass
-        data["theme"] = mode
+        data[key] = value
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(data, indent=2), encoding="utf-8")
         return True

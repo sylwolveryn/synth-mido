@@ -21,8 +21,10 @@ repos:
   - repo: local
     hooks:
       - id: unit-tests
-        name: unit tests (test_theme, test_recorder, test_audio_output, test_playback)
-        entry: python -m unittest test_theme test_recorder test_audio_output test_playback
+        name: unit tests (all test_* modules except the hardware script test_midi)
+        entry: >-
+          python -m unittest test_theme test_recorder test_audio_output test_playback
+          test_piano_layout test_keyboard_play test_sustain test_visualizer test_doubling
         language: python
         additional_dependencies: [mido==1.3.2, numpy==2.5.4]
         pass_filenames: false
