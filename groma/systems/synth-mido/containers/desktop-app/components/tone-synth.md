@@ -5,7 +5,4 @@ status: stable
 groma:
   id: tone-synth
   parent: desktop-app
-  code:
-    - scanner: python
-      file: tone_synth.py
 ---

@@ -5,7 +5,4 @@ status: stable
 groma:
   id: recorder
   parent: desktop-app
-  code:
-    - scanner: python
-      file: recorder.py
 ---

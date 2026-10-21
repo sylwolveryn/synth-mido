@@ -5,7 +5,4 @@ status: stable
 groma:
   id: doubling
   parent: desktop-app
-  code:
-    - scanner: python
-      file: doubling.py
 ---

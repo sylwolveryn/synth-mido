@@ -46,7 +46,7 @@ Ha nincs csatlakoztatott MIDI kimenet, a program a gép alapértelmezett hangkim
 
 Csatlakoztatott MIDI kimenet esetén mindig az szól; leválasztás után a program visszavált az alapértelmezett kimenetre. Az aktív hangkimenet az állapotsorban látható. Ha egyik kimenet sem érhető el, a program hang nélkül is működik (egyszer jelzi a naplóban).
 
-Tesztek: `python -m unittest test_audio_output -v`
+Tesztek: `python -m unittest tests.test_audio_output -v`
 
 ## Téma
 
@@ -64,7 +64,7 @@ A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\sy
 
 A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a billentyűje fölé (fehér billentyű: cián, fekete: magenta, a fényerő a hangerőtől függ); elengedéskor az oszlop tovább emelkedik és elhalványul, hangindításkor szikrák pattannak. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet, felvétel lejátszás és a bemutató gombok. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
 
-Tesztek: `python -m unittest test_theme -v`
+Tesztek: `python -m unittest tests.test_theme -v`
 
 ## Felvétel
 
@@ -89,7 +89,7 @@ A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárol
 }
 ```
 
-`start` és `duration` másodpercben értendő. Tesztek: `python -m unittest test_recorder -v`
+`start` és `duration` másodpercben értendő. Tesztek: `python -m unittest tests.test_recorder -v`
 
 ## Visszajátszás
 
@@ -109,11 +109,39 @@ A betöltött felvétel a "Lejátszás" rész alsó sorában vezérelhető:
 - **Pozíció csúszka** — mutatja, hol tart a lejátszás (`perc:mp / hossz`); rákattintva vagy húzva oda ugrik, lejátszás közben és szünetben is.
 - **Sebesség** — 0.5x … 2x, lejátszás közben is azonnal vált, ugrás nélkül.
 
-Tesztek: `python -m unittest test_playback -v`
+Tesztek: `python -m unittest tests.test_playback -v`
+
+## Projekt felépítés
+
+```
+main.py                 belépési pont
+synth_mido/
+  config.py             MIDI csatorna, eszköz kulcsszavak, hangszerek
+  core/                 Tk-tól független modellek (unit tesztelhetők)
+    events.py           NoteBus — Observer: minden hang forrással együtt
+    recorder.py         felvétel + JSON tárolás
+    playback.py         lejátszó (szünet, ugrás, sebesség)
+    piano_layout.py     88 billentyű geometria
+    keyboard_play.py    számítógép billentyűzet, oktávváltás, pedál gomb
+    sustain.py          kitartó pedál
+    doubling.py         oktáv duplázás
+  audio/                MIDI kimenet / bemenet és tartalék hanggenerátor
+  skins/                témák / skinek (paletták, fejléc rajzolók)
+  fx/                   vizuális effektek modelljei
+  ui/                   Tk felület: app.py összerakja a részeket (mixinek)
+tests/                  unit tesztek (+ fakes.py: közös hamis időzítő / port)
+scripts/                hardver / diagnosztikai szkriptek (valódi eszközt igényelnek)
+records/                felvételek (JSON)
+progress/               haladás képernyőképekkel
+```
+
+Tervezési minták: **Observer** (`core/events.py` NoteBus — a zongora kiemelés, a hangvizualizáció és a hangszínszabályzó ablak feliratkozik a hangokra), **Facade** (`audio/midi_controller.py` — egy kimenet a csatlakoztatott eszköz vagy a tartalék előtt), **Strategy + Registry** (skinek fejléc rajzolói és az effekt animációk), Tk-tól független modellek + vékony nézet réteg.
+
+Diagnosztika: `python -m scripts.examples`, `python scripts/diag.py`, `python scripts/midi_check.py`.
 
 ## Fejlesztés: pre-commit
 
-Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és az összes unit teszt (`test_theme`, `test_recorder`, `test_audio_output`, `test_playback`, `test_piano_layout`, `test_keyboard_play`, `test_sustain`, `test_visualizer`, `test_doubling`; a `test_midi` valódi eszközt igényel, ezért kimarad). Egyszeri beállítás:
+Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `tests/` mappa összes unit tesztje (`python -m unittest discover -s tests -t .`). Egyszeri beállítás:
 
 >pip install -r requirements-dev.txt
 >pre-commit install

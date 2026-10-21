@@ -5,8 +5,5 @@ status: stable
 groma:
   id: midi-settings
   parent: desktop-app
-  code:
-    - scanner: python
-      file: config.py
   group: MIDI control
 ---

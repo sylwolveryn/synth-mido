@@ -7,7 +7,5 @@ groma:
   parent: desktop-app
   code:
     - scanner: python
-      file: ui.py
-    - scanner: python
       file: main.py
 ---

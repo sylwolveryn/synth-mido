@@ -5,7 +5,4 @@ status: stable
 groma:
   id: theme
   parent: desktop-app
-  code:
-    - scanner: python
-      file: theme.py
 ---

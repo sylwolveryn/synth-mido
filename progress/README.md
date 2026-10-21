@@ -4,6 +4,7 @@ Feladatonként egy oldal képernyőképpel; a legújabb van legfelül.
 
 | Feladat | Tartalom | Kép |
 |---|---|---|
+| [TASK-012](task-012.md) | Refaktorálás csomagokba (Observer, Facade, Strategy) | architektúra ábra |
 | [TASK-011](task-011.md) | Oktáv duplázás ("két kéz") | <img src="task-011-doubling.png" width="240"> |
 | [TASK-010](task-010.md) | Synthwave hangvizualizáció | <img src="task-010-fx-synthwave.png" width="240"> |
 | [TASK-009](task-009.md) | Synthwave dizájn | <img src="task-009-synthwave-main.png" width="240"> |
