@@ -1,11 +1,11 @@
 ---
 id: TASK-008.01
 title: Draw the full 88-key keyboard (A0-C8)
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:50:00Z'
-updated_date: '2026-10-21T20:06:00Z'
+updated_date: '2026-10-21T20:07:00Z'
 labels:
   - feature
 dependencies: []
@@ -15,6 +15,11 @@ modified_files:
   - piano_layout.py
   - test_piano_layout.py
   - ui.py
+  - progress/task-008-01-88keys-dark.png
+  - progress/task-008-01-88keys-light.png
+  - progress/task-008-01.md
+  - progress/README.md
+  - readme.md
 parent_task_id: TASK-008
 priority: medium
 type: feature
@@ -29,18 +34,18 @@ Replace the two-octave on-screen piano with the full 88-key range so every note 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The piano canvas draws MIDI notes 21 (A0) to 108 (C8): 52 white and 36 black keys in the correct pattern, starting with A0, A#0, B0 and ending on C8
-- [ ] #2 All keys are visible at once at the default and the minimum window width, with no horizontal scrolling, and the keyboard rescales when the window is resized
-- [ ] #3 Every key can be played and highlighted with the mouse, including black keys and the extreme keys A0 and C8
-- [ ] #4 C keys carry octave labels (C1...C8) that stay legible at the default size; middle C (C4) is easy to find
-- [ ] #5 Live MIDI input, record playback and the demo buttons highlight the correct key anywhere in the 88-key range
-- [ ] #6 Both light and dark themes look correct on the new keyboard
-- [ ] #7 Unit tests cover the key layout (note to white/black key and position mapping, 88 keys, range ends) without needing a real window
+- [x] #1 The piano canvas draws MIDI notes 21 (A0) to 108 (C8): 52 white and 36 black keys in the correct pattern, starting with A0, A#0, B0 and ending on C8
+- [x] #2 All keys are visible at once at the default and the minimum window width, with no horizontal scrolling, and the keyboard rescales when the window is resized
+- [x] #3 Every key can be played and highlighted with the mouse, including black keys and the extreme keys A0 and C8
+- [x] #4 C keys carry octave labels (C1...C8) that stay legible at the default size; middle C (C4) is easy to find
+- [x] #5 Live MIDI input, record playback and the demo buttons highlight the correct key anywhere in the 88-key range
+- [x] #6 Both light and dark themes look correct on the new keyboard
+- [x] #7 Unit tests cover the key layout (note to white/black key and position mapping, 88 keys, range ends) without needing a real window
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -51,3 +56,15 @@ Replace the two-octave on-screen piano with the full 88-key range so every note 
 3. Tests `test_piano_layout.py`: key count, range ends, white/black pattern, contiguous white keys, black-key placement, key_at, rescaling, label notes.
 4. Smoke test in the real window: default and minimum width, clicks on A0/C8/black keys, live-input and playback highlighting across the range, both themes; progress page with screenshots.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Verified: 94 unit tests green (11 new layout tests), ruff clean, real-window smoke test 21/21 (88 keys at default and minimum width spanning the canvas, mouse picks and plays A0/A#0/B0/C4/C#4/B7/C8, playback highlights A0/A1/C8, redraw in both themes). Screenshots: progress/task-008-01.md.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+New Tk-free piano_layout.py holds the 88-key geometry (A0-C8, 52 white keys evenly spread, 36 black keys centred on the white-key boundaries, key_at with black keys on top). ui.py draws the full range, rescales with the window (about 16 px per white key at 860 px, 14.5 px at the 780 px minimum), labels only the C keys and marks middle C with the accent colour and a dot. Highlighting from mouse, live input, demos and playback works across the whole range. 11 unit tests plus a real-window smoke test. Follow-up in TASK-008.02/.03: keyboard play and range markers.
+<!-- SECTION:FINAL_SUMMARY:END -->
