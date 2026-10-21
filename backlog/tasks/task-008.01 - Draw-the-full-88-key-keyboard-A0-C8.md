@@ -5,12 +5,15 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:50:00Z'
-updated_date: '2026-10-21T20:05:00Z'
+updated_date: '2026-10-21T20:06:00Z'
 labels:
   - feature
 dependencies: []
 references:
   - ui.py
+modified_files:
+  - piano_layout.py
+  - test_piano_layout.py
 parent_task_id: TASK-008
 priority: medium
 type: feature
