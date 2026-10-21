@@ -5,11 +5,19 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T22:48:00Z'
+updated_date: '2026-10-21T23:18:00Z'
 labels:
   - ui
   - chore
 dependencies: []
+modified_files:
+  - progress/README.md
+  - progress/task-018.md
+  - readme.md
+  - synth_mido/core/events.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/common.py
+  - synth_mido/ui/playback_view.py
 priority: low
 type: chore
 ordinal: 29000
