@@ -13,6 +13,9 @@ references:
   - ui.py
   - keyboard_play.py
   - sustain.py
+modified_files:
+  - doubling.py
+  - test_doubling.py
 priority: medium
 type: feature
 ordinal: 19000
