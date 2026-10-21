@@ -1,9 +1,11 @@
 ---
 id: TASK-010
 title: Synthwave note visual effect when notes are played
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T20:17:00Z'
+updated_date: '2026-10-21T20:23:00Z'
 labels:
   - feature
   - design
@@ -44,3 +46,13 @@ Tk constraint: everything is drawn on a Canvas with after() frames. The effect m
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. New Tk-free `visualizer.py`: a Visualizer model with note_on(note, velocity, t) / note_off(note, t), plus frame(now, width, height, key_span), which returns shapes (glow, bar, spark) with an intensity. A sounding note grows a bar up from its key; after note_off the bar detaches, keeps rising and fades over about 1.6 s. Each note start makes a few sparks. Bars and sparks are capped (oldest dropped). active tells whether anything is left to draw. A seeded RNG makes it deterministic in tests.
+2. theme.py: generic load_setting/save_setting on the existing settings.json (the theme helpers keep their behaviour).
+3. ui.py: a visualiser canvas between the octave row and the piano, with a static perspective floor in the grid colour. highlight() gets a velocity argument and feeds the visualiser, so every note source is covered: mouse, keyboard, sustain, live input, playback and demos. A 30 fps after() loop runs only while something is visible, deleting and redrawing the fx items each frame. Colours come from key_*_active mixed with the keybed by intensity, so all themes are covered. An "Effekt" checkbutton toggles it (the band is hidden and cleared when off) and is saved as visual_fx. The window grows to fit (860x930, minimum 780x790).
+4. Tests `test_visualizer.py`: spawn, growth, detach and fade, removal, caps, key alignment, retrigger, plus the settings helpers.
+5. Smoke test: all sources, toggle persistence, resizing, frame time under heavy load, screenshot.
+<!-- SECTION:PLAN:END -->
