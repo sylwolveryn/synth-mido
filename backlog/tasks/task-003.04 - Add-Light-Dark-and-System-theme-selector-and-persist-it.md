@@ -4,7 +4,7 @@ title: Add Light, Dark, and System theme selector and persist it
 status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
-updated_date: '2026-10-21T16:49:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -25,10 +25,10 @@ After System as the default, users still need an explicit Light, Dark, or System
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A UI control lets the user choose Light, Dark, or System
-- [ ] #2 The chosen mode takes effect immediately
-- [ ] #3 The chosen mode is persisted and restored on the next launch
-- [ ] #4 The control remains usable in both light and dark palettes
+- [x] #1 A UI control lets the user choose Light, Dark, or System
+- [x] #2 The chosen mode takes effect immediately
+- [x] #3 The chosen mode is persisted and restored on the next launch
+- [x] #4 The control remains usable in both light and dark palettes
 <!-- AC:END -->
 
 ## Implementation Notes
