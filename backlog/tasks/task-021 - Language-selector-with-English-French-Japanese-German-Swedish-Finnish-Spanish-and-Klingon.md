@@ -7,11 +7,64 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T23:17:00Z'
+updated_date: '2026-10-21T23:18:00Z'
 labels:
   - i18n
   - ui
 dependencies: []
+modified_files:
+  - groma/actors/player.md
+  - groma/systems/synth-mido/containers/desktop-app/components/connection.md
+  - groma/systems/synth-mido/containers/desktop-app/components/i18n.md
+  - groma/systems/synth-mido/containers/desktop-app/components/instrument-art.md
+  - >-
+    groma/systems/synth-mido/containers/desktop-app/components/instrument-view.md
+  - groma/systems/synth-mido/containers/desktop-app/components/language.md
+  - >-
+    groma/systems/synth-mido/containers/desktop-app/components/midi-controller.md
+  - >-
+    groma/systems/synth-mido/containers/desktop-app/components/note-effect-view.md
+  - groma/systems/synth-mido/containers/desktop-app/components/note-effect.md
+  - groma/systems/synth-mido/containers/desktop-app/components/playback-view.md
+  - groma/systems/synth-mido/containers/desktop-app/components/playback.md
+  - groma/systems/synth-mido/containers/desktop-app/components/recorder.md
+  - groma/systems/synth-mido/containers/desktop-app/components/theming.md
+  - groma/systems/synth-mido/containers/desktop-app/components/tone-synth.md
+  - groma/systems/synth-mido/containers/desktop-app/container.md
+  - progress/README.md
+  - progress/task-021-languages.png
+  - progress/task-021.md
+  - readme.md
+  - synth_mido/audio/midi_controller.py
+  - synth_mido/core/doubling.py
+  - synth_mido/core/i18n.py
+  - synth_mido/core/recorder.py
+  - synth_mido/fx/animations.py
+  - synth_mido/lang/de.json
+  - synth_mido/lang/en.json
+  - synth_mido/lang/es.json
+  - synth_mido/lang/fi.json
+  - synth_mido/lang/fr.json
+  - synth_mido/lang/hu.json
+  - synth_mido/lang/ja.json
+  - synth_mido/lang/sv.json
+  - synth_mido/lang/tlh.json
+  - synth_mido/skins/painters.py
+  - synth_mido/skins/registry.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/connection.py
+  - synth_mido/ui/equalizer_window.py
+  - synth_mido/ui/input.py
+  - synth_mido/ui/instrument_view.py
+  - synth_mido/ui/language.py
+  - synth_mido/ui/piano_view.py
+  - synth_mido/ui/playback_view.py
+  - synth_mido/ui/recording.py
+  - synth_mido/ui/records_window.py
+  - synth_mido/ui/theming.py
+  - tests/test_doubling.py
+  - tests/test_i18n.py
+  - tests/test_instrument_art.py
 priority: high
 type: feature
 ordinal: 32000
