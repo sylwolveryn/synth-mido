@@ -59,9 +59,20 @@ A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárol
 
 `start` és `duration` másodpercben értendő. Tesztek: `python -m unittest test_recorder -v`
 
+## Visszajátszás
+
+Egy mentett felvétel kétféleképpen játszható le:
+
+- a "Lejátszás" részben a **Felvétel lejátszása…** gombbal: fájlválasztó nyílik a `records/` mappában;
+- a **Felvételek…** ablakban: jelölj ki egy felvételt és nyomd meg a **Lejátszás** gombot (vagy kattints duplán / Enter).
+
+Betöltéskor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** és a **Minden hang ki** gomb azonnal megállítja; új lejátszás (felvétel, skála, akkord, bemutató) indítása leállítja az előzőt. A visszajátszás nem kerül bele egy éppen futó felvételbe.
+
+Tesztek: `python -m unittest test_playback -v`
+
 ## Fejlesztés: pre-commit
 
-Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme`, `test_recorder`, `test_audio_output` unit tesztek. Egyszeri beállítás:
+Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme`, `test_recorder`, `test_audio_output`, `test_playback` unit tesztek. Egyszeri beállítás:
 
 >pip install -r requirements-dev.txt
 >pre-commit install

@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T19:41:00Z'
+updated_date: '2026-10-21T19:42:00Z'
 labels:
   - feature
 dependencies:
@@ -22,6 +22,8 @@ modified_files:
   - playback.py
   - test_playback.py
   - ui.py
+  - .pre-commit-config.yaml
+  - readme.md
 priority: medium
 type: feature
 ordinal: 5000
@@ -73,3 +75,9 @@ Out of scope (TASK-006): pause/resume, speed change and the position/seek slider
 5. readme: playback section.
 6. Verify: ruff, all unit tests, pre-commit, and a scripted smoke test of the real window without a MIDI device (file playback, records-window playback, invalid file, instrument default, stop, replace, not recorded).
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Implemented playback.py (build_schedule with note_off-before-note_on ordering, same-pitch overlap cut and minimum note length; default_instrument by name/program/first; Player driven by injected after/cancel and a clock, catching up so timing does not drift; stop releases sounding notes). ui.py: Felvétel lejátszása… file picker (starts in records/), Lejátszás button / double-click / Enter in Felvételek (exactly one selected), invalid file error dialog, record instrument preselected and changeable, key highlighting, status/log start and end, one playback at a time (scale/chord/demo/record replace each other), Leállítás / Minden hang ki / disconnect / close stop playback, playback bypasses the recorder. test_playback.py (17 tests), pre-commit hook and readme updated. Verified: ruff clean, 72 unit tests green, pre-commit --all-files green, scripted smoke test of the real window without a MIDI device (20/20).
+<!-- SECTION:NOTES:END -->

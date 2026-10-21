@@ -2,10 +2,12 @@ import os
 import subprocess
 import sys
 import tkinter as tk
-from tkinter import ttk, messagebox
+from pathlib import Path
+from tkinter import ttk, messagebox, filedialog
 from tkinter import font as tkfont
 
 import config
+import playback
 import recorder
 import theme
 from midi_controller import VevorMIDIController
@@ -68,6 +70,13 @@ class PianoApp:
         self.records_win = None
         self.records_tree = None
         self.fallback_error_logged = False
+        self.base_status = ""
+        self.player = playback.Player(
+            after=self.root.after,
+            cancel=self.root.after_cancel,
+            on_note=self._on_player_note,
+            on_finish=self._on_player_finish,
+        )
 
         self.theme_mode = theme.load_mode()
         self.scheme = theme.resolve_scheme(self.theme_mode)
@@ -139,6 +148,7 @@ class PianoApp:
         ttk.Button(actions, text="C-dúr skála", command=self.play_scale).pack(side="left", padx=3)
         ttk.Button(actions, text="C-dúr akkord", command=self.play_chord).pack(side="left", padx=3)
         ttk.Button(actions, text="Bemutató", command=self.play_demo).pack(side="left", padx=3)
+        ttk.Button(actions, text="Felvétel lejátszása…", command=self.open_record_file).pack(side="left", padx=3)
         ttk.Button(actions, text="Leállítás", command=self.stop_playback).pack(side="left", padx=3)
         ttk.Button(actions, text="Minden hang ki", command=self.panic).pack(side="left", padx=3)
 
@@ -400,11 +410,12 @@ class PianoApp:
         head = f"Csatlakozva: {c.device_name}" if c.connected else idle_text
         name = c.output_name
         if name is None:
-            self.status_var.set(f"{head} — nincs hangkimenet")
+            self.base_status = f"{head} — nincs hangkimenet"
         elif c.using_fallback:
-            self.status_var.set(f"{head} — hang: {name} (alapértelmezett)")
+            self.base_status = f"{head} — hang: {name} (alapértelmezett)"
         else:
-            self.status_var.set(head)
+            self.base_status = head
+        self.status_var.set(self.base_status)
         if c.fallback_error and not self.fallback_error_logged:
             self.fallback_error_logged = True
             self.log_line(c.fallback_error)
@@ -433,8 +444,9 @@ class PianoApp:
         self._play_sequence(DEMO_MELODY, hold_ms=180, gap_ms=40, label="Bemutató")
 
     def play_chord(self):
-        if not self.require_output() or self.playing:
+        if not self.require_output():
             return
+        self.stop_playback(quiet=True)
         self.playing = True
         vel = int(self.velocity_var.get())
         for note in C_MAJOR_CHORD:
@@ -451,8 +463,9 @@ class PianoApp:
         self.play_job = None
 
     def _play_sequence(self, notes, hold_ms, gap_ms, label):
-        if not self.require_output() or self.playing:
+        if not self.require_output():
             return
+        self.stop_playback(quiet=True)
         self.playing = True
         self.log_line(label)
         self._play_index(notes, 0, hold_ms, gap_ms)
@@ -478,19 +491,75 @@ class PianoApp:
             return
         self.play_job = self.root.after(gap_ms, lambda: self._play_index(notes, index + 1, hold_ms, gap_ms))
 
-    def stop_playback(self):
+    def stop_playback(self, quiet: bool = False):
+        """Minden lejátszás (skála / akkord / bemutató / felvétel) leállítása."""
         self.playing = False
         if self.play_job:
             self.root.after_cancel(self.play_job)
             self.play_job = None
-        self.panic()
+        self.panic(quiet)
 
-    def panic(self):
+    def panic(self, quiet: bool = False):
+        was_playing = self.player.is_playing
+        self.player.stop()
         self.controller.panic()
         for note in list(self.active_notes):
             self.highlight(note, False)
         self.active_notes.clear()
+        if was_playing:
+            self.status_var.set(self.base_status)
+        if quiet:
+            return
+        if was_playing:
+            self.log_line(f"Lejátszás leállítva: {self.player.record_name}")
         self.log_line("Minden hang leállítva")
+
+    # --- felvétel visszajátszása ------------------------------------------
+
+    def open_record_file(self):
+        folder = recorder.RECORDS_DIR if recorder.RECORDS_DIR.is_dir() else recorder.RECORDS_DIR.parent
+        path = filedialog.askopenfilename(
+            parent=self.root,
+            title="Felvétel megnyitása",
+            initialdir=str(folder),
+            filetypes=[("Felvételek", "*.json"), ("Minden fájl", "*.*")],
+        )
+        if path:
+            self.play_record_file(path)
+
+    def play_record_file(self, path, parent=None):
+        """Felvétel betöltése és lejátszása; a hangszere lesz az alapértelmezett (átállítható)."""
+        path = Path(path)
+        try:
+            record = recorder.load_record(path)
+        except ValueError as e:
+            messagebox.showerror("Hibás felvétel", f"{path.name}\n\n{e}", parent=parent or self.root)
+            return
+        if not self.require_output():
+            return
+        self.stop_playback(quiet=True)
+        instrument = playback.default_instrument(record, config.INSTRUMENTS)
+        self.instrument_var.set(pretty_instrument(instrument))
+        self.on_instrument_change()
+        if not record["notes"]:
+            messagebox.showinfo("Üres felvétel", f"A(z) „{path.stem}” felvételben nincs hang.", parent=parent or self.root)
+            return
+        self.player.play(record, path.stem)
+        self.log_line(
+            f"Lejátszás: {path.stem} ({len(record['notes'])} hang, {format_seconds(self.player.duration)})"
+        )
+        self.status_var.set(f"Lejátszás: {path.stem}")
+
+    def _on_player_note(self, note: int, velocity: int, on: bool):
+        if on:
+            self.controller.note_on(note, velocity)
+        else:
+            self.controller.note_off(note)
+        self.highlight(note, on)
+
+    def _on_player_finish(self):
+        self.log_line(f"Lejátszás vége: {self.player.record_name}")
+        self.status_var.set(self.base_status)
 
     def toggle_listen(self):
         if self.listening:
@@ -766,7 +835,10 @@ class PianoApp:
 
         btns = ttk.Frame(body)
         btns.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(8, 0))
-        ttk.Button(btns, text="Összes kijelölése", command=self.select_all_records).pack(side="left", padx=(0, 3))
+        ttk.Button(btns, text="Lejátszás", command=self.play_selected_record, style="Accent.TButton").pack(
+            side="left", padx=(0, 3)
+        )
+        ttk.Button(btns, text="Összes kijelölése", command=self.select_all_records).pack(side="left", padx=3)
         ttk.Button(btns, text="Törlés", command=self.delete_selected_records).pack(side="left", padx=3)
         ttk.Button(btns, text="Frissítés", command=self.refresh_records).pack(side="left", padx=3)
         ttk.Button(btns, text="Mappa megnyitása", command=self.open_records_folder).pack(side="left", padx=3)
@@ -774,6 +846,8 @@ class PianoApp:
         body.columnconfigure(0, weight=1)
         body.rowconfigure(0, weight=1)
 
+        tree.bind("<Double-1>", lambda e: self.play_selected_record() if tree.identify_row(e.y) else None)
+        tree.bind("<Return>", lambda _e: self.play_selected_record())
         tree.bind("<Delete>", lambda _e: self.delete_selected_records())
         tree.bind("<Control-a>", lambda _e: self.select_all_records())
         win.bind("<Escape>", lambda _e: win.destroy())
@@ -804,6 +878,18 @@ class PianoApp:
                     pretty_instrument(info.instrument),
                 )
                 tree.insert("", "end", iid=str(info.path), values=values)
+
+    def play_selected_record(self):
+        tree = self.records_tree
+        if tree is None:
+            return
+        selected = tree.selection()
+        if len(selected) != 1:
+            messagebox.showinfo(
+                "Válassz egy felvételt", "A lejátszáshoz pontosan egy felvételt jelölj ki.", parent=self.records_win
+            )
+            return
+        self.play_record_file(selected[0], parent=self.records_win)
 
     def select_all_records(self):
         if self.records_tree is not None:
