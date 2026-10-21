@@ -1,9 +1,10 @@
 ---
 id: TASK-003.03
 title: Detect OS appearance and default to System
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
+updated_date: '2026-10-21T16:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -13,7 +14,7 @@ references:
 parent_task_id: TASK-003
 priority: medium
 type: feature
-ordinal: 9000
+ordinal: 4000
 ---
 
 ## Description
@@ -28,6 +29,12 @@ Users expect first launch to match Windows or Linux light/dark mode rather than 
 - [ ] #2 First launch with no saved preference uses System
 - [ ] #3 If the OS scheme cannot be read, a documented fallback is used and the app does not crash
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+theme.py: detect_system_theme() (Windows registry, macOS defaults, Linux gsettings); any failure returns light (FALLBACK_SCHEME). Default mode is System.
+<!-- SECTION:NOTES:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
