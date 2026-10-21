@@ -5,13 +5,16 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:51:00Z'
-updated_date: '2026-10-21T20:11:00Z'
+updated_date: '2026-10-21T20:12:00Z'
 labels:
   - feature
 dependencies:
   - TASK-008.02
 references:
   - ui.py
+modified_files:
+  - keyboard_play.py
+  - test_keyboard_play.py
 parent_task_id: TASK-008
 priority: medium
 type: feature
