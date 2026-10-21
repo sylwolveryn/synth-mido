@@ -1,12 +1,13 @@
 ---
 id: TASK-001
 title: Precommit hook setup
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-21T15:57:00Z'
+updated_date: '2026-10-21T17:34:00Z'
 labels: []
 dependencies: []
-ordinal: 1000
+ordinal: 8000
 ---
 
 ## Implementation Plan
