@@ -1,7 +1,7 @@
 ---
 id: TASK-013.03
 title: Buttons and all widgets follow the chosen skin
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T20:51:00Z'
@@ -52,13 +52,25 @@ Colours alone are not enough: buttons, sliders, checkbuttons, comboboxes, scroll
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Each skin defines widget style tokens (font family, title case, button padding/border/relief, accent per state) and every ttk widget style is built from them
-- [ ] #2 Hover, pressed, disabled and selected states use skin colours (no default-grey Tk state left)
-- [ ] #3 Dialogs (records window, save dialog), piano keys, keyboard range bar, visual effect and equalizer window use the skin
-- [ ] #4 Switching skins at runtime restyles every open window without restart
+- [x] #1 Each skin defines widget style tokens (font family, title case, button padding/border/relief, accent per state) and every ttk widget style is built from them
+- [x] #2 Hover, pressed, disabled and selected states use skin colours (no default-grey Tk state left)
+- [x] #3 Dialogs (records window, save dialog), piano keys, keyboard range bar, visual effect and equalizer window use the skin
+- [x] #4 Switching skins at runtime restyles every open window without restart
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+Every ttk style in apply_theme is built from the palette + WidgetStyle (font, title case, padding, border width, relief, edge token, bold) with state maps for active/pressed/disabled/selected/focus. Small.TButton for crowded rows. skin_listeners hook for other windows (equalizer). Measure that rows fit in all skins.
+<!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+All widgets follow the skin: TButton/Accent.TButton (shape, border, relief, all state colours), the Small.TButton variant, TCheckbutton/Pedal, TCombobox and its popdowns, Scale, Entry, Treeview, Scrollbar, LabelFrame titles (case per skin), log, piano, range bar, visual effect floor, records window and save dialog. A skin_listeners hook lets further windows (the TASK-014 equalizer) restyle on switch. Fixed on the way: clam draws no border for flat relief (now raised with flat colours), and wide fonts overflowed the button rows (shorter labels, compact style, Constantia; all 34 looks measured to fit at 780 and 860 px). Smoke test 17/17.
+<!-- SECTION:FINAL_SUMMARY:END -->
