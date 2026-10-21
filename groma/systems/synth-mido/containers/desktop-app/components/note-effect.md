@@ -10,7 +10,7 @@ groma:
       file: synth_mido/fx/visualizer.py
   group: Visual effects
   technology: Python
-description: Rising neon bars, trails and sparks for played notes
+description: Glowing flames with rising embers for played notes
 ---
 
-Tk-free model with capped bars and sparks; returns shapes per frame.
+Tk-free model: per sounding note a three-layer halo, a flickering smoothed flame and a bright core whose height and brightness follow velocity; embers burst on note-on and rise while held; flames die down after release. Capped at 40 flames and 70 embers; returns layered shapes.

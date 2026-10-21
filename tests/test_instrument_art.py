@@ -6,9 +6,9 @@ Futtatás:  python -m unittest tests.test_instrument_art -v
 import unittest
 
 from synth_mido import config
+from synth_mido.core import i18n
 from synth_mido.fx import instrument_art as art
 from synth_mido.skins import registry
-from synth_mido.ui.instrument_view import CAPTIONS
 from tests.test_skins import FakeCanvas
 
 
@@ -23,7 +23,7 @@ class MappingTests(unittest.TestCase):
             family = art.family_of(program)
             self.assertIn(family.animal, art.ANIMALS, name)
             self.assertIn(family.instrument, art.INSTRUMENTS, name)
-            self.assertIn(family.id, CAPTIONS, name)
+            self.assertIn(f"art.{family.id}", i18n.load_file(i18n.REFERENCE), name)
 
     def test_known_examples(self):
         by_name = {name: art.family_of(program) for name, program in config.INSTRUMENTS.items()}

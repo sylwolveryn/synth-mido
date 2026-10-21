@@ -3,6 +3,7 @@
 import tkinter as tk
 
 from synth_mido.core import doubling, events
+from synth_mido.core.i18n import t
 from synth_mido.skins import theme
 
 
@@ -31,11 +32,11 @@ class InputMixin:
 
 
     def on_doubling_change(self, _event=None):
-        label = self.doubling_var.get()
-        mode = next((m for m, text in doubling.LABELS.items() if text == label), doubling.DEFAULT_MODE)
+        index = self.doubling_combo.current()  # index szerint: a felirat nyelvfüggő
+        mode = doubling.MODES[index] if 0 <= index < len(doubling.MODES) else doubling.DEFAULT_MODE
         self.doubler.set_mode(mode)
         theme.save_setting("octave_doubling", mode)
-        self.log_line(f"Oktáv duplázás: {label}")
+        self.log_line(t("log.doubling", mode=doubling.label(mode)))
 
 
     def _stop_note(self, note: int):

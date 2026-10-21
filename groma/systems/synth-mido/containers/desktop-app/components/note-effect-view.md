@@ -10,10 +10,10 @@ groma:
       file: synth_mido/ui/fx_view.py
   group: Visual effects
   technology: Tkinter canvas
-description: Draws the note effect above the piano and opens the equalizer
+description: Draws the flame effect above the piano and opens the equalizer
 ---
 
-Subscribes to the note bus, animates at ~30 fps only while something is visible with pooled canvas items, and can be switched off (saved).
+Subscribes to the note bus, animates at ~30 fps only while something burns, with pooled canvas items per layer and colours from the skin's sun gradient; can be switched off (saved).
 
 ## Relationships
 

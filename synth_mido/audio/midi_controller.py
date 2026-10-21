@@ -25,6 +25,7 @@ class VevorMIDIController:
         self.fallback = None
         self.fallback_name: Optional[str] = None
         self.fallback_error: Optional[str] = None
+        self.fallback_error_detail: Optional[str] = None  # csak az ok (a felület a saját nyelvén írja ki)
 
         # Backend ellenőrzése
         self._check_backend()
@@ -257,6 +258,7 @@ class VevorMIDIController:
             print(f"🔈 Alapértelmezett hangkimenet: {synth.name}")
             return synth
         except Exception as e:
+            self.fallback_error_detail = str(e)
             self.fallback_error = f"Nincs alapértelmezett hangkimenet: {e}"
             print(f"⚠️ {self.fallback_error}")
             return None

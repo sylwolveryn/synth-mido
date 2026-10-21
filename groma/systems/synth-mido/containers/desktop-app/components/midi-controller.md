@@ -10,10 +10,10 @@ groma:
     - scanner: python
       file: synth_mido/audio/midi_controller.py
   technology: mido, python-rtmidi
-description: Single sound output and MIDI input facade
+description: Single sound output and MIDI input facade, with per-channel instruments
 ---
 
-Opens the VEVOR piano ports; when no MIDI output is connected it falls back to an OS MIDI synthesizer port or the built-in tone generator. Sends notes, instrument changes, sustain (CC 64) and panic through one path.
+Opens the VEVOR piano ports; when no MIDI output is connected it falls back to an OS MIDI synthesizer port or the built-in tone generator. Sends notes on any channel, program changes per channel, sustain (CC 64) and panic to every used channel through one path.
 
 ## Relationships
 

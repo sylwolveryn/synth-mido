@@ -4,6 +4,8 @@ rendszer téma figyelése."""
 import tkinter as tk
 from tkinter import font as tkfont
 
+from synth_mido.core import i18n
+from synth_mido.core.i18n import t
 from synth_mido.skins import registry, theme
 from synth_mido.skins.palette import mix
 from synth_mido.ui.common import THEME_POLL_MS
@@ -23,8 +25,8 @@ class ThemingMixin:
     def set_skin(self, skin_id: str, variant: str, save: bool = True):
         self.skin = registry.get(skin_id)
         self.skin_id, self.variant = self.skin.id, variant
-        self.skin_var.set(self.skin.name)
-        self.variant_var.set(registry.VARIANT_LABELS[variant])
+        self.skin_var.set(self.skin.label)
+        self.variant_var.set(registry.variant_label(variant))
         self.scheme = theme.resolve_scheme(variant)
         self.palette = self.skin.palette(self.scheme)
         if save:
@@ -33,13 +35,15 @@ class ThemingMixin:
         self._schedule_theme_poll()
 
     def on_skin_change(self, _event=None):
-        skin = registry.by_name(self.skin_var.get()) or registry.get(registry.DEFAULT_SKIN)
+        index = self.skin_combo.current()  # index szerint: a név nyelvfüggő
+        skins = registry.all_skins()
+        skin = skins[index] if 0 <= index < len(skins) else registry.get(registry.DEFAULT_SKIN)
         self.set_skin(skin.id, self.variant)
 
     def on_variant_change(self, _event=None):
-        label = self.variant_var.get()
-        variant = next((v for v, text in registry.VARIANT_LABELS.items() if text == label), registry.DEFAULT_VARIANT)
-        self.set_skin(self.skin_id, variant)
+        index = self.variant_combo.current()
+        order = registry.VARIANTS_ORDER
+        self.set_skin(self.skin_id, order[index] if 0 <= index < len(order) else registry.DEFAULT_VARIANT)
 
     # --- alkalmazás ------------------------------------------------------------------
 
@@ -54,8 +58,9 @@ class ThemingMixin:
                 tkfont.nametofont(name).configure(family=self.font_family, size=theme.FONT_SIZE)
             except tk.TclError:
                 pass
-        for frame, title in self.sections:
-            frame.configure(text=f" {title.upper()} " if st.title_upper else title)
+        for frame, key in self.sections:
+            title = t(key)
+            frame.configure(text=f" {i18n.upper(title)} " if st.title_upper else title)
         edge = p[st.button_edge]
         # a clam téma "flat" reliefnél semmilyen keretet nem rajzol: a lapos skinek "raised" reliefet kapnak
         # egyszínű (felülettel azonos) fénnyel / árnyékkal — így lapos marad, de a keret látszik
@@ -193,7 +198,8 @@ class ThemingMixin:
 
     def comboboxes(self):
         return [getattr(self, n) for n in ("input_combo", "output_combo", "skin_combo", "variant_combo",
-                                           "instrument_combo", "speed_combo", "doubling_combo") if hasattr(self, n)]
+                                           "language_combo", "instrument_combo", "speed_combo", "doubling_combo")
+                if hasattr(self, n)]
 
     # --- rendszer téma figyelése ------------------------------------------------------
 

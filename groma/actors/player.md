@@ -19,3 +19,4 @@ A person playing music on the VEVOR digital piano or, without it, on the compute
 | [player](player.md) | [synth_mido/ui/recording.py](../../synth_mido/ui/recording.py) | Records takes | Tkinter UI |
 | [player](player.md) | [synth_mido/ui/equalizer_window.py](../../synth_mido/ui/equalizer_window.py) | Watches equalizer | Tkinter window |
 | [player](player.md) | [vevor-digital-piano](../externals/vevor-digital-piano.md) | Plays | piano keys and pedal |
+| [player](player.md) | [synth_mido/ui/language.py](../../synth_mido/ui/language.py) | Chooses language | Python call |

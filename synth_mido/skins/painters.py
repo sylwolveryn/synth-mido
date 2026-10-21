@@ -8,10 +8,11 @@ A cím a bal oldalra kerül, a jelenet fő elemei jobbra, hogy ne takarják egym
 import math
 import random
 
+from synth_mido.core import i18n
+from synth_mido.core.i18n import t
 from synth_mido.skins.palette import mix
 
 TITLE = "SYNTH-MIDO"
-SUBTITLE = "VEVOR MIDI VEZÉRLŐ  ·  88 BILLENTYŰ"
 
 
 # --- közös segédek ---------------------------------------------------------------
@@ -38,7 +39,7 @@ def title(c, p, font, height, upper=True, shadow=True, size=24, color=None, sub_
         c.create_text(26, y + 2, anchor="w", text=text, fill=p["accent"], font=(font, size, "bold"))
     c.create_text(24, y, anchor="w", text=text, fill=color or (p["accent2"] if shadow else p["title_fg"]),
                   font=(font, size, "bold"))
-    c.create_text(26, y + size * 0.95, anchor="w", text=SUBTITLE if upper else "VEVOR MIDI vezérlő · 88 billentyű",
+    c.create_text(26, y + size * 0.95, anchor="w", text=i18n.upper(t("header.subtitle")).replace(" · ", "  ·  ") if upper else t("header.subtitle"),
                   fill=sub_color or p["title_fg"], font=(font, 9, "bold"))
 
 
@@ -77,7 +78,7 @@ def paint_synthwave(c, w, h, p, font, dark):
 
 def paint_classic(c, w, h, p, font, dark):
     c.create_text(12, h / 2, anchor="w", text="SYNTH-MIDO", fill=p["title_fg"], font=(font, 13, "bold"))
-    c.create_text(140, h / 2, anchor="w", text="VEVOR MIDI vezérlő", fill=p["muted"], font=(font, 9))
+    c.create_text(140, h / 2, anchor="w", text=t("app.title"), fill=p["muted"], font=(font, 9))
     c.create_line(0, h - 1, w, h - 1, fill=p["border"])
 
 

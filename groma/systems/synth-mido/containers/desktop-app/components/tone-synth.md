@@ -13,7 +13,7 @@ groma:
 description: Built-in fallback synthesizer for computers without a MIDI synth
 ---
 
-Mixes decaying sine voices for note on/off into the default audio device; behaves like a MIDI output port.
+Mixes decaying sine voices keyed by (channel, note) into the default audio device, so the same note on two instruments sounds and stops independently; behaves like a MIDI output port.
 
 ## Relationships
 

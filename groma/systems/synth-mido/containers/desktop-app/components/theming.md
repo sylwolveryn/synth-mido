@@ -21,3 +21,4 @@ Builds every ttk style (shape, border, relief, fonts, all state colours) from th
 | --- | --- | --- | --- |
 | [synth_mido/ui/theming.py](../../../../../../synth_mido/ui/theming.py) | [synth_mido/skins/registry.py](../../../../../../synth_mido/skins/registry.py) | Looks up skins | Python call |
 | [synth_mido/ui/theming.py](../../../../../../synth_mido/ui/theming.py) | [synth_mido/skins/theme.py](../../../../../../synth_mido/skins/theme.py) | Saves skin choice | Python call |
+| [synth_mido/ui/theming.py](../../../../../../synth_mido/ui/theming.py) | [synth_mido/core/i18n.py](../../../../../../synth_mido/core/i18n.py) | Translates section titles | Python call |

@@ -9,12 +9,18 @@ közös hang (pl. C4 +1 mellett lenyomott C5) addig szól, amíg bármelyik bill
 
 from typing import Dict, List, Sequence, Tuple
 
+from synth_mido.core.i18n import t
 from synth_mido.core.piano_layout import FIRST_NOTE, LAST_NOTE
 
 OFF, UP, DOWN, BOTH = "off", "up", "down", "both"
 OFFSETS: Dict[str, Tuple[int, ...]] = {OFF: (), UP: (12,), DOWN: (-12,), BOTH: (-12, 12)}
-LABELS: Dict[str, str] = {OFF: "Ki", UP: "+1 oktáv", DOWN: "−1 oktáv", BOTH: "±1 oktáv"}
+MODES: Tuple[str, ...] = (OFF, UP, DOWN, BOTH)   # a választó sorrendje
 DEFAULT_MODE = OFF
+
+
+def label(mode: str) -> str:
+    """A mód felirata az aktuális nyelven (pl. "+1 oktáv")."""
+    return t(f"doubling.{mode}")
 
 
 def targets(note: int, mode: str, extra: Sequence[int] = ()) -> List[int]:

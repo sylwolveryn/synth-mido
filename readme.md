@@ -73,6 +73,12 @@ Az **Equalizer…** gomb külön ablakot nyit spektrum analizátorral, ahogy a r
 
 ![Equalizer](progress/task-014-equalizer.png)
 
+## Nyelvek
+
+A **Csatlakozás** rész „Nyelv” listájában választható a felület nyelve: **Magyar**, English, Français, 日本語, Deutsch, Svenska, Suomi, Español és **tlhIngan Hol** (klingon). Váltáskor azonnal minden felirat átíródik — a főablak, a nyitott Felvételek és Equalizer ablak, az állapotsor, a listák és a hibaüzenetek is —, a választás mentődik.
+
+A szövegek a `synth_mido/lang/` mappában vannak, nyelvenként egy egyszerű kulcs–érték JSON fájlban (`hu.json` a referencia). Új nyelvhez elég egy új fájl ugyanazokkal a kulcsokkal (és a kód felvétele az `i18n.LANGUAGES` listába); egy teszt ellenőrzi, hogy minden fájlban pontosan a referencia kulcsai és helyőrzői szerepelnek. Hiányzó kulcsnál a magyar szöveg jelenik meg.
+
 ## Hangszer illusztráció
 
 A **Lejátszás** részben a választott hangszer családjának állata játszik a hangszerén (pl. fuvola → madárka fuvolával, trombita → elefánt, gitár → róka). A General MIDI 16 hangszercsaládja 16 különböző állatot és hangszert kap; a rajz vászon primitívekből készül (nincs képfájl), a színek a skinhez igazodnak, és hangszerváltáskor azonnal frissül.
@@ -166,9 +172,11 @@ synth_mido/
     keyboard_play.py    számítógép billentyűzet, oktávváltás, pedál gomb
     sustain.py          kitartó pedál
     doubling.py         oktáv duplázás
+    i18n.py             többnyelvűség: kulcs → szöveg az aktuális nyelven
   audio/                MIDI kimenet / bemenet és tartalék hanggenerátor
   skins/                témák / skinek (paletták, fejléc rajzolók)
   fx/                   vizuális effektek: lángok, spektrum, equalizer animációk, hangszer illusztrációk
+  lang/                 nyelvi fájlok (hu, en, fr, ja, de, sv, fi, es, tlh) — kulcs–érték JSON
   ui/                   Tk felület: app.py összerakja a részeket (mixinek)
 tests/                  unit tesztek (+ fakes.py: közös hamis időzítő / port)
 scripts/                hardver / diagnosztikai szkriptek (valódi eszközt igényelnek)

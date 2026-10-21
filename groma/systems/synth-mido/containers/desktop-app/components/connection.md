@@ -22,3 +22,5 @@ Opens ports through the MIDI controller, shows the active output (device or fall
 | [synth_mido/ui/connection.py](../../../../../../synth_mido/ui/connection.py) | [synth_mido/audio/midi_controller.py](../../../../../../synth_mido/audio/midi_controller.py) | Connects and polls | Python call |
 | [synth_mido/ui/connection.py](../../../../../../synth_mido/ui/connection.py) | [synth_mido/core/events.py](../../../../../../synth_mido/core/events.py) | Publishes live notes | Python call |
 | [synth_mido/ui/connection.py](../../../../../../synth_mido/ui/connection.py) | [synth_mido/core/recorder.py](../../../../../../synth_mido/core/recorder.py) | Records live notes | Python call |
+| [synth_mido/ui/connection.py](../../../../../../synth_mido/ui/connection.py) | [synth_mido/core/i18n.py](../../../../../../synth_mido/core/i18n.py) | Translates status and messages | Python call |
+| [synth_mido/ui/connection.py](../../../../../../synth_mido/ui/connection.py) | [synth_mido/ui/instrument_view.py](../../../../../../synth_mido/ui/instrument_view.py) | Redraws on instrument change | Python call |

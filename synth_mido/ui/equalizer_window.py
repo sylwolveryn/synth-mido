@@ -9,6 +9,7 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
+from synth_mido.core.i18n import t
 from synth_mido.fx import animations
 from synth_mido.fx.spectrum import Spectrum
 from synth_mido.skins import theme
@@ -24,7 +25,7 @@ class EqualizerWindow:
     def __init__(self, app):
         self.app = app
         self.win = tk.Toplevel(app.root)
-        self.win.title("Equalizer — Synth-Mido")
+        app.bind_text(self.win, lambda: t("eq.title"), option="title")
         self.win.geometry("680x340")
         self.win.minsize(360, 200)
         self.spectrum = Spectrum()
@@ -36,10 +37,10 @@ class EqualizerWindow:
 
         bar = ttk.Frame(self.win, padding=(10, 8))
         bar.pack(fill="x")
-        ttk.Label(bar, text="Animáció").pack(side="left")
-        self.anim_var = tk.StringVar(value=self.animation.label)
-        self.anim_combo = ttk.Combobox(bar, textvariable=self.anim_var, state="readonly", width=20,
-                                       values=[cls.label for cls in animations.ANIMATIONS.values()])
+        app.tr(ttk.Label(bar), "eq.animation").pack(side="left")
+        self.anim_var = tk.StringVar()
+        self.anim_combo = ttk.Combobox(bar, textvariable=self.anim_var, state="readonly", width=20)
+        app.bind_text(self.anim_combo, self._relabel_animations, option=None)
         self.anim_combo.pack(side="left", padx=8)
         self.anim_combo.bind("<<ComboboxSelected>>", self.on_animation_change)
         self.info_var = tk.StringVar()
@@ -93,13 +94,18 @@ class EqualizerWindow:
         self._start()
 
     def on_animation_change(self, _event=None):
-        label = self.anim_var.get()
-        anim_id = next((k for k, cls in animations.ANIMATIONS.items() if cls.label == label), animations.DEFAULT)
+        ids = list(animations.ANIMATIONS)
+        index = self.anim_combo.current()  # index szerint: a név nyelvfüggő
+        anim_id = ids[index] if 0 <= index < len(ids) else animations.DEFAULT
         self.animation = animations.create(anim_id)
         theme.save_setting(SETTING_KEY, anim_id)
         self.win.focus_set()
         self._hide_from({k: 0 for k in self._pool})
         self._redraw_static()
+
+    def _relabel_animations(self):
+        self.anim_combo.configure(values=[animations.label(k) for k in animations.ANIMATIONS])
+        self.anim_var.set(animations.label(self.animation.id))
 
     def restyle(self):
         """Skin váltás: háttér, LED rács és a következő képkocka színei."""
@@ -159,7 +165,7 @@ class EqualizerWindow:
         self._hide_from(used)
         c.tag_raise("grille")
         loud = max(self.spectrum.levels) if self.spectrum.levels else 0
-        self.info_var.set(f"{self.animation.label} · {round(loud * 100):3d}%")
+        self.info_var.set(f"{animations.label(self.animation.id)} · {round(loud * 100):3d}%")
 
     def _create(self, kind):
         c = self.canvas

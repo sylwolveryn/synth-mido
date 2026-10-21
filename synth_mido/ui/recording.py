@@ -5,6 +5,7 @@ from tkinter import messagebox, ttk
 
 from synth_mido import config
 from synth_mido.core import recorder
+from synth_mido.core.i18n import t
 from synth_mido.ui.common import (
     RECORD_TICK_MS,
     format_seconds,
@@ -31,15 +32,15 @@ class RecordingMixin:
         # lejátszás közben indított felvétel: a már szóló visszajátszott hangok is bekerülnek
         for note, velocity, instrument in self.player.sounding_voices():
             self.recorder.note_on(note, velocity, instrument)
-        self.record_btn.configure(text="■ Leállítás", style="Accent.TButton")
+        self.record_btn.configure(text=t("btn.record_stop"), style="Accent.TButton")
         if self.controller.connected and self.controller.input_port:
             if not self.listening:
                 self.toggle_listen()
-            self.log_line(f"Felvétel indítva ({pretty_instrument(name)})")
+            self.log_line(t("log.rec_started", instrument=pretty_instrument(name)))
         else:
-            self.log_line("Felvétel indítva kapcsolat nélkül — a képernyős zongora hangjai rögzülnek")
+            self.log_line(t("log.rec_started_blind"))
         if self.player.is_playing:
-            self.log_line(f"A lejátszott „{self.player.record_name}” is bekerül a felvételbe")
+            self.log_line(t("log.rec_with_playback", name=self.player.record_name))
         self._tick_recording()
 
 
@@ -47,7 +48,7 @@ class RecordingMixin:
         self.record_job = None
         if not self.recorder.is_recording:
             return
-        self.record_var.set(f"● {format_seconds(self.recorder.elapsed())} · {self.recorder.note_count} hang")
+        self.record_var.set(t("rec.counter", time=format_seconds(self.recorder.elapsed()), count=self.recorder.note_count))
         self.record_job = self.root.after(RECORD_TICK_MS, self._tick_recording)
 
 
@@ -59,10 +60,10 @@ class RecordingMixin:
         if self.record_job:
             self.root.after_cancel(self.record_job)
             self.record_job = None
-        self.record_btn.configure(text="● Felvétel", style="TButton")
+        self.record_btn.configure(text=t("btn.record"), style="TButton")
         self.record_var.set("")
         if not record["notes"]:
-            self.log_line("Üres felvétel, nem mentve")
+            self.log_line(t("log.rec_empty"))
             return
         self._ask_save(record)
 
@@ -71,23 +72,21 @@ class RecordingMixin:
         """Modális ablak: név megadása (alapértelmezett: felvetel_YYYYMMDD_HHMMSS), Mentés vagy Elvetés."""
         dlg = tk.Toplevel(self.root)
         self.save_dialog = dlg
-        dlg.title("Felvétel mentése")
+        dlg.title(t("save.title"))
         dlg.configure(bg=self.palette["bg"])
         dlg.resizable(False, False)
         dlg.transient(self.root)
 
         body = ttk.Frame(dlg, padding=14)
         body.pack(fill="both", expand=True)
-        summary = (
-            f"{len(record['notes'])} hang · {format_seconds(record['duration'])} · "
-            f"{', '.join(pretty_instrument(i['name']) for i in recorder.instruments_of(record))}"
-        )
+        summary = t("save.summary", count=len(record["notes"]), duration=format_seconds(record["duration"]),
+                    instruments=", ".join(pretty_instrument(i["name"]) for i in recorder.instruments_of(record)))
         ttk.Label(body, text=summary, style="Status.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
-        ttk.Label(body, text="Név").grid(row=1, column=0, sticky="w", padx=(0, 8))
+        ttk.Label(body, text=t("save.name")).grid(row=1, column=0, sticky="w", padx=(0, 8))
         name_var = tk.StringVar(value=recorder.default_name())
         entry = ttk.Entry(body, textvariable=name_var, width=38)
         entry.grid(row=1, column=1, sticky="ew")
-        ttk.Label(body, text=f"Mentés helye: {recorder.RECORDS_DIR}", style="Status.TLabel").grid(
+        ttk.Label(body, text=t("save.location", path=recorder.RECORDS_DIR), style="Status.TLabel").grid(
             row=2, column=0, columnspan=2, sticky="w", pady=(6, 10)
         )
 
@@ -96,29 +95,29 @@ class RecordingMixin:
                 try:
                     path = recorder.save_record(record, name_var.get())
                 except FileExistsError as e:
-                    if not messagebox.askyesno("Már létezik", f"A(z) „{e.args[0].name}” már létezik. Felülírod?", parent=dlg):
+                    if not messagebox.askyesno(t("msg.exists.title"), t("msg.exists", name=e.args[0].name), parent=dlg):
                         return
                     path = recorder.save_record(record, name_var.get(), overwrite=True)
             except ValueError as e:
-                messagebox.showerror("Hibás név", str(e), parent=dlg)
+                messagebox.showerror(t("msg.bad_name.title"), str(e), parent=dlg)
                 return
             except OSError as e:
-                messagebox.showerror("Mentési hiba", f"Nem sikerült menteni: {e}", parent=dlg)
+                messagebox.showerror(t("msg.save_error.title"), t("msg.save_error", error=e), parent=dlg)
                 return
-            self.log_line(f"Felvétel mentve: {path}")
-            self.status_var.set(f"Felvétel mentve: {path.name}")
+            self.log_line(t("log.saved", path=path))
+            self.status_var.set(t("status.saved", name=path.name))
             dlg.destroy()
             self.refresh_records()
 
         def discard(_event=None):
-            if messagebox.askyesno("Elvetés", "Biztosan elveted a felvételt? Nem lesz mentve.", parent=dlg):
-                self.log_line("Felvétel elvetve")
+            if messagebox.askyesno(t("msg.discard.title"), t("msg.discard"), parent=dlg):
+                self.log_line(t("log.discarded"))
                 dlg.destroy()
 
         btns = ttk.Frame(body)
         btns.grid(row=3, column=0, columnspan=2, sticky="e")
-        ttk.Button(btns, text="Elvetés", command=discard).pack(side="left", padx=3)
-        ttk.Button(btns, text="Mentés", command=save, style="Accent.TButton").pack(side="left", padx=3)
+        ttk.Button(btns, text=t("btn.discard"), command=discard).pack(side="left", padx=3)
+        ttk.Button(btns, text=t("btn.save"), command=save, style="Accent.TButton").pack(side="left", padx=3)
         body.columnconfigure(1, weight=1)
 
         dlg.protocol("WM_DELETE_WINDOW", discard)

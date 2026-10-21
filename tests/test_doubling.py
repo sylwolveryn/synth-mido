@@ -23,7 +23,7 @@ class TargetTests(unittest.TestCase):
 
     def test_labels_and_default(self):
         self.assertEqual(d.DEFAULT_MODE, d.OFF)
-        self.assertEqual(list(d.LABELS.values()), ["Ki", "+1 oktáv", "−1 oktáv", "±1 oktáv"])
+        self.assertEqual([d.label(m) for m in d.MODES], ["Ki", "+1 oktáv", "−1 oktáv", "±1 oktáv"])
 
 
 class DoublerTests(unittest.TestCase):

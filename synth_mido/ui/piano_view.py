@@ -2,6 +2,7 @@
 
 
 from synth_mido.core import events, piano_layout
+from synth_mido.core.i18n import t
 from synth_mido.core.piano_layout import note_label
 from synth_mido.skins import theme
 from synth_mido.ui.common import (
@@ -77,7 +78,7 @@ class PianoViewMixin:
 
     def shift_octave(self, octaves: int):
         if not self.keyboard.shift(octaves):
-            self.log_line("A billentyűzet tartománya elérte a zongora szélét")
+            self.log_line(t("log.kb_edge"))
 
 
     def _on_keyboard_range(self):
@@ -98,7 +99,7 @@ class PianoViewMixin:
         self.doubler.set_extra_offsets(self.octaves.offsets())
         for base, var in self.octave_vars.items():
             var.set(self.octaves.is_selected(base))
-        self.octave_label_var.set(f"Oktávok: {self.octaves.label()}")
+        self.octave_label_var.set(t("piano.octaves", octaves=self.octaves.label()))
         self.draw_piano()
 
 

@@ -8,11 +8,18 @@ A felület a nyilvántartásból listáz, így új skin felvétele egyetlen `reg
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
+from synth_mido.core.i18n import t
+
 DARK = "dark"
 LIGHT = "light"
 SYSTEM = "system"
 VARIANTS = (DARK, LIGHT, SYSTEM)
-VARIANT_LABELS = {DARK: "Sötét", LIGHT: "Világos", SYSTEM: "Rendszer"}
+VARIANTS_ORDER = (DARK, LIGHT, SYSTEM)  # a választó sorrendje
+
+
+def variant_label(variant: str) -> str:
+    """A változat felirata az aktuális nyelven (Sötét / Világos / Rendszer)."""
+    return t(f"variant.{variant}")
 
 DEFAULT_SKIN = "synthwave"
 DEFAULT_VARIANT = DARK
@@ -45,6 +52,11 @@ class Skin:
     def palette(self, scheme: str) -> dict:
         return self.light if scheme == LIGHT else self.dark
 
+    @property
+    def label(self) -> str:
+        """A skin neve az aktuális nyelven (a `name` a magyar alapnév)."""
+        return t(f"skin.{self.id}") if t(f"skin.{self.id}") != f"skin.{self.id}" else self.name
+
 
 _SKINS: Dict[str, Skin] = {}
 
@@ -66,7 +78,7 @@ def all_skins() -> List[Skin]:
 
 
 def by_name(name: str) -> Optional[Skin]:
-    return next((s for s in _SKINS.values() if s.name == name), None)
+    return next((s for s in _SKINS.values() if name in (s.name, s.label)), None)
 
 
 def choose_font(fonts: Sequence[str], available) -> str:

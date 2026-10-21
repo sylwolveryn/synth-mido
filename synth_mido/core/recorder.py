@@ -27,6 +27,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, Iterable, List, Optional
 
+from synth_mido.core.i18n import t
+
 RECORDS_DIR = Path(__file__).resolve().parents[2] / "records"  # a projekt gyökerében
 FORMAT = "synth-mido-record"
 V1 = 1        # egy hangszer, felülírható (régi felvételek, daloskönyv)
@@ -148,9 +150,9 @@ def sanitize_name(name: str) -> str:
         name = name[: -len(EXTENSION)]
     name = _ILLEGAL_CHARS.sub("_", name).strip().rstrip(".")
     if not name:
-        raise ValueError("Adj meg egy nevet a felvételnek.")
+        raise ValueError(t("rec.err.name_empty"))
     if name.upper() in _RESERVED_NAMES:
-        raise ValueError(f"A(z) „{name}” név nem használható fájlnévként.")
+        raise ValueError(t("rec.err.name_reserved", name=name))
     return name
 
 
@@ -196,21 +198,21 @@ def instruments_of(record: dict) -> List[dict]:
 def validate_record(data) -> None:
     """Ellenőrzi a felvétel szerkezetét; hibára ValueError."""
     if not isinstance(data, dict):
-        raise ValueError("A felvétel nem JSON objektum.")
+        raise ValueError(t("rec.err.not_object"))
     if data.get("format") != FORMAT:
-        raise ValueError("Ismeretlen fájlformátum.")
+        raise ValueError(t("rec.err.format"))
     version = data.get("version")
     if isinstance(version, bool) or version not in VERSIONS:
-        raise ValueError(f"Nem támogatott verzió: {version!r}.")
+        raise ValueError(t("rec.err.version", version=repr(version)))
     if not isinstance(data.get("created"), str):
-        raise ValueError("Hiányzik a létrehozás ideje.")
+        raise ValueError(t("rec.err.created"))
     if not _is_instrument(data.get("instrument")):
-        raise ValueError("Hibás hangszer adat.")
+        raise ValueError(t("rec.err.instrument"))
     if not _is_num(data.get("duration")) or data["duration"] < 0:
-        raise ValueError("Hibás felvétel hossz.")
+        raise ValueError(t("rec.err.duration"))
     notes = data.get("notes")
     if not isinstance(notes, list):
-        raise ValueError("Hiányzik a hangok listája.")
+        raise ValueError(t("rec.err.notes"))
     keys = NOTE_KEYS[version]
     for i, n in enumerate(notes):
         if (
@@ -222,7 +224,7 @@ def validate_record(data) -> None:
             or not _is_num(n["start"]) or n["start"] < 0
             or not _is_num(n["duration"]) or n["duration"] < 0
         ):
-            raise ValueError(f"Hibás hang a(z) {i + 1}. helyen.")
+            raise ValueError(t("rec.err.note", index=i + 1))
 
 
 def record_path(name: str, directory=None) -> Path:
@@ -246,7 +248,7 @@ def load_record(path) -> dict:
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
-        raise ValueError(f"A fájl nem olvasható: {e}") from e
+        raise ValueError(t("rec.err.unreadable", error=e)) from e
     validate_record(data)
     return data
 
@@ -293,7 +295,7 @@ def delete_records(paths: Iterable, directory=None) -> int:
     targets = [Path(p).resolve() for p in paths]
     for path in targets:
         if path.parent != folder or path.suffix != EXTENSION:
-            raise ValueError(f"Nem felvétel fájl: {path}")
+            raise ValueError(t("rec.err.not_record", path=path))
     deleted = 0
     for path in targets:
         try:

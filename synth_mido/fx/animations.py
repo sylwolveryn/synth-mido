@@ -9,6 +9,8 @@ működik; a modell Tk nélkül tesztelhető.
 import math
 from typing import Dict, List, NamedTuple, Tuple, Type
 
+from synth_mido.core.i18n import t
+
 
 class Shape(NamedTuple):
     kind: str            # "rect" | "line" | "oval" | "poly"
@@ -29,7 +31,6 @@ def level_role(fraction: float) -> str:
 
 class Animation:
     id = ""
-    label = ""
     led_rows = 0   # > 0: statikus LED rács a sávokon (a felület rajzolja egyszer)
 
     def render(self, spectrum, width: float, height: float) -> List[Shape]:
@@ -39,7 +40,7 @@ class Animation:
 class ClassicBars(Animation):
     """Klasszikus Winamp: LED szegmenses oszlopok, alul zöld (low) → sárga (mid) → piros (high), lehulló csúcsok."""
 
-    id, label, led_rows = "bars", "Klasszikus oszlopok", 18
+    id, led_rows = "bars", 18
 
     def render(self, s, w, h):
         out, bw = [], w / s.bands
@@ -59,7 +60,7 @@ class ClassicBars(Animation):
 class MirrorBars(Animation):
     """Tükrözött oszlopok a középvonalhoz képest."""
 
-    id, label = "mirror", "Tükrözött oszlopok"
+    id = "mirror"
 
     def render(self, s, w, h):
         out, bw, mid = [], w / s.bands, h / 2
@@ -79,7 +80,7 @@ class MirrorBars(Animation):
 class Oscilloscope(Animation):
     """Oszcilloszkóp: a szóló hangok összegzett hullámformája."""
 
-    id, label = "scope", "Oszcilloszkóp"
+    id = "scope"
 
     def render(self, s, w, h):
         samples = max(32, int(w / 5))
@@ -99,7 +100,7 @@ class Oscilloscope(Animation):
 class RadialBars(Animation):
     """Kör alakú sugaras oszlopok, középen pulzáló kör."""
 
-    id, label = "radial", "Kör spektrum"
+    id = "radial"
 
     def render(self, s, w, h):
         cx, cy = w / 2, h / 2
@@ -126,7 +127,7 @@ class RadialBars(Animation):
 class Fire(Animation):
     """Tűz / plazma: lobogó lángnyelvek a sávok fölött."""
 
-    id, label = "fire", "Tűz"
+    id = "fire"
 
     def render(self, s, w, h):
         out, bw, t = [], w / s.bands, s.time
@@ -151,7 +152,7 @@ class Fire(Animation):
 class Area(Animation):
     """Kitöltött spektrum görbe csúcspontokkal."""
 
-    id, label = "area", "Spektrum görbe"
+    id = "area"
 
     def render(self, s, w, h):
         bw = w / max(s.bands - 1, 1)
@@ -169,6 +170,11 @@ ANIMATIONS: Dict[str, Type[Animation]] = {}
 for _cls in (ClassicBars, MirrorBars, Oscilloscope, RadialBars, Fire, Area):
     ANIMATIONS[_cls.id] = _cls
 DEFAULT = ClassicBars.id
+
+
+def label(animation_id: str) -> str:
+    """Az animáció neve az aktuális nyelven."""
+    return t(f"eq.{animation_id}")
 
 
 def create(animation_id: str) -> Animation:

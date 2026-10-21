@@ -5,6 +5,7 @@ from tkinter import filedialog, messagebox
 
 from synth_mido import config
 from synth_mido.core import events, playback, recorder
+from synth_mido.core.i18n import t
 from synth_mido.ui.common import (
     PLAYER_TICK_MS,
     SEEK_MARGIN,
@@ -34,17 +35,17 @@ class PlaybackMixin:
         if quiet:
             return
         if was_active:
-            self.log_line(f"Lejátszás leállítva: {self.player.record_name}")
-        self.log_line("Minden hang leállítva")
+            self.log_line(t("log.playback_stopped", name=self.player.record_name))
+        self.log_line(t("log.all_stopped"))
 
 
     def open_record_file(self):
         folder = recorder.RECORDS_DIR if recorder.RECORDS_DIR.is_dir() else recorder.RECORDS_DIR.parent
         path = filedialog.askopenfilename(
             parent=self.root,
-            title="Felvétel megnyitása",
+            title=t("open.title"),
             initialdir=str(folder),
-            filetypes=[("Felvételek", "*.json"), ("Minden fájl", "*.*")],
+            filetypes=[(t("open.records"), "*.json"), (t("open.all_files"), "*.*")],
         )
         if path:
             self.play_record_file(path)
@@ -56,7 +57,7 @@ class PlaybackMixin:
         try:
             record = recorder.load_record(path)
         except ValueError as e:
-            messagebox.showerror("Hibás felvétel", f"{path.name}\n\n{e}", parent=parent or self.root)
+            messagebox.showerror(t("msg.bad_record.title"), f"{path.name}\n\n{e}", parent=parent or self.root)
             return
         if not self.require_output():
             return
@@ -73,14 +74,14 @@ class PlaybackMixin:
             for program, channel in self.record_channels.items():
                 self.controller.set_program(channel, program)
         if not record["notes"]:
-            messagebox.showinfo("Üres felvétel", f"A(z) „{path.stem}” felvételben nincs hang.", parent=parent or self.root)
+            messagebox.showinfo(t("msg.empty_record.title"), t("msg.empty_record", name=path.stem),
+                                parent=parent or self.root)
             return
         self.player.set_speed(float(self.speed_var.get().rstrip("x")))
         self.player.play(record, path.stem)
         names = ", ".join(pretty_instrument(i["name"]) for i in recorder.instruments_of(record))
-        self.log_line(
-            f"Lejátszás: {path.stem} ({len(record['notes'])} hang, {format_seconds(self.player.duration)}, {names})"
-        )
+        self.log_line(t("log.playing", name=path.stem, count=len(record["notes"]),
+                        duration=format_seconds(self.player.duration), instruments=names))
         self._player_changed()
 
 
@@ -97,7 +98,7 @@ class PlaybackMixin:
 
 
     def _on_player_finish(self):
-        self.log_line(f"Lejátszás vége: {self.player.record_name}")
+        self.log_line(t("log.playback_end", name=self.player.record_name))
         self._player_changed()
 
 
@@ -127,9 +128,9 @@ class PlaybackMixin:
         """Állapotsor + lejátszó sáv frissítése egy lejátszó művelet után."""
         name = self.player.record_name
         if self.player.is_playing:
-            self.status_var.set(f"Lejátszás: {name} ({self.speed_var.get()})")
+            self.status_var.set(t("status.playing", name=name, speed=self.speed_var.get()))
         elif self.player.is_paused:
-            self.status_var.set(f"Szünet: {name}")
+            self.status_var.set(t("status.paused", name=name))
         else:
             self.status_var.set(self.base_status)
         self._refresh_player_ui()
@@ -144,7 +145,7 @@ class PlaybackMixin:
         for widget in (self.player_btn, self.player_stop_btn, self.position_scale):
             widget.state(state)
         self.player_btn.configure(text="⏸" if p.is_playing else "▶")
-        self.player_name_var.set(p.record_name or "Nincs betöltött felvétel")
+        self.player_name_var.set(p.record_name or t("player.none"))
         duration = p.duration
         self.position_scale.configure(to=max(duration, 0.001))
         position = self.player_pos_var.get() if self.seeking else p.position()
