@@ -71,6 +71,8 @@ Tk constraint: everything is drawn on a Canvas with after() frames. The effect m
 
 <!-- SECTION:NOTES:BEGIN -->
 Verified: 151 unit tests green (17 new visualizer and settings tests), ruff clean, real-window smoke test 15/15 covering every note source, sustain, idle stop, resize, toggle persistence. Performance: the first version took ~20 ms per frame under a 300-note burst. Canvas redraw was the bottleneck (~22 ms for 284 items). Fixes: pooled canvas items, stricter caps (96 bars, 60 sparks, 3 sparks per note) and an adaptive frame delay, giving ~12.7 ms under the same extreme load.
+
+Correction: the full unit suite at that point was 150 tests, not 151.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
