@@ -3,7 +3,7 @@ id: TASK-021
 title: >-
   Language selector with English, French, Japanese, German, Swedish, Finnish,
   Spanish and Klingon
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
@@ -78,11 +78,11 @@ Every label is hard-coded in Hungarian. Players who do not read Hungarian need t
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 All user-visible UI texts come from key-value language files in a language folder, Hungarian being the default and reference
-- [ ] #2 A language selector offers Magyar, English, Français, 日本語, Deutsch, Svenska, Suomi, Español and Klingon (tlhIngan Hol)
-- [ ] #3 Changing the language relabels the main window and open windows immediately and the choice is saved
-- [ ] #4 A missing key falls back to Hungarian, then to the key itself
-- [ ] #5 A test checks that every language file has exactly the keys of the reference file and valid placeholders
+- [x] #1 All user-visible UI texts come from key-value language files in a language folder, Hungarian being the default and reference
+- [x] #2 A language selector offers Magyar, English, Français, 日本語, Deutsch, Svenska, Suomi, Español and Klingon (tlhIngan Hol)
+- [x] #3 Changing the language relabels the main window and open windows immediately and the choice is saved
+- [x] #4 A missing key falls back to Hungarian, then to the key itself
+- [x] #5 A test checks that every language file has exactly the keys of the reference file and valid placeholders
 <!-- AC:END -->
 
 ## Definition of Done
@@ -98,3 +98,15 @@ Every label is hard-coded in Hungarian. Players who do not read Hungarian need t
 3. ui/language.py mixin: tr()/bind_text() register widget texts; set_language re-applies all live bindings (main window, Records, Equalizer), rebuilds language-dependent lists, status, player bar, sections; choice saved in settings. Language combobox next to Megjelenés; list choices by index.
 4. Write the 8 translations; tests for key/placeholder parity, used keys, fallbacks; real-window smoke for live relabel, persistence and fit at 780 px in all languages; update Groma map, readme and progress.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Instrument names stay as General MIDI English names in every language. Language-dependent combobox choices are resolved by index. Klingon is never uppercased (case is phonemic). Japanese piano-row labels shortened to fit 780 px. Also removed a Windows username that had leaked into the Groma container overview in TASK-016 (cmd.exe expanded %APPDATA%), and curated the four new Groma components (i18n, language, instrument-art, instrument-view) with groups and relations.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added a language selector (Magyar, English, Français, 日本語, Deutsch, Svenska, Suomi, Español, tlhIngan Hol). All user-visible texts moved into flat key-value JSON files in synth_mido/lang/ with Hungarian as reference; core/i18n.py provides t() with Hungarian-then-key fallback and placeholder filling. Widgets bind their texts to keys, so a switch relabels the main window and the open Records and Equalizer windows at once, including lists, status, player bar, captions, dialogs and record validation errors; the choice is saved. Verified by 13 new unit tests (key and placeholder parity for all files, used keys exist, fallbacks) and a real-window smoke test (18/18) including fit at 780 px for all nine languages; earlier smoke tests still pass.
+<!-- SECTION:FINAL_SUMMARY:END -->
