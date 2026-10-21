@@ -18,6 +18,7 @@ modified_files:
   - tone_synth.py
   - config.py
   - midi_controller.py
+  - ui.py
 priority: medium
 type: feature
 ordinal: 10000
