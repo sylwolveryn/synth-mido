@@ -1,9 +1,11 @@
 ---
 id: TASK-011
 title: Two-hand octave doubling for played notes
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T20:17:00Z'
+updated_date: '2026-10-21T20:28:00Z'
 labels:
   - feature
 dependencies: []
@@ -41,3 +43,12 @@ Design: an "Oktáv duplázás" selector with Ki (off, default), +1 oktáv, −1 
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. New Tk-free `doubling.py`: MODES off / up / down / both (offsets (), (+12), (-12), (-12,+12)) with Hungarian labels. OctaveDoubler.press(source) returns the real notes to start (the source plus the doubles inside A0-C8), remembers them per source key and counts how many held keys need each real note. release(source) returns only the notes nobody needs any more, so a shared note (C4+1 while C5 is held) keeps sounding, and a release after a setting change stops exactly what was started.
+2. ui.py: _user_note_on/_user_note_off (mouse and computer keyboard only) go through the doubler. Each real note goes through the existing path (pedal key_down/key_up, output, recorder, highlight and visual effect), so sustain, recording and the effect cover the doubles automatically. Live MIDI input and playback do not use this path, so they are not doubled. A "Duplázás" combobox in the Lejátszás row (Ki / +1 oktáv / −1 oktáv / ±1 oktáv) is saved as octave_doubling.
+3. Tests `test_doubling.py`: directions, range edges, shared notes, mode change while held, repeated press.
+4. Smoke test (doubled sound, highlight and effect, pedal, recording, octave shift, input/playback not doubled, persistence), screenshot, readme and progress page.
+<!-- SECTION:PLAN:END -->
