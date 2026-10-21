@@ -4,7 +4,7 @@ title: Polish layout, typography, and accents for both palettes
 status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
-updated_date: '2026-10-21T16:49:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -25,9 +25,9 @@ Inverting colors is not enough for a designed window: the current form is dense 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Spacing, fonts, and accent usage are consistent with the active palette
-- [ ] #2 Light and Dark both keep readable contrast for labels, buttons, status, and log
-- [ ] #3 Layout polish does not change connect, play, or listen behavior
+- [x] #1 Spacing, fonts, and accent usage are consistent with the active palette
+- [x] #2 Light and Dark both keep readable contrast for labels, buttons, status, and log
+- [x] #3 Layout polish does not change connect, play, or listen behavior
 <!-- AC:END -->
 
 ## Implementation Notes
