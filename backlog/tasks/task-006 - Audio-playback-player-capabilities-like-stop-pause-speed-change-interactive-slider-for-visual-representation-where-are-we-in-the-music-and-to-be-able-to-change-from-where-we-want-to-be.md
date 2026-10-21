@@ -1,10 +1,11 @@
 ---
 id: TASK-006
 title: 'Playback controls: stop, pause, speed and seek slider'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T20:00:00Z'
+updated_date: '2026-10-21T20:01:00Z'
 labels:
   - feature
 dependencies:
@@ -43,3 +44,12 @@ Context: the Player is driven by Tk after() callbacks and a clock, and sends not
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. playback.py: extend Player into a small transport. State: stopped / playing / paused, a position in record seconds and a speed factor. position() = base position + elapsed clock time * speed while playing. Note spans are kept besides the event list, so resume/seek can restart the notes that should be sounding at a position (start < pos < end) and continue from the first event at or after it. pause() releases sounding notes and keeps the position. play_pause() resumes, or restarts from 0 when at the end. seek(t) clamps to 0..duration and works while playing, paused or stopped. set_speed(x) re-bases the clock so the position does not jump. stop() releases notes and rewinds to 0 but keeps the record loaded. A note_off is only sent for notes that are actually sounding.
+2. ui.py: player bar as a new row in the Lejátszás frame: Play/Pause and Stop buttons, record name, "mm:ss / mm:ss" label, a position slider (custom click/drag -> seek on release, so dragging does not retrigger notes) and a speed combobox (0.5x-2x). Refreshed every 100 ms while playing and after every action. Disabled until a record is loaded. The status bar shows Lejátszás / Szünet. Leállítás, Minden hang ki, demos and closing stop (rewind) the player.
+3. Tests in test_playback.py: pause/resume, seek into a held note, seek while paused, speed change without a position jump, stop rewinds but keeps loaded, play after the end restarts.
+4. readme player controls; progress page with a screenshot.
+<!-- SECTION:PLAN:END -->
