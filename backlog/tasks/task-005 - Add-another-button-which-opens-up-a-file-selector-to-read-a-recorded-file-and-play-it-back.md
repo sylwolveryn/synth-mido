@@ -3,10 +3,11 @@ id: TASK-005
 title: >-
   Add another button which opens up a file selector to read a recorded file and
   play it back
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T19:31:00Z'
+updated_date: '2026-10-21T19:39:00Z'
 labels:
   - feature
 dependencies:
@@ -57,3 +58,14 @@ Out of scope (TASK-006): pause/resume, speed change and the position/seek slider
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. New `playback.py` (no Tk): `build_schedule(record)` turns notes into time-ordered note_on/note_off events (note_off before note_on at equal times; an overlapping repeat of the same pitch cuts the earlier note so it can not be silenced early); `default_instrument(record, instruments)` resolves the record instrument by name, then by program, else the first one; `Player` drives the schedule with injected `after`/`cancel` callbacks and a clock (catches up against the clock, so no drift), calls `on_note(note, velocity, on)` and `on_finish()`, and `stop()` releases sounding notes. This also gives TASK-006 a place for pause/speed/seek.
+2. `ui.py`: "Felvétel lejátszása…" button in the Lejátszás row (file selector starting in records/, *.json); "Lejátszás" button and double-click in the Felvételek window (exactly one selected). Loading validates with `recorder.load_record` (error dialog on failure), selects the record instrument in the Hangszer list, and plays through the controller (TASK-007 shared output) with key highlighting. The recorder is bypassed, so playback is never recorded. Status bar and log show the playing record and the end; the status bar then returns to the output status.
+3. One playback at a time: scale/chord/demo/record start by stopping whatever plays (`stop_playback(quiet=True)`) instead of being refused; Leállítás, Minden hang ki, disconnect and close stop the player too.
+4. `test_playback.py`: schedule ordering, overlapping and repeated notes, empty record, default instrument, and Player timing/stop/finish/restart with a fake clock and fake `after`. Add it to the pre-commit unit-test hook.
+5. readme: playback section.
+6. Verify: ruff, all unit tests, pre-commit, and a scripted smoke test of the real window without a MIDI device (file playback, records-window playback, invalid file, instrument default, stop, replace, not recorded).
+<!-- SECTION:PLAN:END -->
