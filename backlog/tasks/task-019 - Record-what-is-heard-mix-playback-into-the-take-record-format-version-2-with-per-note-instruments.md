@@ -7,12 +7,31 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T22:54:00Z'
+updated_date: '2026-10-21T23:18:00Z'
 labels:
   - recording
   - playback
   - audio
 dependencies: []
+modified_files:
+  - progress/README.md
+  - progress/task-019-mix.png
+  - progress/task-019-records.png
+  - progress/task-019.md
+  - readme.md
+  - synth_mido/audio/midi_controller.py
+  - synth_mido/audio/tone_synth.py
+  - synth_mido/core/playback.py
+  - synth_mido/core/recorder.py
+  - synth_mido/core/songbook.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/connection.py
+  - synth_mido/ui/playback_view.py
+  - synth_mido/ui/recording.py
+  - synth_mido/ui/records_window.py
+  - tests/test_audio_output.py
+  - tests/test_playback.py
+  - tests/test_recorder.py
 priority: high
 type: feature
 ordinal: 30000
