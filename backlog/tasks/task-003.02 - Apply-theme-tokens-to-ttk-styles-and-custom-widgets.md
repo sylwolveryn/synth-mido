@@ -4,7 +4,7 @@ title: Apply theme tokens to ttk styles and custom widgets
 status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
-updated_date: '2026-10-21T16:49:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -25,10 +25,10 @@ LabelFrames, comboboxes, buttons, the scale, the Text log, and the piano canvas 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 ttk widgets use styles derived from the active palette
-- [ ] #2 Canvas piano background, keys, outlines, and labels use the active palette
-- [ ] #3 Log Text widget colors match the active palette
-- [ ] #4 Changing the active palette restyles already created widgets without restarting
+- [x] #1 ttk widgets use styles derived from the active palette
+- [x] #2 Canvas piano background, keys, outlines, and labels use the active palette
+- [x] #3 Log Text widget colors match the active palette
+- [x] #4 Changing the active palette restyles already created widgets without restarting
 <!-- AC:END -->
 
 ## Implementation Notes
