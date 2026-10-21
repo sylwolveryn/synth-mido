@@ -14,6 +14,11 @@ references:
   - ui.py
   - tone_synth.py
   - recorder.py
+modified_files:
+  - sustain.py
+  - keyboard_play.py
+  - midi_controller.py
+  - test_sustain.py
 parent_task_id: TASK-008
 priority: low
 type: feature
