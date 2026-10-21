@@ -165,6 +165,7 @@ class ThemingMixin:
         self.draw_header()
         self.draw_fx_floor()
         self.draw_piano()
+        self.draw_instrument_art()
         for listener in list(self.skin_listeners):
             listener()
 

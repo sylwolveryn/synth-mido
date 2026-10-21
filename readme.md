@@ -73,6 +73,10 @@ Az **Equalizer…** gomb külön ablakot nyit spektrum analizátorral, ahogy a r
 
 ![Equalizer](progress/task-014-equalizer.png)
 
+## Hangszer illusztráció
+
+A **Lejátszás** részben a választott hangszer családjának állata játszik a hangszerén (pl. fuvola → madárka fuvolával, trombita → elefánt, gitár → róka). A General MIDI 16 hangszercsaládja 16 különböző állatot és hangszert kap; a rajz vászon primitívekből készül (nincs képfájl), a színek a skinhez igazodnak, és hangszerváltáskor azonnal frissül.
+
 ## Felvétel
 
 A "Billentyűzet figyelése" részben a **● Felvétel** gombbal indítható a felvétel, a **■ Leállítás** gombbal áll le. Felvétel közben látszik az eltelt idő és a rögzített hangok száma.
@@ -164,7 +168,7 @@ synth_mido/
     doubling.py         oktáv duplázás
   audio/                MIDI kimenet / bemenet és tartalék hanggenerátor
   skins/                témák / skinek (paletták, fejléc rajzolók)
-  fx/                   vizuális effektek modelljei
+  fx/                   vizuális effektek: lángok, spektrum, equalizer animációk, hangszer illusztrációk
   ui/                   Tk felület: app.py összerakja a részeket (mixinek)
 tests/                  unit tesztek (+ fakes.py: közös hamis időzítő / port)
 scripts/                hardver / diagnosztikai szkriptek (valódi eszközt igényelnek)

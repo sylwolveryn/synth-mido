@@ -89,6 +89,7 @@ class ConnectionMixin:
 
     def on_instrument_change(self, _event=None):
         label = self.instrument_var.get()
+        self.draw_instrument_art()
         for name, num in config.INSTRUMENTS.items():
             if pretty_instrument(name) == label:
                 self.recorder.set_instrument(name, num)  # felvétel közben a további hangok ezzel rögzülnek

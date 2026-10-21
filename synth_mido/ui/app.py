@@ -10,6 +10,7 @@ from synth_mido.core.sustain import SustainPedal
 from synth_mido.fx.visualizer import Visualizer
 from synth_mido.skins import registry, theme
 from synth_mido.ui.common import (
+    ART_SIZE,
     FX_HEIGHT,
     HEADER_HEIGHT,
     PIANO_HEIGHT,
@@ -19,6 +20,7 @@ from synth_mido.ui.common import (
 from synth_mido.ui.connection import ConnectionMixin
 from synth_mido.ui.fx_view import FX_LAYERS, FxMixin
 from synth_mido.ui.input import InputMixin
+from synth_mido.ui.instrument_view import InstrumentArtMixin
 from synth_mido.ui.piano_view import PianoViewMixin
 from synth_mido.ui.playback_view import PlaybackMixin
 from synth_mido.ui.recording import RecordingMixin
@@ -26,7 +28,8 @@ from synth_mido.ui.records_window import RecordsWindowMixin
 from synth_mido.ui.theming import ThemingMixin
 
 
-class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, InputMixin, FxMixin, RecordingMixin, RecordsWindowMixin):
+class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, InputMixin, FxMixin, RecordingMixin,
+               RecordsWindowMixin, InstrumentArtMixin):
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("VEVOR MIDI vezérlő")
@@ -170,8 +173,14 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.doubling_combo.grid(row=0, column=5, sticky="w", padx=(0, 8), pady=6)
         self.doubling_combo.bind("<<ComboboxSelected>>", self.on_doubling_change)
 
-        actions = self.actions_row = ttk.Frame(play)
-        actions.grid(row=1, column=0, columnspan=6, sticky="w", padx=8, pady=(0, 8))
+        actions_line = ttk.Frame(play)
+        actions_line.grid(row=1, column=0, columnspan=6, sticky="ew", padx=8, pady=(0, 4))
+        actions = self.actions_row = ttk.Frame(actions_line)
+        actions.pack(side="left", anchor="n")
+        # hangszer illusztráció (TASK-022): az állat a választott hangszerrel, felirattal
+        self.art_canvas = tk.Canvas(actions_line, height=ART_SIZE, highlightthickness=0, bd=0)
+        self.art_canvas.pack(side="left", fill="x", expand=True, padx=(12, 0))
+        self.art_canvas.bind("<Configure>", lambda _e: self.draw_instrument_art())
         ttk.Button(actions, text="Megnyitás…", command=self.open_record_file, style="Small.TButton").pack(side="left", padx=3)
         ttk.Button(actions, text="Leállítás", command=self.stop_playback, style="Small.TButton").pack(side="left", padx=3)
 
