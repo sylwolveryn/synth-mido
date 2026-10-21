@@ -1,11 +1,11 @@
 ---
 id: TASK-008.02
 title: Play notes with the computer keyboard
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:50:00Z'
-updated_date: '2026-10-21T20:09:00Z'
+updated_date: '2026-10-21T20:11:00Z'
 labels:
   - feature
 dependencies:
@@ -16,6 +16,10 @@ modified_files:
   - keyboard_play.py
   - test_keyboard_play.py
   - ui.py
+  - readme.md
+  - progress/task-008-02-keyboard-chord.png
+  - progress/task-008-02.md
+  - progress/README.md
 parent_task_id: TASK-008
 priority: medium
 type: feature
@@ -30,19 +34,19 @@ Let the user play the on-screen piano from the computer keyboard, so melodies an
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A fixed set of letter keys plays at least one and a half octaves: one row for white keys, the row above for the matching black keys, laid out like a piano
-- [ ] #2 The mapping works on a Hungarian QWERTZ layout and on a US QWERTY layout
-- [ ] #3 Pressing a key starts the note and releasing it stops the note; holding a key does not retrigger it through key auto-repeat
-- [ ] #4 Several keys can be held at the same time to play chords
-- [ ] #5 Played keys are highlighted on the on-screen piano, and velocity comes from the Hangerő slider
-- [ ] #6 Notes sound through the active output (connected MIDI device or the TASK-007 fallback) and are captured by a running recording like on-screen clicks
-- [ ] #7 Typing in text fields (save dialog name, comboboxes) does not play notes, and no note is left hanging when the window loses focus
-- [ ] #8 Unit tests cover the key-to-note mapping for both layouts, without needing a real window
+- [x] #1 A fixed set of letter keys plays at least one and a half octaves: one row for white keys, the row above for the matching black keys, laid out like a piano
+- [x] #2 The mapping works on a Hungarian QWERTZ layout and on a US QWERTY layout
+- [x] #3 Pressing a key starts the note and releasing it stops the note; holding a key does not retrigger it through key auto-repeat
+- [x] #4 Several keys can be held at the same time to play chords
+- [x] #5 Played keys are highlighted on the on-screen piano, and velocity comes from the Hangerő slider
+- [x] #6 Notes sound through the active output (connected MIDI device or the TASK-007 fallback) and are captured by a running recording like on-screen clicks
+- [x] #7 Typing in text fields (save dialog name, comboboxes) does not play notes, and no note is left hanging when the window loses focus
+- [x] #8 Unit tests cover the key-to-note mapping for both layouts, without needing a real window
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -53,3 +57,15 @@ Let the user play the on-screen piano from the computer keyboard, so melodies an
 3. Tests `test_keyboard_play.py`: both layouts map to 0..17, case-insensitivity, unknown keys, auto-repeat on both platforms, chords, range clipping, release_all.
 4. Smoke test with real key events (event_generate) in the window, plus a progress page.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Verified: 111 unit tests green (16 keyboard tests), ruff clean, real-window smoke test with generated Tk key events 12/12. Found and fixed: this Tk build reports é/á as the character keysym instead of eacute/aacute, so both forms (and ;/\x27 characters) are mapped.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+New Tk-free keyboard_play.py maps two keyboard rows to C4-F5 (18 notes) on both Hungarian QWERTZ and US QWERTY (y/z both G#, é/á and ;/\x27 for the same physical keys, as keysym names or characters). KeyboardPlayer filters Windows and X11 auto-repeat, remembers each key's note so releases never hang, and releases everything on focus loss. ui.py binds keys on the main window only, ignores text inputs/comboboxes and Ctrl/Alt, returns focus after combobox selections, and shares one note path with the mouse (output, recorder, highlight). 16 unit tests plus a key-event smoke test. Range shifting and key labels follow in TASK-008.03.
+<!-- SECTION:FINAL_SUMMARY:END -->
