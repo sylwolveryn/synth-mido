@@ -7,7 +7,7 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T19:46:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - feature
 dependencies:
@@ -45,19 +45,19 @@ Out of scope (TASK-006): pause/resume, speed change and the position/seek slider
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A "Felvétel lejátszása…" button in the main window opens a file selector that starts in records/ and shows .json record files
-- [ ] #2 The Felvételek window has a "Lejátszás" button, and double-clicking a row plays that record; with no or multiple rows selected the button explains that one record must be selected
-- [ ] #3 An unreadable or invalid record file is rejected with a readable error message and nothing is played
-- [ ] #4 Loading a record selects its instrument in the Hangszer list; changing the instrument before or during playback takes effect
-- [ ] #5 Notes play with their recorded start times, durations and velocities, in order, including overlapping notes and repeated notes
-- [ ] #6 Playback works without a connected MIDI device (through the TASK-007 fallback) as well as with a connected MIDI output
-- [ ] #7 Played notes are highlighted on the on-screen piano and un-highlighted when they end; notes outside the drawn keyboard play without errors
-- [ ] #8 The log and status bar show which record is playing and when playback has finished
-- [ ] #9 Leállítás and Minden hang ki stop playback immediately with no hanging notes; disconnecting or closing the app during playback stops it cleanly
-- [ ] #10 Starting a playback while another sequence (scale, chord, demo or a record) is playing stops the previous one first, so sounds never overlap
-- [ ] #11 Playback is not captured by a running recording (only notes the user plays are recorded)
-- [ ] #12 Unit tests cover turning a loaded record into a timed note-on/note-off schedule (ordering, overlapping and repeated notes) and the default instrument, without Tk, MIDI or audio devices
-- [ ] #13 readme describes how to play back a recording
+- [x] #1 A "Felvétel lejátszása…" button in the main window opens a file selector that starts in records/ and shows .json record files
+- [x] #2 The Felvételek window has a "Lejátszás" button, and double-clicking a row plays that record; with no or multiple rows selected the button explains that one record must be selected
+- [x] #3 An unreadable or invalid record file is rejected with a readable error message and nothing is played
+- [x] #4 Loading a record selects its instrument in the Hangszer list; changing the instrument before or during playback takes effect
+- [x] #5 Notes play with their recorded start times, durations and velocities, in order, including overlapping notes and repeated notes
+- [x] #6 Playback works without a connected MIDI device (through the TASK-007 fallback) as well as with a connected MIDI output
+- [x] #7 Played notes are highlighted on the on-screen piano and un-highlighted when they end; notes outside the drawn keyboard play without errors
+- [x] #8 The log and status bar show which record is playing and when playback has finished
+- [x] #9 Leállítás and Minden hang ki stop playback immediately with no hanging notes; disconnecting or closing the app during playback stops it cleanly
+- [x] #10 Starting a playback while another sequence (scale, chord, demo or a record) is playing stops the previous one first, so sounds never overlap
+- [x] #11 Playback is not captured by a running recording (only notes the user plays are recorded)
+- [x] #12 Unit tests cover turning a loaded record into a timed note-on/note-off schedule (ordering, overlapping and repeated notes) and the default instrument, without Tk, MIDI or audio devices
+- [x] #13 readme describes how to play back a recording
 <!-- AC:END -->
 
 ## Definition of Done
