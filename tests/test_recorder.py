@@ -56,10 +56,11 @@ class RecordShapeTests(unittest.TestCase):
         self.assertEqual(self.record["instrument"], {"name": "acoustic_grand_piano", "program": 0})
 
     def test_notes_have_timing_and_velocity(self):
+        piano = {"name": "acoustic_grand_piano", "program": 0}
         self.assertEqual(self.record["notes"], [
-            {"note": 60, "velocity": 100, "start": 0.0, "duration": 0.75},
-            {"note": 64, "velocity": 80, "start": 0.5, "duration": 0.5},
-            {"note": 67, "velocity": 90, "start": 1.0, "duration": 1.0},
+            {"note": 60, "velocity": 100, "start": 0.0, "duration": 0.75, "instrument": piano},
+            {"note": 64, "velocity": 80, "start": 0.5, "duration": 0.5, "instrument": piano},
+            {"note": 67, "velocity": 90, "start": 1.0, "duration": 1.0, "instrument": piano},
         ])
         self.assertEqual(self.record["duration"], 2.0)
 
@@ -173,7 +174,7 @@ class StorageTests(unittest.TestCase):
         self.assertEqual([i.name for i in items], ["uj", "regi", "hibas"])
         self.assertEqual(items[0].note_count, 3)
         self.assertEqual(items[0].duration, 2.0)
-        self.assertEqual(items[0].instrument, "acoustic_grand_piano")
+        self.assertEqual(items[0].instruments, ["acoustic_grand_piano"])
         self.assertIsNone(items[0].error)
         self.assertIsNotNone(items[2].error)
 
@@ -201,6 +202,87 @@ class StorageTests(unittest.TestCase):
             recorder.delete_records([inside, outside], self.dir)
         self.assertTrue(inside.exists())
         self.assertTrue(outside.exists())
+
+
+PIANO = {"name": "acoustic_grand_piano", "program": 0}
+FLUTE = {"name": "flute", "program": 73}
+VIOLIN = {"name": "violin", "program": 40}
+
+
+def v1_record() -> dict:
+    """Egy régi (1. verziójú) felvétel, ahogy a TASK-004 mentette."""
+    return {
+        "format": recorder.FORMAT, "version": 1, "created": "2026-10-21T19:40:12",
+        "instrument": dict(VIOLIN), "duration": 1.0,
+        "notes": [{"note": 60, "velocity": 100, "start": 0.0, "duration": 0.5},
+                  {"note": 64, "velocity": 90, "start": 0.5, "duration": 0.5}],
+    }
+
+
+class VersionTwoTests(unittest.TestCase):
+    """2. verzió: minden hangnak saját hangszere van; az 1. verzió továbbra is olvasható."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name)
+
+    def mixed(self) -> dict:
+        """Visszajátszott fuvola + élőben játszott zongora, a felvétel közben hegedűre váltva."""
+        clock = FakeClock()
+        rec = recorder.Recorder(clock=clock)
+        rec.start("acoustic_grand_piano", 0)
+        rec.note_on(72, 90, FLUTE)        # visszajátszott hang (saját hangszer)
+        rec.note_on(72, 100)              # ugyanaz a hang a felhasználótól (zongora) — külön szól
+        clock.advance(0.5)
+        rec.note_off(72, FLUTE)
+        rec.set_instrument("violin", 40)  # hangszerváltás lenyomott billentyűnél
+        clock.advance(0.5)
+        rec.note_off(72)                  # a zongorás hang zárul, nem marad lógva
+        rec.note_on(76, 80)               # már hegedűvel
+        clock.advance(0.5)
+        return rec.stop()
+
+    def test_new_recordings_are_version_two_with_per_note_instruments(self):
+        record = self.mixed()
+        self.assertEqual(record["version"], 2)
+        self.assertEqual(record["instrument"], PIANO)  # az induláskori hangszer
+        self.assertEqual(
+            [(n["note"], n["start"], n["duration"], n["instrument"]) for n in record["notes"]],
+            [(72, 0.0, 1.0, PIANO), (72, 0.0, 0.5, FLUTE), (76, 1.0, 0.5, VIOLIN)],
+        )
+        for n in record["notes"]:
+            self.assertEqual(set(n), {"note", "velocity", "start", "duration", "instrument"})
+        recorder.validate_record(record)
+
+    def test_v2_save_load_list_delete(self):
+        record = self.mixed()
+        path = recorder.save_record(record, "rajatszas", self.dir)
+        self.assertEqual(recorder.load_record(path), record)
+        info = recorder.list_records(self.dir)[0]
+        self.assertEqual(info.instruments, ["acoustic_grand_piano", "flute", "violin"])
+        self.assertEqual(info.note_count, 3)
+        self.assertEqual(recorder.delete_records([path], self.dir), 1)
+        self.assertEqual(recorder.list_records(self.dir), [])
+
+    def test_v1_still_loads_and_lists(self):
+        path = self.dir / "regi.json"
+        path.write_text(json.dumps(v1_record()), encoding="utf-8")
+        self.assertEqual(recorder.load_record(path), v1_record())
+        self.assertEqual(recorder.list_records(self.dir)[0].instruments, ["violin"])
+        self.assertEqual(recorder.instruments_of(v1_record()), [VIOLIN])
+        self.assertIsNone(recorder.note_instrument(v1_record(), v1_record()["notes"][0]))
+
+    def test_version_specific_note_shape_is_enforced(self):
+        v2_without = {**v1_record(), "version": 2}
+        v1_with = {**self.mixed(), "version": 1}
+        bad_instrument = self.mixed()
+        bad_instrument["notes"][0]["instrument"] = {"name": "x", "program": 128}
+        for name, data in {"v2 hangszer nélkül": v2_without, "v1 hangszerrel": v1_with,
+                           "hibás hangszer": bad_instrument, "3. verzió": {**self.mixed(), "version": 3},
+                           "bool verzió": {**v1_record(), "version": True}}.items():
+            with self.assertRaises(ValueError, msg=name):
+                recorder.validate_record(data)
 
 
 if __name__ == "__main__":

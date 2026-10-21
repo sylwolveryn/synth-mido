@@ -28,6 +28,9 @@ class RecordingMixin:
             return
         name, program = self._current_instrument()
         self.recorder.start(name, program)
+        # lejátszás közben indított felvétel: a már szóló visszajátszott hangok is bekerülnek
+        for note, velocity, instrument in self.player.sounding_voices():
+            self.recorder.note_on(note, velocity, instrument)
         self.record_btn.configure(text="■ Leállítás", style="Accent.TButton")
         if self.controller.connected and self.controller.input_port:
             if not self.listening:
@@ -35,6 +38,8 @@ class RecordingMixin:
             self.log_line(f"Felvétel indítva ({pretty_instrument(name)})")
         else:
             self.log_line("Felvétel indítva kapcsolat nélkül — a képernyős zongora hangjai rögzülnek")
+        if self.player.is_playing:
+            self.log_line(f"A lejátszott „{self.player.record_name}” is bekerül a felvételbe")
         self._tick_recording()
 
 
@@ -75,7 +80,7 @@ class RecordingMixin:
         body.pack(fill="both", expand=True)
         summary = (
             f"{len(record['notes'])} hang · {format_seconds(record['duration'])} · "
-            f"{pretty_instrument(record['instrument']['name'])}"
+            f"{', '.join(pretty_instrument(i['name']) for i in recorder.instruments_of(record))}"
         )
         ttk.Label(body, text=summary, style="Status.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
         ttk.Label(body, text="Név").grid(row=1, column=0, sticky="w", padx=(0, 8))

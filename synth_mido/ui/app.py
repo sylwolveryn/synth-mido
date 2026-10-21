@@ -41,6 +41,7 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.key_ids = {}
 
         self.recorder = recorder.Recorder()
+        self.record_channels = {}  # 2. verziójú felvétel lejátszásakor: program -> MIDI csatorna
         self.record_job = None
         self.save_dialog = None
         self.records_win = None

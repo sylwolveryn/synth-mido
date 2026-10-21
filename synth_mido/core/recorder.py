@@ -1,30 +1,38 @@
 """Felvétel — a játszott hangok rögzítése és JSON fájlba mentése a records/ mappába.
 
-Egy felvétel formátuma (UTF-8 JSON):
+Egy felvétel formátuma (UTF-8 JSON), 2. verzió — minden hangnak saját hangszere van,
+így egy felvételben több hangszer szólhat egyszerre (pl. visszajátszás + rájátszás):
 
     {
       "format": "synth-mido-record",
-      "version": 1,
-      "created": "2026-10-21T19:40:12",
+      "version": 2,
+      "created": "2026-10-22T19:40:12",
       "instrument": {"name": "acoustic_grand_piano", "program": 0},
       "duration": 12.48,
-      "notes": [{"note": 60, "velocity": 100, "start": 0.0, "duration": 0.42}, ...]
+      "notes": [{"note": 60, "velocity": 100, "start": 0.0, "duration": 0.42,
+                 "instrument": {"name": "flute", "program": 73}}, ...]
     }
 
-A hangszer csak alapértelmezés a visszajátszáshoz; a lejátszó felülírhatja.
+A felső szintű "instrument" a felvétel indításakor választott hangszer.
+
+Az 1. verzióban (régi felvételek, daloskönyv) a hangoknak nincs "instrument" mezője;
+ott a felső szintű hangszer csak alapértelmezés, a lejátszó felülírhatja.
 """
 
 import json
 import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Iterable, List, Optional
 
 RECORDS_DIR = Path(__file__).resolve().parents[2] / "records"  # a projekt gyökerében
 FORMAT = "synth-mido-record"
-VERSION = 1
+V1 = 1        # egy hangszer, felülírható (régi felvételek, daloskönyv)
+V2 = 2        # minden hangnak saját hangszere van
+VERSION = V2  # az új felvételek verziója
+VERSIONS = (V1, V2)
 EXTENSION = ".json"
 DEFAULT_PREFIX = "felvetel_"
 
@@ -49,9 +57,10 @@ class Recorder:
         self.is_recording = False
         self._start_time = 0.0
         self._stop_time = 0.0
-        self._held = {}  # hang -> (kezdet, hangerő)
+        self._held = {}  # (program, hang) -> (kezdet, hangerő, hangszer)
         self._notes = []
-        self._instrument = {"name": "", "program": 0}
+        self._instrument = {"name": "", "program": 0}  # induláskori hangszer
+        self.current = {"name": "", "program": 0}       # az éppen választott hangszer (felhasználó, MIDI bemenet)
         self._created = ""
 
     def start(self, instrument_name: str, program: int) -> None:
@@ -60,6 +69,7 @@ class Recorder:
         self._held = {}
         self._notes = []
         self._instrument = {"name": instrument_name, "program": int(program)}
+        self.current = dict(self._instrument)
         self._created = datetime.now().isoformat(timespec="seconds")
         self.is_recording = True
 
@@ -71,27 +81,42 @@ class Recorder:
     def note_count(self) -> int:
         return len(self._notes) + len(self._held)
 
-    def note_on(self, note: int, velocity: int) -> None:
+    def set_instrument(self, instrument_name: str, program: int) -> None:
+        """Hangszerváltás felvétel közben: a későbbi hangok már ezzel rögzülnek."""
+        self.current = {"name": instrument_name, "program": int(program)}
+
+    def note_on(self, note: int, velocity: int, instrument: Optional[dict] = None) -> None:
+        """Hang kezdete; `instrument` nélkül az éppen választott hangszerrel (visszajátszott hangnál a sajátjával)."""
         if not self.is_recording:
             return
+        instrument = dict(instrument or self.current)
         if velocity <= 0:
-            self.note_off(note)
+            self.note_off(note, instrument)
             return
         now = self._clock() - self._start_time
-        if note in self._held:
-            self._close(note, now)
-        self._held[note] = (now, min(int(velocity), 127))
+        key = (instrument["program"], int(note))
+        if key in self._held:
+            self._close(key, now)
+        self._held[key] = (now, min(int(velocity), 127), instrument)
 
-    def note_off(self, note: int) -> None:
-        if not self.is_recording or note not in self._held:
+    def note_off(self, note: int, instrument: Optional[dict] = None) -> None:
+        """Hang vége. Ha a megadott (vagy a jelenlegi) hangszerrel nem szól, az ugyanilyen magasságú
+        hangot zárja — így a lenyomva tartott billentyű közbeni hangszerváltás sem hagy lógó hangot."""
+        if not self.is_recording:
             return
-        self._close(note, self._clock() - self._start_time)
+        key = ((instrument or self.current)["program"], int(note))
+        if key not in self._held:
+            key = next((k for k in self._held if k[1] == note), None)
+            if key is None:
+                return
+        self._close(key, self._clock() - self._start_time)
 
-    def _close(self, note: int, end: float) -> None:
-        start, velocity = self._held.pop(note)
-        self._notes.append(
-            {"note": int(note), "velocity": velocity, "start": _r(start), "duration": _r(end - start)}
-        )
+    def _close(self, key, end: float) -> None:
+        start, velocity, instrument = self._held.pop(key)
+        self._notes.append({
+            "note": key[1], "velocity": velocity, "start": _r(start), "duration": _r(end - start),
+            "instrument": instrument,
+        })
 
     def stop(self) -> dict:
         """Felvétel leállítása; a még lenyomott hangokat a leállítás pillanatában zárja le."""
@@ -101,7 +126,7 @@ class Recorder:
             for note in list(self._held):
                 self._close(note, end)
             self.is_recording = False
-        notes = sorted(self._notes, key=lambda n: (n["start"], n["note"]))
+        notes = sorted(self._notes, key=lambda n: (n["start"], n["note"], n["instrument"]["program"]))
         return {
             "format": FORMAT,
             "version": VERSION,
@@ -137,33 +162,61 @@ def _is_num(value) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
+NOTE_KEYS = {
+    V1: {"note", "velocity", "start", "duration"},
+    V2: {"note", "velocity", "start", "duration", "instrument"},
+}
+
+
+def _is_instrument(value) -> bool:
+    return (
+        isinstance(value, dict)
+        and set(value) == {"name", "program"}
+        and isinstance(value["name"], str)
+        and _is_int(value["program"])
+        and 0 <= value["program"] <= 127
+    )
+
+
+def note_instrument(record: dict, note: dict) -> Optional[dict]:
+    """A hang saját hangszere (2. verzió); 1. verziónál None — ott a választott hangszer szól."""
+    return note.get("instrument") if record.get("version") == V2 else None
+
+
+def instruments_of(record: dict) -> List[dict]:
+    """A felvételben szóló hangszerek első megszólalás szerint (1. verziónál a felvétel hangszere)."""
+    if record.get("version") != V2:
+        return [dict(record["instrument"])]
+    seen = {}
+    for n in record["notes"]:
+        seen.setdefault(n["instrument"]["program"], n["instrument"])
+    return [dict(i) for i in seen.values()] or [dict(record["instrument"])]
+
+
 def validate_record(data) -> None:
     """Ellenőrzi a felvétel szerkezetét; hibára ValueError."""
     if not isinstance(data, dict):
         raise ValueError("A felvétel nem JSON objektum.")
     if data.get("format") != FORMAT:
         raise ValueError("Ismeretlen fájlformátum.")
-    if data.get("version") != VERSION:
-        raise ValueError(f"Nem támogatott verzió: {data.get('version')!r}.")
+    version = data.get("version")
+    if isinstance(version, bool) or version not in VERSIONS:
+        raise ValueError(f"Nem támogatott verzió: {version!r}.")
     if not isinstance(data.get("created"), str):
         raise ValueError("Hiányzik a létrehozás ideje.")
-    instrument = data.get("instrument")
-    if (
-        not isinstance(instrument, dict)
-        or not isinstance(instrument.get("name"), str)
-        or not _is_int(instrument.get("program"))
-        or not 0 <= instrument["program"] <= 127
-    ):
+    if not _is_instrument(data.get("instrument")):
         raise ValueError("Hibás hangszer adat.")
     if not _is_num(data.get("duration")) or data["duration"] < 0:
         raise ValueError("Hibás felvétel hossz.")
     notes = data.get("notes")
     if not isinstance(notes, list):
         raise ValueError("Hiányzik a hangok listája.")
+    keys = NOTE_KEYS[version]
     for i, n in enumerate(notes):
         if (
             not isinstance(n, dict)
-            or set(n) != {"note", "velocity", "start", "duration"}
+            or set(n) != keys
+            or (version == V2 and not _is_instrument(n["instrument"]))
             or not _is_int(n["note"]) or not 0 <= n["note"] <= 127
             or not _is_int(n["velocity"]) or not 1 <= n["velocity"] <= 127
             or not _is_num(n["start"]) or n["start"] < 0
@@ -205,7 +258,7 @@ class RecordInfo:
     created: str = ""
     duration: float = 0.0
     note_count: int = 0
-    instrument: str = ""
+    instruments: List[str] = field(default_factory=list)
     error: Optional[str] = None
 
 
@@ -226,7 +279,7 @@ def list_records(directory=None) -> List[RecordInfo]:
                 created=data["created"],
                 duration=data["duration"],
                 note_count=len(data["notes"]),
-                instrument=data["instrument"]["name"],
+                instruments=[i["name"] for i in instruments_of(data)],
             ))
         except ValueError as e:
             items.append(RecordInfo(path=path, name=path.stem, error=str(e)))

@@ -17,6 +17,8 @@ class VevorMIDIController:
         self.output_port: Optional[mido.ports.BaseOutput] = None
         self.device_name: Optional[str] = None
         self.connected = False
+        # csatornák, amelyekre már ment hang (a pedál és a vészleállítás mindegyiknek szól)
+        self.used_channels = {channel}
 
         # Tartalék kimenet, ha nincs csatlakoztatott MIDI kimenet (lustán nyílik meg)
         self._tone_factory = tone_factory
@@ -283,13 +285,21 @@ class VevorMIDIController:
             print(f"❌ Hiba az üzenet küldésekor: {e}")
             return False
 
-    def note_on(self, note: int, velocity: int = 100) -> None:
-        """Hang indítása (nem vár)"""
-        self._send(mido.Message('note_on', channel=self.channel, note=note, velocity=velocity))
+    def note_on(self, note: int, velocity: int = 100, channel: Optional[int] = None) -> None:
+        """Hang indítása (nem vár); csatorna nélkül a fő csatornán (a választott hangszerrel)"""
+        channel = self.channel if channel is None else channel
+        self.used_channels.add(channel)
+        self._send(mido.Message('note_on', channel=channel, note=note, velocity=velocity))
 
-    def note_off(self, note: int) -> None:
+    def note_off(self, note: int, channel: Optional[int] = None) -> None:
         """Hang leállítása"""
-        self._send(mido.Message('note_off', channel=self.channel, note=note, velocity=0), open_fallback=False)
+        channel = self.channel if channel is None else channel
+        self._send(mido.Message('note_off', channel=channel, note=note, velocity=0), open_fallback=False)
+
+    def set_program(self, channel: int, program: int) -> bool:
+        """Hangszer egy adott csatornán (pl. egy több hangszeres felvétel szólamának)"""
+        self.used_channels.add(channel)
+        return self._send(mido.Message('program_change', channel=channel, program=program))
 
     def send_note(self, note: int, velocity: int = 100, duration: float = 0.5) -> None:
         """Egy hang lejátszása a zongorán"""
@@ -310,8 +320,9 @@ class VevorMIDIController:
 
     def sustain(self, on: bool) -> None:
         """Kitartó pedál (CC 64) az aktív kimenetre; felengedéshez nem nyit tartalék kimenetet"""
-        msg = mido.Message('control_change', channel=self.channel, control=64, value=127 if on else 0)
-        self._send(msg, open_fallback=on)
+        for channel in sorted(self.used_channels):
+            msg = mido.Message('control_change', channel=channel, control=64, value=127 if on else 0)
+            self._send(msg, open_fallback=on)
 
     def change_instrument(self, instrument_number: int) -> None:
         """Hangszer váltása Program Change üzenettel"""
@@ -365,6 +376,8 @@ class VevorMIDIController:
         )
         if not sent:
             return
+        for channel in sorted(self.used_channels - {self.channel}):
+            self._send(mido.Message('control_change', channel=channel, control=123, value=0), open_fallback=False)
         for note in range(128):
             self._send(mido.Message('note_off', channel=self.channel, note=note, velocity=0), open_fallback=False)
         print("🔇 Minden hang leállítva")

@@ -76,6 +76,13 @@ class ToneSynthTests(unittest.TestCase):
         self.synth.close()
         self.assertEqual(self.synth.active_notes, [])
 
+    def test_channels_are_independent_voices(self):
+        self.synth.send(msg("note_on", note=60, velocity=100, channel=0))
+        self.synth.send(msg("note_on", note=60, velocity=100, channel=1))
+        self.synth.send(msg("note_off", note=60, channel=1))
+        self.synth.render(int(SR * tone_synth.RELEASE) + 10)
+        self.assertEqual(self.synth.active_notes, [60])  # a 0. csatorna hangja tovább szól
+
     def test_program_change_is_ignored(self):
         self.synth.send(msg("program_change", program=40))
         self.assertFalse(np.any(self.synth.render(64)))
@@ -202,6 +209,22 @@ class OutputSelectionTests(unittest.TestCase):
         tone = c.active_output
         self.assertIn(("control_change", 123), [(m.type, getattr(m, "control", None)) for m in tone.sent])
         self.assertEqual(sum(1 for m in tone.sent if m.type == "note_off"), 128)
+
+    def test_channels_for_several_instruments(self):
+        c = self.make(["Microsoft GS Wavetable Synth 0"])
+        c.set_program(1, 73)
+        port = self.opened["Microsoft GS Wavetable Synth 0"][0]
+        c.note_on(60, 90, channel=1)
+        c.note_on(60, 80)
+        c.note_off(60, channel=1)
+        c.sustain(True)
+        c.panic()
+        sent = [(m.type, m.channel, getattr(m, "note", getattr(m, "program", getattr(m, "control", None))))
+                for m in port.sent]
+        self.assertEqual(sent[:4], [("program_change", 1, 73), ("note_on", 1, 60), ("note_on", 0, 60), ("note_off", 1, 60)])
+        self.assertIn(("control_change", 0, 64), sent)
+        self.assertIn(("control_change", 1, 64), sent)
+        self.assertIn(("control_change", 1, 123), sent)
 
     def test_shutdown_closes_fallback(self):
         c = self.make([])

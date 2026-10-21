@@ -107,7 +107,7 @@ class PlayerTests(unittest.TestCase):
         self.player = Player(
             after=self.timer.after,
             cancel=self.timer.cancel,
-            on_note=lambda note, vel, on: self.log.append((round(self.timer.now, 3), note, vel, on)),
+            on_note=lambda note, vel, on, _instrument=None: self.log.append((round(self.timer.now, 3), note, vel, on)),
             on_finish=self._finish,
             clock=self.timer.clock,
         )
@@ -177,7 +177,7 @@ class TransportTests(unittest.TestCase):
         self.player = Player(
             after=self.timer.after,
             cancel=self.timer.cancel,
-            on_note=lambda note, vel, on: self.log.append((round(self.timer.now, 3), note, on)),
+            on_note=lambda note, vel, on, _instrument=None: self.log.append((round(self.timer.now, 3), note, on)),
             on_finish=self._finish,
             clock=self.timer.clock,
         )
@@ -293,6 +293,62 @@ class TransportTests(unittest.TestCase):
         self.player.stop()
         self.assertFalse(self.player.is_loaded)
         self.assertEqual(self.log, [])
+
+
+FLUTE = {"name": "flute", "program": 73}
+PIANO = {"name": "acoustic_grand_piano", "program": 0}
+
+
+def record_v2(*notes):
+    """2. verziójú felvétel: (hang, hangerő, kezdet, hossz, hangszer)."""
+    return {
+        "format": "synth-mido-record", "version": 2, "created": "2026-10-22T10:00:00",
+        "instrument": dict(PIANO), "duration": max((s + d for _, _, s, d, _ in notes), default=0.0),
+        "notes": [{"note": n, "velocity": v, "start": s, "duration": d, "instrument": i} for n, v, s, d, i in notes],
+    }
+
+
+class MultiInstrumentTests(unittest.TestCase):
+    def test_channels_skip_user_and_drum_channel(self):
+        instruments = [{"name": f"i{p}", "program": p} for p in range(16)]
+        channels = playback.assign_channels(instruments)
+        self.assertEqual(channels[0], 1)
+        self.assertNotIn(0, channels.values())
+        self.assertNotIn(playback.DRUM_CHANNEL, channels.values())
+        self.assertEqual(len(set(list(channels.values())[:14])), 14)  # 14 hangszerig mind külön csatorna
+        self.assertEqual(playback.assign_channels([FLUTE, FLUTE]), {73: 1})
+
+    def test_v1_events_have_no_instrument(self):
+        self.assertIsNone(build_schedule(record((60, 90, 0.0, 0.5)))[0].instrument)
+
+    def test_v2_events_carry_each_notes_instrument(self):
+        events = build_schedule(record_v2((60, 90, 0.0, 0.5, FLUTE), (64, 80, 0.0, 0.5, PIANO)))
+        self.assertEqual([(e.on, e.note, e.instrument["name"]) for e in events], [
+            (True, 60, "flute"), (True, 64, "acoustic_grand_piano"),
+            (False, 60, "flute"), (False, 64, "acoustic_grand_piano"),
+        ])
+
+    def test_same_pitch_on_two_instruments_is_not_cut(self):
+        events = build_schedule(record_v2((60, 90, 0.0, 1.0, FLUTE), (60, 80, 0.5, 1.0, PIANO)))
+        self.assertEqual(
+            [(e.time, e.on, e.instrument["program"]) for e in events],
+            [(0.0, True, 73), (0.5, True, 0), (1.0, False, 73), (1.5, False, 0)],
+        )
+
+    def test_player_reports_instruments_and_releases_every_voice(self):
+        timer = FakeTimer()
+        log = []
+        player = Player(timer.after, timer.cancel, lambda n, v, on, inst: log.append((n, on, inst["name"])),
+                        clock=timer.clock)
+        player.play(record_v2((60, 90, 0.0, 1.0, FLUTE), (60, 80, 0.0, 1.0, PIANO)), "ket hangszer")
+        self.assertEqual(sorted(player.sounding_voices()), [(60, 80, PIANO), (60, 90, FLUTE)])
+        self.assertEqual(player.sounding, {60})
+        player.stop()
+        self.assertEqual(sorted(log), sorted([
+            (60, True, "flute"), (60, True, "acoustic_grand_piano"),
+            (60, False, "flute"), (60, False, "acoustic_grand_piano"),
+        ]))
+        self.assertEqual(player.sounding_voices(), [])
 
 
 if __name__ == "__main__":

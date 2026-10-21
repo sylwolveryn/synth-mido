@@ -40,7 +40,7 @@ A zongora a számítógép billentyűzetéről is játszható (MIDI eszköz nél
 
 ## Hang MIDI eszköz nélkül
 
-Ha nincs csatlakoztatott MIDI kimenet, a program a gép alapértelmezett hangkimenetét használja, így a képernyős zongora, a skála / akkord / bemutató gombok és a felvételek visszajátszása eszköz nélkül is hallható:
+Ha nincs csatlakoztatott MIDI kimenet, a program a gép alapértelmezett hangkimenetét használja, így a képernyős zongora és a felvételek visszajátszása eszköz nélkül is hallható:
 
 - **Windows:** a beépített *Microsoft GS Wavetable Synth* szól, a hangszerválasztás is működik.
 - **Linux / macOS:** ha fut egy szoftveres szintetizátor (FluidSynth, TiMidity), annak a portját használja; különben egy egyszerű beépített hanggenerátor szól az alapértelmezett hangeszközön (`numpy` + `sounddevice`). Ez minden hangszert ugyanúgy szólaltat meg. Linuxon a `sounddevice`-hoz a PortAudio rendszercsomag kell (pl. `sudo apt install libportaudio2`).
@@ -63,7 +63,7 @@ A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\sy
 
 ### Hangvizualizáció
 
-A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a billentyűje fölé (fehér billentyű: cián, fekete: magenta, a fényerő a hangerőtől függ); elengedéskor az oszlop tovább emelkedik és elhalványul, hangindításkor szikrák pattannak. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet, felvétel lejátszás és a bemutató gombok. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
+A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a billentyűje fölé (fehér billentyű: cián, fekete: magenta, a fényerő a hangerőtől függ); elengedéskor az oszlop tovább emelkedik és elhalványul, hangindításkor szikrák pattannak. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet, felvétel lejátszás. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
 
 Tesztek: `python -m unittest tests.test_theme -v`
 
@@ -79,24 +79,27 @@ A "Billentyűzet figyelése" részben a **● Felvétel** gombbal indítható a 
 
 - Rögzül a zongora (MIDI bemenet) és a képernyős zongora minden lenyomott hangja. Ha van bemenet, a felvétel automatikusan elindítja a figyelést.
 - Kapcsolat nélkül is lehet felvenni ("vakon"): ilyenkor a képernyős zongora hangjai rögzülnek hang nélkül.
-- A skála / akkord / bemutató gombok nem kerülnek a felvételbe.
+- **Rájátszás:** ha felvétel közben egy felvétel szól (vagy lejátszás közben indítod a felvételt), a felvétel mindent rögzít, ami hallható: a visszajátszott hangokat a saját hangszerükkel, és amit közben te játszol, a te hangszereddel. Felvétel közben hangszert váltva a további hangok már az új hangszerrel rögzülnek.
 - Leállításkor megadható a név (alapértelmezett: `felvetel_YYYYMMDD_HHMMSS`), vagy a felvétel elvethető. Leválasztáskor és kilépéskor a futó felvétel ugyanígy menthető.
 - A **Felvételek…** ablak listázza az összes felvételt; egy vagy több kijelölt (Ctrl / Shift) felvétel egyszerre törölhető.
 
-A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárolódnak. Csak a hangokat, az időzítést és a használt hangszert tartalmazzák (a hangszer visszajátszáskor csak alapértelmezés):
+A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárolódnak. Csak a hangokat, az időzítést és a hangszereket tartalmazzák. Az új felvételek **2. verziójúak**: minden hangnak saját hangszere van, így egy felvételben több hangszer szólhat egyszerre (a felső szintű `instrument` a felvétel indításakor választott hangszer):
 
 ```json
 {
   "format": "synth-mido-record",
-  "version": 1,
-  "created": "2026-10-21T19:40:12",
+  "version": 2,
+  "created": "2026-10-22T19:40:12",
   "instrument": {"name": "acoustic_grand_piano", "program": 0},
   "duration": 12.48,
-  "notes": [{"note": 60, "velocity": 100, "start": 0.0, "duration": 0.42}]
+  "notes": [
+    {"note": 72, "velocity": 90, "start": 0.0, "duration": 1.2, "instrument": {"name": "flute", "program": 73}},
+    {"note": 60, "velocity": 100, "start": 0.5, "duration": 0.42, "instrument": {"name": "acoustic_grand_piano", "program": 0}}
+  ]
 }
 ```
 
-`start` és `duration` másodpercben értendő. Tesztek: `python -m unittest tests.test_recorder -v`
+Az **1. verziójú** felvételek (a korábbiak és a daloskönyv) továbbra is betölthetők: ott a hangoknak nincs `instrument` mezője, a felvétel hangszere egyetlen, visszajátszáskor átállítható alapértelmezés. `start` és `duration` másodpercben értendő. Tesztek: `python -m unittest tests.test_recorder -v`
 
 ## Daloskönyv
 
@@ -132,7 +135,7 @@ Egy mentett felvétel kétféleképpen játszható le:
 - a "Lejátszás" részben a **Felvétel lejátszása…** gombbal: fájlválasztó nyílik a `records/` mappában;
 - a **Felvételek…** ablakban: jelölj ki egy felvételt és nyomd meg a **Lejátszás** gombot (vagy kattints duplán / Enter).
 
-Betöltéskor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** gomb azonnal megállítja, és minden szóló hangot elhallgattat; új felvétel lejátszása leállítja az előzőt. A visszajátszás nem kerül bele egy éppen futó felvételbe.
+Egy 2. verziójú felvétel minden hangszere egyszerre, a saját hangszínén szól (mindegyik külön MIDI csatornán), a "Hangszer" lista pedig a tiéd marad: lejátszás közben azzal játszhatsz rá. Egy 1. verziójú felvétel betöltésekor a felvétel hangszere lesz kiválasztva a "Hangszer" listában, de lejátszás előtt vagy közben bármikor átállítható. A hangok az eredeti időzítéssel és hangerővel szólnak, a lejátszott billentyűk kiemelve látszanak a képernyős zongorán. MIDI eszköz nélkül az alapértelmezett hangkimeneten szól (lásd fent). A **Leállítás** gomb azonnal megállítja, és minden szóló hangot elhallgattat; új felvétel lejátszása leállítja az előzőt. Egy éppen futó felvételbe a visszajátszás is bekerül (lásd Rájátszás).
 
 ### Lejátszó vezérlők
 

@@ -3,7 +3,8 @@
 A `ToneSynth` úgy viselkedik, mint egy mido kimeneti port (`send`, `close`, `name`):
 a note_on / note_off üzenetekből lecsengő szinusz hangokat kever, és a gép
 alapértelmezett hangeszközén (sounddevice) szólaltatja meg. A hangszínt nem
-követi — minden hangszer ugyanúgy szól.
+követi — minden hangszer ugyanúgy szól —, de a csatornákat külön kezeli, így két
+hangszer azonos hangja egymástól függetlenül szól és áll le.
 
 A numpy és a sounddevice csak példányosításkor töltődik be, így hiányuk nem
 akadályozza a program indítását.
@@ -70,10 +71,10 @@ class ToneSynth:
     def send(self, msg) -> None:
         if msg.type == "note_on" and msg.velocity > 0:
             with self._lock:
-                self._voices[msg.note] = _Voice(note_frequency(msg.note), msg.velocity / 127)
+                self._voices[(msg.channel, msg.note)] = _Voice(note_frequency(msg.note), msg.velocity / 127)
         elif msg.type in ("note_on", "note_off"):
             with self._lock:
-                voice = self._voices.get(msg.note)
+                voice = self._voices.get((msg.channel, msg.note))
                 if voice is not None and voice.release_pos is None:
                     voice.release_pos = voice.pos
         elif msg.type == "control_change" and msg.control in ALL_NOTES_OFF_CONTROLS:
@@ -94,7 +95,7 @@ class ToneSynth:
     @property
     def active_notes(self):
         with self._lock:
-            return sorted(self._voices)
+            return sorted({note for _, note in self._voices})
 
     # --- hangkeverés -------------------------------------------------------
 
@@ -105,7 +106,7 @@ class ToneSynth:
         n = np.arange(frames)
         sr = self.samplerate
         with self._lock:
-            for note, v in list(self._voices.items()):
+            for key, v in list(self._voices.items()):
                 samples = v.pos + n
                 t = samples / sr
                 wave = sum(weight * np.sin(2 * np.pi * v.freq * k * t) for k, weight in HARMONICS)
@@ -118,7 +119,7 @@ class ToneSynth:
                 ended = v.release_pos is not None and (v.pos - v.release_pos) / sr >= RELEASE
                 faded = np.exp(-DECAY_RATE * v.pos / sr) < SILENCE
                 if ended or faded:
-                    del self._voices[note]
+                    del self._voices[key]
         return np.tanh(out * GAIN).astype(np.float32)
 
     def _callback(self, outdata, frames, _time, _status):

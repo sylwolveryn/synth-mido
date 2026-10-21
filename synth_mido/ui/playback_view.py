@@ -61,25 +61,38 @@ class PlaybackMixin:
         if not self.require_output():
             return
         self.stop_playback(quiet=True)
-        instrument = playback.default_instrument(record, config.INSTRUMENTS)
-        self.instrument_var.set(pretty_instrument(instrument))
-        self.on_instrument_change()
+        if record["version"] == recorder.V1:
+            # egy hangszer a fő csatornán: a felvétel hangszere lesz kiválasztva, de átállítható
+            self.record_channels = {}
+            instrument = playback.default_instrument(record, config.INSTRUMENTS)
+            self.instrument_var.set(pretty_instrument(instrument))
+            self.on_instrument_change()
+        else:
+            # minden hangszer saját csatornán; a felhasználó hangszere (0. csatorna) nem változik
+            self.record_channels = playback.assign_channels(recorder.instruments_of(record))
+            for program, channel in self.record_channels.items():
+                self.controller.set_program(channel, program)
         if not record["notes"]:
             messagebox.showinfo("Üres felvétel", f"A(z) „{path.stem}” felvételben nincs hang.", parent=parent or self.root)
             return
         self.player.set_speed(float(self.speed_var.get().rstrip("x")))
         self.player.play(record, path.stem)
+        names = ", ".join(pretty_instrument(i["name"]) for i in recorder.instruments_of(record))
         self.log_line(
-            f"Lejátszás: {path.stem} ({len(record['notes'])} hang, {format_seconds(self.player.duration)})"
+            f"Lejátszás: {path.stem} ({len(record['notes'])} hang, {format_seconds(self.player.duration)}, {names})"
         )
         self._player_changed()
 
 
-    def _on_player_note(self, note: int, velocity: int, on: bool):
+    def _on_player_note(self, note: int, velocity: int, on: bool, instrument=None):
+        """A lejátszó hangja: a saját csatornáján szól, és bekerül egy éppen futó felvételbe is."""
+        channel = self.record_channels.get(instrument["program"]) if instrument else None
         if on:
-            self.controller.note_on(note, velocity)
+            self.controller.note_on(note, velocity, channel)
+            self.recorder.note_on(note, velocity, instrument)
         else:
-            self.controller.note_off(note)
+            self.controller.note_off(note, channel)
+            self.recorder.note_off(note, instrument)
         self.highlight(note, on, velocity, events.PLAYBACK)
 
 

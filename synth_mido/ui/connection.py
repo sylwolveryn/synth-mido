@@ -88,11 +88,12 @@ class ConnectionMixin:
 
 
     def on_instrument_change(self, _event=None):
-        if self.controller.active_output is None:
-            return
         label = self.instrument_var.get()
         for name, num in config.INSTRUMENTS.items():
             if pretty_instrument(name) == label:
+                self.recorder.set_instrument(name, num)  # felvétel közben a további hangok ezzel rögzülnek
+                if self.controller.active_output is None:
+                    return
                 self.controller.change_instrument(num)
                 self.log_line(f"Hangszer: {label}")
                 return

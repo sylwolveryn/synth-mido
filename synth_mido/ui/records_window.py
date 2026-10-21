@@ -89,7 +89,7 @@ class RecordsWindowMixin:
                     info.created.replace("T", " "),
                     format_seconds(info.duration),
                     info.note_count,
-                    pretty_instrument(info.instrument),
+                    ", ".join(pretty_instrument(i) for i in info.instruments),
                 )
                 tree.insert("", "end", iid=str(info.path), values=values)
 

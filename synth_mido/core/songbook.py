@@ -84,7 +84,7 @@ class Song:
         notes.sort(key=lambda n: (n["start"], n["note"]))
         return {
             "format": recorder.FORMAT,
-            "version": recorder.VERSION,
+            "version": recorder.V1,  # egy hangszer, a lejátszón átállítható
             "created": CREATED,
             "instrument": {"name": self.instrument, "program": INSTRUMENTS[self.instrument]},
             "duration": round(start, 3),
