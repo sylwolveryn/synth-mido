@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T20:17:00Z'
-updated_date: '2026-10-21T20:23:00Z'
+updated_date: '2026-10-21T20:24:00Z'
 labels:
   - feature
   - design
@@ -14,6 +14,10 @@ dependencies:
 references:
   - ui.py
   - piano_layout.py
+modified_files:
+  - visualizer.py
+  - theme.py
+  - test_visualizer.py
 priority: medium
 type: feature
 ordinal: 18000
