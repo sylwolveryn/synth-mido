@@ -13,6 +13,8 @@ dependencies:
 references:
   - playback.py
   - ui.py
+modified_files:
+  - playback.py
 priority: medium
 type: feature
 ordinal: 6000
