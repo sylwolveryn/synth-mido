@@ -1,0 +1,34 @@
+---
+id: TASK-003.01
+title: Define light and dark UI color tokens
+status: To Do
+assignee: []
+created_date: '2026-10-21T16:11:00Z'
+labels:
+  - ui theme
+dependencies: []
+references:
+  - ui.py
+parent_task_id: TASK-003
+priority: medium
+type: feature
+ordinal: 7000
+---
+
+## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
+Widgets currently mix default ttk colors with hardcoded canvas fills, so a theme switcher has nothing consistent to apply. Named light and dark palettes need to cover the window, surfaces, text, borders, accents, piano keys, and log before any restyle work.
+<!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 Light and dark palettes exist as named tokens covering window, surfaces, text, borders, accents, piano keys, and log
+- [ ] #2 Tokens can be applied from one place rather than literals scattered through widget construction
+- [ ] #3 Piano idle and active colors are tokens, not hardcoded values in draw or highlight paths
+<!-- AC:END -->
+
+## Definition of Done
+<!-- DOD:BEGIN -->
+- [ ] #1 tests have been ran and they are green
+<!-- DOD:END -->
