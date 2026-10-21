@@ -5,9 +5,12 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T21:46:00Z'
+updated_date: '2026-10-21T21:46:00Z'
 labels:
   - architecture
 dependencies: []
+modified_files:
+  - groma/config.json
 priority: medium
 type: docs
 ordinal: 27000
