@@ -4,6 +4,7 @@ title: 'Songbook: well-known public-domain pieces as playable records'
 status: To Do
 assignee: []
 created_date: '2026-10-21T20:51:00Z'
+updated_date: '2026-10-21T21:18:00Z'
 labels:
   - feature
   - content
@@ -21,7 +22,7 @@ Give the user something to play back right away: a set of well-known pieces save
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 At least 15 public-domain pieces are available as records with proper names (e.g. Für Elise, Ode to Joy, Turkish March, In the Hall of the Mountain King, Canon in D, Radetzky March)
+- [ ] #1 At least 15 public-domain pieces are available as records with proper names (e.g. Für Elise, Ode to Joy, Turkish March, In the Hall of the Mountain King, Canon in D, Funeral March)
 - [ ] #2 Each record uses a fitting instrument and tempo and plays back correctly in the app
 - [ ] #3 No copyrighted works are included; the readme lists the pieces and composers
 - [ ] #4 A generator writes/updates the records from the songbook source
