@@ -1,7 +1,7 @@
 ---
 id: TASK-016
 title: Curate the Groma architecture map for the package layout
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T21:46:00Z'
@@ -164,17 +164,17 @@ After the TASK-012 refactor the Groma map is still an uncurated first scan: the 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Dev tooling (scripts/, tests, empty __init__ files) is excluded from the architecture
-- [ ] #2 The desktop application is one container whose components match the real responsibilities, grouped by domain
-- [ ] #3 The player, the VEVOR piano, the OS MIDI synthesizer and the audio device are declared as actor / external systems
-- [ ] #4 System, container and every component have a description and overview based on the source
-- [ ] #5 Relationships and at least two flows explain the main scenarios (playing a note, recording and playback)
-- [ ] #6 Two consecutive groma scans leave the curated map unchanged
+- [x] #1 Dev tooling (scripts/, tests, empty __init__ files) is excluded from the architecture
+- [x] #2 The desktop application is one container whose components match the real responsibilities, grouped by domain
+- [x] #3 The player, the VEVOR piano, the OS MIDI synthesizer and the audio device are declared as actor / external systems
+- [x] #4 System, container and every component have a description and overview based on the source
+- [x] #5 Relationships and at least two flows explain the main scenarios (playing a note, recording and playback)
+- [x] #6 Two consecutive groma scans leave the curated map unchanged
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -182,3 +182,9 @@ After the TASK-012 refactor the Groma map is still an uncurated first scan: the 
 <!-- SECTION:PLAN:BEGIN -->
 1. Exclude scripts/ and empty __init__.py in groma/config.json; detach and remove their components. 2. Combine the entry-file containers into one desktop-app container; move loose components in; fold the moved modules into their pre-refactor component IDs; rename file-shaped IDs to roles; group by domain. 3. Declare the player and the VEVOR piano, OS MIDI synth and audio device. 4. Describe the project, system, container and all components from the source. 5. Author verified relationships and 3 flows. 6. Two scans must leave the map unchanged.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Groma map curated for the synth_mido package. Excluded dev tooling (scripts/, tests, empty __init__ files); one desktop-app container (Python/Tkinter) with 29 components in 5 domain groups: User interface, Music core, Sound output and MIDI, Skins, Visual effects. Pre-refactor component IDs were kept by folding the moved modules into them; file-shaped IDs were renamed to roles (note-bus, note-input, note-effect, note-effect-view, skin-settings). Declared the Player actor and the VEVOR digital piano, OS MIDI synthesizer and Audio device externals. Every element is described from the source, with 45 authored relationships (including the NoteBus Observer subscriptions) and 3 flows: keyboard note, record and play back, live VEVOR input. Two consecutive scans change nothing (created 0).
+<!-- SECTION:FINAL_SUMMARY:END -->
