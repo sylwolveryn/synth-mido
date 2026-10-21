@@ -1,11 +1,11 @@
 ---
 id: TASK-008
 title: 88-key digital piano with computer keyboard play
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T19:50:00Z'
-updated_date: '2026-10-21T20:05:00Z'
+updated_date: '2026-10-21T20:16:00Z'
 labels:
   - feature
 dependencies: []
@@ -29,12 +29,18 @@ Constraints a future agent cannot see in the code: the user types on a Hungarian
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The on-screen piano shows all 88 keys of a real piano, A0 to C8, with the correct white and black key pattern
-- [ ] #2 The piano can be played from the computer keyboard as well as with the mouse, with and without a connected MIDI device
-- [ ] #3 All subtasks are Done
+- [x] #1 The on-screen piano shows all 88 keys of a real piano, A0 to C8, with the correct white and black key pattern
+- [x] #2 The piano can be played from the computer keyboard as well as with the mouse, with and without a connected MIDI device
+- [x] #3 All subtasks are Done
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+88-key digital piano with computer-keyboard play, delivered through 4 subtasks: full A0-C8 keyboard that scales with the window (008.01), two-row keyboard play on QWERTZ/QWERTY with auto-repeat filtering (008.02), octave shift with range bar and key letters reaching A0-C8 (008.03), and a Space sustain pedal that also sends CC 64 (008.04). All work goes through the shared output and recorder, with and without a MIDI device. 127 unit tests green; each subtask smoke-tested in the real window with screenshots under progress/.
+<!-- SECTION:FINAL_SUMMARY:END -->
