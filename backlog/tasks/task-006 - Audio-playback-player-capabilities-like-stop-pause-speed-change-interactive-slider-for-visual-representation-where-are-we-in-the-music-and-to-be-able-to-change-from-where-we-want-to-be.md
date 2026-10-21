@@ -4,9 +4,10 @@ title: 'Playback controls: stop, pause, speed and seek slider'
 status: To Do
 assignee: []
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T18:26:00Z'
+updated_date: '2026-10-21T19:38:00Z'
 labels: []
-dependencies: []
+dependencies:
+  - TASK-005
 ordinal: 6000
 ---
 
