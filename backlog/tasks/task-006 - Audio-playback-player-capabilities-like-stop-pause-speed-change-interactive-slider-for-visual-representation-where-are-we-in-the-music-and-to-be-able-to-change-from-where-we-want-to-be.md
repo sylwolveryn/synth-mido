@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:01:00Z'
-updated_date: '2026-10-21T20:01:00Z'
+updated_date: '2026-10-21T20:02:00Z'
 labels:
   - feature
 dependencies:
@@ -16,6 +16,7 @@ references:
 modified_files:
   - playback.py
   - test_playback.py
+  - ui.py
 priority: medium
 type: feature
 ordinal: 6000
