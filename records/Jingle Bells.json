@@ -1,0 +1,504 @@
+{
+  "format": "synth-mido-record",
+  "version": 1,
+  "created": "2026-10-21T00:00:00",
+  "instrument": {
+    "name": "acoustic_grand_piano",
+    "program": 0
+  },
+  "duration": 29.091,
+  "notes": [
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 0.0,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 0.0,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 0.455,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 0.909,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 0.909,
+      "duration": 0.818
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 1.818,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 1.818,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 2.273,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 2.727,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 2.727,
+      "duration": 0.818
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 3.636,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 3.636,
+      "duration": 0.409
+    },
+    {
+      "note": 67,
+      "velocity": 85,
+      "start": 4.091,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 4.545,
+      "duration": 0.818
+    },
+    {
+      "note": 60,
+      "velocity": 85,
+      "start": 4.545,
+      "duration": 0.614
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 5.227,
+      "duration": 0.205
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 5.455,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 5.455,
+      "duration": 1.636
+    },
+    {
+      "note": 52,
+      "velocity": 55,
+      "start": 6.364,
+      "duration": 0.818
+    },
+    {
+      "note": 41,
+      "velocity": 55,
+      "start": 7.273,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 7.273,
+      "duration": 0.409
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 7.727,
+      "duration": 0.409
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 8.182,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 8.182,
+      "duration": 0.614
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 8.864,
+      "duration": 0.205
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 9.091,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 9.091,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 9.545,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 10.0,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 10.0,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 10.455,
+      "duration": 0.205
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 10.682,
+      "duration": 0.205
+    },
+    {
+      "note": 50,
+      "velocity": 55,
+      "start": 10.909,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 10.909,
+      "duration": 0.409
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 11.364,
+      "duration": 0.409
+    },
+    {
+      "note": 45,
+      "velocity": 55,
+      "start": 11.818,
+      "duration": 0.818
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 11.818,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 12.273,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 12.727,
+      "duration": 0.818
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 12.727,
+      "duration": 0.818
+    },
+    {
+      "note": 47,
+      "velocity": 55,
+      "start": 13.636,
+      "duration": 0.818
+    },
+    {
+      "note": 67,
+      "velocity": 85,
+      "start": 13.636,
+      "duration": 0.818
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 14.545,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 14.545,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 15.0,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 15.455,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 15.455,
+      "duration": 0.818
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 16.364,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 16.364,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 16.818,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 17.273,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 17.273,
+      "duration": 0.818
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 18.182,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 18.182,
+      "duration": 0.409
+    },
+    {
+      "note": 67,
+      "velocity": 85,
+      "start": 18.636,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 19.091,
+      "duration": 0.818
+    },
+    {
+      "note": 60,
+      "velocity": 85,
+      "start": 19.091,
+      "duration": 0.614
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 19.773,
+      "duration": 0.205
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 20.0,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 20.0,
+      "duration": 1.636
+    },
+    {
+      "note": 52,
+      "velocity": 55,
+      "start": 20.909,
+      "duration": 0.818
+    },
+    {
+      "note": 41,
+      "velocity": 55,
+      "start": 21.818,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 21.818,
+      "duration": 0.409
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 22.273,
+      "duration": 0.409
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 22.727,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 22.727,
+      "duration": 0.614
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 23.409,
+      "duration": 0.205
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 23.636,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 23.636,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 24.091,
+      "duration": 0.409
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 24.545,
+      "duration": 0.818
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 24.545,
+      "duration": 0.409
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 25.0,
+      "duration": 0.205
+    },
+    {
+      "note": 64,
+      "velocity": 85,
+      "start": 25.227,
+      "duration": 0.205
+    },
+    {
+      "note": 43,
+      "velocity": 55,
+      "start": 25.455,
+      "duration": 0.818
+    },
+    {
+      "note": 67,
+      "velocity": 85,
+      "start": 25.455,
+      "duration": 0.409
+    },
+    {
+      "note": 67,
+      "velocity": 85,
+      "start": 25.909,
+      "duration": 0.409
+    },
+    {
+      "note": 47,
+      "velocity": 55,
+      "start": 26.364,
+      "duration": 0.818
+    },
+    {
+      "note": 65,
+      "velocity": 85,
+      "start": 26.364,
+      "duration": 0.409
+    },
+    {
+      "note": 62,
+      "velocity": 85,
+      "start": 26.818,
+      "duration": 0.409
+    },
+    {
+      "note": 48,
+      "velocity": 55,
+      "start": 27.273,
+      "duration": 1.636
+    },
+    {
+      "note": 60,
+      "velocity": 85,
+      "start": 27.273,
+      "duration": 1.636
+    }
+  ]
+}

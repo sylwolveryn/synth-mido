@@ -183,7 +183,8 @@ def save_record(record: dict, name: str, directory=None, overwrite: bool = False
     if path.exists() and not overwrite:
         raise FileExistsError(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(record, indent=2, ensure_ascii=False), encoding="utf-8")
+    # záró újsorral, ahogy a pre-commit end-of-file ellenőrzés várja
+    path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return path
 
 

@@ -4,6 +4,7 @@ Feladatonként egy oldal képernyőképpel; a legújabb van legfelül.
 
 | Feladat | Tartalom | Kép |
 |---|---|---|
+| [TASK-015](task-015.md) | Daloskönyv: 18 közkincs mű felvételként | <img src="task-015-songbook-list.png" width="240"> |
 | [TASK-014](task-014.md) | Winamp-szerű hangszínszabályzó ablak | <img src="task-014-equalizer.png" width="240"> |
 | [TASK-013](task-013.md) | Skin rendszer: 17 skin × sötét / világos | <img src="task-013-gallery-dark.png" width="240"> |
 | [TASK-012](task-012.md) | Refaktorálás csomagokba (Observer, Facade, Strategy) | architektúra ábra |

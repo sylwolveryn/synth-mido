@@ -126,6 +126,10 @@ class StorageTests(unittest.TestCase):
         self.assertTrue(path.is_file())
         self.assertEqual(json.loads(path.read_text(encoding="utf-8")), self.record)
 
+    def test_saved_file_ends_with_newline(self):
+        path = recorder.save_record(self.record, "ujsor", self.dir)
+        self.assertTrue(path.read_text(encoding="utf-8").endswith("}\n"))
+
     def test_save_load_round_trip(self):
         path = recorder.save_record(self.record, "kor", self.dir)
         self.assertEqual(recorder.load_record(path), self.record)

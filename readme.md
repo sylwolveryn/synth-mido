@@ -97,6 +97,33 @@ A felvételek a program mappájában, a `records/` alatt, JSON fájlként tárol
 
 `start` és `duration` másodpercben értendő. Tesztek: `python -m unittest tests.test_recorder -v`
 
+## Daloskönyv
+
+A `records/` mappában 18 közismert, **közkincs** mű található felvételként, azonnal lejátszható (Felvételek… ablak vagy Megnyitás…):
+
+| Mű | Szerző | Év | Hangszer | Hossz | Hangok |
+|---|---|---|---|---|---|
+| Für Elise | Ludwig van Beethoven | 1810 | Acoustic Grand Piano | 00:35 | 188 |
+| Ode to Joy | Ludwig van Beethoven | 1824 | String Ensemble 1 | 00:34 | 106 |
+| Twinkle Twinkle Little Star | népdal (Mozart variációk) | 1761 | Music Box | 00:28 | 66 |
+| Rondo alla Turca | Wolfgang Amadeus Mozart | 1783 | Acoustic Grand Piano | 00:15 | 170 |
+| In the Hall of the Mountain King | Edvard Grieg | 1875 | Pizzicato Strings | 00:32 | 210 |
+| Canon in D | Johann Pachelbel | 1680 | String Ensemble 1 | 01:16 | 172 |
+| Funeral March | Frédéric Chopin | 1839 | Acoustic Grand Piano | 00:23 | 58 |
+| William Tell Overture - Finale | Gioachino Rossini | 1829 | Brass Section | 00:07 | 83 |
+| Minuet in G | Christian Petzold | 1725 | Harpsichord | 00:24 | 91 |
+| Morning Mood | Edvard Grieg | 1875 | Flute | 00:17 | 66 |
+| Brahms Lullaby | Johannes Brahms | 1868 | Music Box | 00:16 | 43 |
+| Jingle Bells | James Lord Pierpont | 1857 | Acoustic Grand Piano | 00:29 | 82 |
+| Greensleeves | népdal (angol) | 1580 | Acoustic Guitar Nylon | 00:19 | 70 |
+| Eine kleine Nachtmusik | Wolfgang Amadeus Mozart | 1787 | String Ensemble 1 | 00:14 | 69 |
+| The Entertainer | Scott Joplin | 1902 | Honky Tonk Piano | 00:10 | 93 |
+| Gymnopédie No. 1 | Erik Satie | 1888 | Electric Piano 1 | 00:25 | 50 |
+| Toccata and Fugue in D minor | Johann Sebastian Bach | 1705 | Church Organ | 00:27 | 41 |
+| Moonlight Sonata | Ludwig van Beethoven | 1801 | Acoustic Grand Piano | 00:22 | 72 |
+
+Modern, szerzői jogvédett művek (pl. Imperial March) nincsenek benne. A dalok forrása a `synth_mido/core/songbook.py` tömör jelöléssel; újragenerálás: `python -m scripts.build_songbook`.
+
 ## Visszajátszás
 
 Egy mentett felvétel kétféleképpen játszható le:
