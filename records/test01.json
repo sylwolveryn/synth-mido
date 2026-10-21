@@ -1,0 +1,108 @@
+{
+  "format": "synth-mido-record",
+  "version": 1,
+  "created": "2026-10-21T20:15:48",
+  "instrument": {
+    "name": "acoustic_grand_piano",
+    "program": 0
+  },
+  "duration": 9.57,
+  "notes": [
+    {
+      "note": 55,
+      "velocity": 100,
+      "start": 1.334,
+      "duration": 0.124
+    },
+    {
+      "note": 65,
+      "velocity": 100,
+      "start": 1.743,
+      "duration": 0.105
+    },
+    {
+      "note": 61,
+      "velocity": 100,
+      "start": 2.127,
+      "duration": 0.109
+    },
+    {
+      "note": 61,
+      "velocity": 100,
+      "start": 2.28,
+      "duration": 0.13
+    },
+    {
+      "note": 60,
+      "velocity": 100,
+      "start": 2.677,
+      "duration": 0.105
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 3.146,
+      "duration": 0.094
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 3.312,
+      "duration": 0.104
+    },
+    {
+      "note": 53,
+      "velocity": 100,
+      "start": 3.622,
+      "duration": 0.098
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 4.04,
+      "duration": 0.102
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 4.489,
+      "duration": 0.129
+    },
+    {
+      "note": 64,
+      "velocity": 100,
+      "start": 4.87,
+      "duration": 0.122
+    },
+    {
+      "note": 68,
+      "velocity": 100,
+      "start": 5.305,
+      "duration": 0.797
+    },
+    {
+      "note": 68,
+      "velocity": 100,
+      "start": 6.19,
+      "duration": 0.322
+    },
+    {
+      "note": 68,
+      "velocity": 100,
+      "start": 6.547,
+      "duration": 0.14
+    },
+    {
+      "note": 67,
+      "velocity": 100,
+      "start": 6.983,
+      "duration": 1.157
+    },
+    {
+      "note": 69,
+      "velocity": 100,
+      "start": 8.444,
+      "duration": 0.143
+    }
+  ]
+}

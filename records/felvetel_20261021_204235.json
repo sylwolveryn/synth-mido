@@ -1,0 +1,78 @@
+{
+  "format": "synth-mido-record",
+  "version": 1,
+  "created": "2026-10-21T20:42:26",
+  "instrument": {
+    "name": "glockenspiel",
+    "program": 9
+  },
+  "duration": 8.662,
+  "notes": [
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 1.348,
+      "duration": 0.077
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 1.492,
+      "duration": 0.09
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 1.644,
+      "duration": 0.086
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 1.798,
+      "duration": 0.093
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 1.934,
+      "duration": 0.118
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 2.11,
+      "duration": 0.111
+    },
+    {
+      "note": 60,
+      "velocity": 100,
+      "start": 2.573,
+      "duration": 0.139
+    },
+    {
+      "note": 60,
+      "velocity": 100,
+      "start": 3.231,
+      "duration": 0.143
+    },
+    {
+      "note": 65,
+      "velocity": 100,
+      "start": 4.111,
+      "duration": 0.115
+    },
+    {
+      "note": 64,
+      "velocity": 100,
+      "start": 5.066,
+      "duration": 0.144
+    },
+    {
+      "note": 57,
+      "velocity": 100,
+      "start": 6.076,
+      "duration": 1.936
+    }
+  ]
+}
