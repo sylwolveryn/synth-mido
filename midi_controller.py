@@ -95,9 +95,38 @@ class VevorMIDIController:
         print("   3. A zongorán be van kapcsolva a MIDI mód")
         return False
     
-    def connect(self, device_name: Optional[str] = None) -> bool:
+    def connect(
+        self,
+        device_name: Optional[str] = None,
+        input_name: Optional[str] = None,
+        output_name: Optional[str] = None,
+    ) -> bool:
         """Csatlakozik a VEVOR zongorához"""
         try:
+            if self.input_port or self.output_port:
+                self.close()
+
+            if input_name or output_name:
+                self.device_name = output_name or input_name
+                if output_name:
+                    try:
+                        self.output_port = mido.open_output(output_name)
+                        print(f"✅ Kimenet megnyitva: {output_name}")
+                    except Exception as e:
+                        print(f"⚠️ Kimenet hiba: {e}")
+                if input_name:
+                    try:
+                        self.input_port = mido.open_input(input_name)
+                        print(f"✅ Bemenet megnyitva: {input_name}")
+                    except Exception as e:
+                        print(f"⚠️ Bemenet hiba: {e}")
+                if not self.input_port and not self.output_port:
+                    print("❌ Nem sikerült megnyitni a portokat!")
+                    return False
+                self.connected = True
+                print(f"🔗 Csatlakozva: {self.device_name}")
+                return True
+
             if device_name:
                 self.device_name = device_name
             else:
@@ -167,6 +196,27 @@ class VevorMIDIController:
             print(f"❌ Csatlakozási hiba: {e}")
             return False
     
+    def note_on(self, note: int, velocity: int = 100) -> None:
+        """Hang indítása (nem vár)"""
+        if not self.connected or not self.output_port:
+            print("❌ Nincs csatlakozás vagy kimenet!")
+            return
+        try:
+            msg = mido.Message('note_on', channel=self.channel, note=note, velocity=velocity)
+            self.output_port.send(msg)
+        except Exception as e:
+            print(f"❌ Hiba a hang küldésekor: {e}")
+
+    def note_off(self, note: int) -> None:
+        """Hang leállítása"""
+        if not self.connected or not self.output_port:
+            return
+        try:
+            msg = mido.Message('note_off', channel=self.channel, note=note, velocity=0)
+            self.output_port.send(msg)
+        except Exception as e:
+            print(f"❌ Hiba a hang leállításakor: {e}")
+
     def send_note(self, note: int, velocity: int = 100, duration: float = 0.5) -> None:
         """Egy hang lejátszása a zongorán"""
         if not self.connected or not self.output_port:
@@ -174,14 +224,12 @@ class VevorMIDIController:
             return
         
         try:
-            note_on = mido.Message('note_on', channel=self.channel, note=note, velocity=velocity)
-            self.output_port.send(note_on)
+            self.note_on(note, velocity)
             print(f"🔊 Hang indítva: {note} (hangerő: {velocity})")
             
             time.sleep(duration)
             
-            note_off = mido.Message('note_off', channel=self.channel, note=note, velocity=0)
-            self.output_port.send(note_off)
+            self.note_off(note)
             print(f"🔇 Hang leállítva: {note}")
         except Exception as e:
             print(f"❌ Hiba a hang küldésekor: {e}")
@@ -266,6 +314,8 @@ class VevorMIDIController:
             if self.output_port:
                 self.output_port.close()
                 print("🔌 Kimenet bezárva")
+            self.input_port = None
+            self.output_port = None
             self.connected = False
             print("🔌 Kapcsolat bontva")
         except Exception as e:
