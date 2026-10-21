@@ -1,9 +1,11 @@
 ---
 id: TASK-008
 title: 88-key digital piano with computer keyboard play
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T19:50:00Z'
+updated_date: '2026-10-21T20:05:00Z'
 labels:
   - feature
 dependencies: []
