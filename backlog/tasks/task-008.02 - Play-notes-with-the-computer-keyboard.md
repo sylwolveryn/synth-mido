@@ -4,9 +4,11 @@ title: Play notes with the computer keyboard
 status: To Do
 assignee: []
 created_date: '2026-10-21T19:50:00Z'
+updated_date: '2026-10-21T19:51:00Z'
 labels:
   - feature
-dependencies: []
+dependencies:
+  - TASK-008.01
 references:
   - ui.py
 parent_task_id: TASK-008
