@@ -1,11 +1,11 @@
 ---
 id: TASK-009
 title: Synthwave visual redesign of the GUI
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T20:17:00Z'
-updated_date: '2026-10-21T20:20:00Z'
+updated_date: '2026-10-21T20:23:00Z'
 labels:
   - feature
   - design
@@ -19,6 +19,13 @@ modified_files:
   - theme.py
   - test_theme.py
   - ui.py
+  - readme.md
+  - progress/task-009-synthwave-main.png
+  - progress/task-009-synthwave-records.png
+  - progress/task-009-synthwave-save.png
+  - progress/task-009-light-compare.png
+  - progress/task-009.md
+  - progress/README.md
 priority: medium
 type: feature
 ordinal: 17000
@@ -41,21 +48,21 @@ Decision: Synthwave becomes a fourth "Megjelenés" option and the default when n
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A "Synthwave" option appears in Megjelenés next to Rendszer / Világos / Sötét, is saved like the others, and is the default when no choice has been saved
-- [ ] #2 The Synthwave palette uses the agreed tokens and every widget (buttons, comboboxes, sliders, checkbuttons, log, records window, save dialog, piano) is themed with no default-grey Tk parts left
-- [ ] #3 A header banner shows the app title with a sunset sun and perspective grid in Synthwave, rescales with the window width, and is a plain compact title bar in the other themes
-- [ ] #4 Section titles, buttons and borders follow the Synthwave design (neon primary buttons, outlined secondary buttons, uppercase section titles)
-- [ ] #5 Piano keys, active-key highlight and the keyboard range bar use the Synthwave colours and stay clearly readable
-- [ ] #6 Switching between all four themes at runtime works with no restart and no leftover colours
-- [ ] #7 Text contrast is readable: body text and button labels have at least 4.5:1 contrast against their backgrounds in the Synthwave palette
-- [ ] #8 All existing features keep working at the default and minimum window size
-- [ ] #9 Unit tests cover the new palette (same tokens as the other palettes, contrast checks) and the new default theme
-- [ ] #10 readme and a progress page show the new design with screenshots
+- [x] #1 A "Synthwave" option appears in Megjelenés next to Rendszer / Világos / Sötét, is saved like the others, and is the default when no choice has been saved
+- [x] #2 The Synthwave palette uses the agreed tokens and every widget (buttons, comboboxes, sliders, checkbuttons, log, records window, save dialog, piano) is themed with no default-grey Tk parts left
+- [x] #3 A header banner shows the app title with a sunset sun and perspective grid in Synthwave, rescales with the window width, and is a plain compact title bar in the other themes
+- [x] #4 Section titles, buttons and borders follow the Synthwave design (neon primary buttons, outlined secondary buttons, uppercase section titles)
+- [x] #5 Piano keys, active-key highlight and the keyboard range bar use the Synthwave colours and stay clearly readable
+- [x] #6 Switching between all four themes at runtime works with no restart and no leftover colours
+- [x] #7 Text contrast is readable: body text and button labels have at least 4.5:1 contrast against their backgrounds in the Synthwave palette
+- [x] #8 All existing features keep working at the default and minimum window size
+- [x] #9 Unit tests cover the new palette (same tokens as the other palettes, contrast checks) and the new default theme
+- [x] #10 readme and a progress page show the new design with screenshots
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -66,3 +73,15 @@ Decision: Synthwave becomes a fourth "Megjelenés" option and the default when n
 3. test_theme.py: default/fallback tests move to the new default, plus Synthwave palette key parity, contrast >= 4.5 for text/button pairs and the save/load round trip.
 4. Smoke test switching all four themes at runtime, the records window and save dialog in Synthwave, default and minimum size, and screenshots. readme and progress page.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Verified: 134 unit tests green (7 new theme tests incl. WCAG contrast >= 4.5 for all Synthwave text pairs), ruff clean, real-window smoke test 19/19 across all four themes, records window and save dialog, default and minimum size. Found and fixed on the way: the status bar was pushed out of the window at the default size because the log requested 10 lines; it now reserves its space first and the log fills the rest. Screenshots avoid local paths.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Synthwave redesign: theme.py has a SYNTHWAVE palette (night #0d0221, surface #261447, neon magenta #ff2a6d, cyan #05d9e8, sunset #fdd835/#ff9e00, grid #b026ff) and is now the default mode (superseding TASK-003's System default; saved choices are kept). Shared tokens were added to all palettes, plus display_font/contrast/mix helpers. ui.py has a header canvas with a striped sunset sun, horizon and perspective grid behind a neon letter-spaced title (a plain title bar in the other themes), uppercase cyan section titles, Bahnschrift font, flat neon-bordered buttons with magenta primaries, cyan slider handles and a sunset-gradient keyboard range bar. Also fixed the long-hidden status bar. 7 new unit tests plus a real-window smoke test with screenshots.
+<!-- SECTION:FINAL_SUMMARY:END -->
