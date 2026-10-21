@@ -1,7 +1,7 @@
 ---
 id: TASK-020
 title: Flame-like glowing note effect above the piano
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
@@ -23,11 +23,11 @@ The note effect above the keys shows bars with small sparks; it feels thin. Play
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Each played note produces a glowing flame above its key that flickers while the note sounds and dies down after release
-- [ ] #2 Flames have a soft glow halo and rising embers instead of the small spark particles
-- [ ] #3 Flame colours follow the active skin (accent colours), velocity changes flame height
-- [ ] #4 Frame cost stays within the existing budget (capped shapes, pooled canvas items)
-- [ ] #5 The effect can still be switched off with Effekt; unit tests cover the model
+- [x] #1 Each played note produces a glowing flame above its key that flickers while the note sounds and dies down after release
+- [x] #2 Flames have a soft glow halo and rising embers instead of the small spark particles
+- [x] #3 Flame colours follow the active skin (accent colours), velocity changes flame height
+- [x] #4 Frame cost stays within the existing budget (capped shapes, pooled canvas items)
+- [x] #5 The effect can still be switched off with Effekt; unit tests cover the model
 <!-- AC:END -->
 
 ## Definition of Done
@@ -42,3 +42,9 @@ The note effect above the keys shows bars with small sparks; it feels thin. Play
 2. ui/fx_view.py: per-layer canvas pools (polygons/ovals), layer order halo, ember, flame, core restored only when items are created; colours from the skin sun gradient (dark/light variants).
 3. Replace the bar/spark unit tests with flame tests; real-window smoke incl. frame cost and four-skin screenshot.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Replaced the neon bars and small sparks with glowing flames: a three-layer soft halo, a flickering smoothed flame tongue with a bright core, and embers rising from the tip while the note sounds. Velocity sets height and brightness; flames flare up in 80 ms and die down in about 0.5 s after release. Colours come from each skin's sun gradient, so every skin has its own fire. Canvas items stay pooled per layer with caps of 40 flames and 70 embers; measured 3.1 ms average per frame with 10 held notes. Verified by 15 model tests and a real-window smoke test (13/13) with screenshots in four skins.
+<!-- SECTION:FINAL_SUMMARY:END -->
