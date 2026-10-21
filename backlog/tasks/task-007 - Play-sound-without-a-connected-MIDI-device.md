@@ -14,6 +14,8 @@ references:
   - ui.py
   - midi-controller
   - desktop-ui
+modified_files:
+  - tone_synth.py
 priority: medium
 type: feature
 ordinal: 10000
