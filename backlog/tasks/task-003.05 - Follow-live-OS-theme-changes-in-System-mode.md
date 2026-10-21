@@ -4,7 +4,7 @@ title: Follow live OS theme changes in System mode
 status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
-updated_date: '2026-10-21T16:49:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -25,9 +25,9 @@ System as default is incomplete if the window stays on the launch-time scheme af
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 While System is selected, an OS light/dark change updates the UI without restart
-- [ ] #2 Explicit Light or Dark is not overridden by later OS appearance changes
-- [ ] #3 Any OS-theme watcher is stopped when the window closes
+- [x] #1 While System is selected, an OS light/dark change updates the UI without restart
+- [x] #2 Explicit Light or Dark is not overridden by later OS appearance changes
+- [x] #3 Any OS-theme watcher is stopped when the window closes
 <!-- AC:END -->
 
 ## Implementation Notes
