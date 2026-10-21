@@ -20,9 +20,8 @@
         "conftest.py",
         "build/",
         "dist/",
-        "/diag.py",
-        "/usb.py",
-        "/examples.py"
+        "/scripts/",
+        "**/__init__.py"
       ]
     }
   ],
