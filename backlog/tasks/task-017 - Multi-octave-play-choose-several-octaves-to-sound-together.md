@@ -5,10 +5,21 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T21:52:00Z'
+updated_date: '2026-10-21T21:54:00Z'
 labels:
   - feature
 dependencies:
   - TASK-011
+modified_files:
+  - progress/README.md
+  - progress/task-017-octaves.png
+  - progress/task-017.md
+  - readme.md
+  - synth_mido/core/doubling.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/piano_view.py
+  - synth_mido/ui/theming.py
+  - tests/test_doubling.py
 priority: medium
 type: feature
 ordinal: 28000
@@ -35,3 +46,9 @@ TASK-011 added a fixed two-hand doubling (±1 octave). The player wants more: li
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. core/doubling.py: targets() accepts extra offsets (dedup, A0-C8 range); OctaveSelection (C0-C7, the keyboard octave always included and following X/C, ticked extras, offsets relative to the keyboard octave, label); OctaveDoubler.set_extra_offsets. 2. UI: an Oktávok ttk.Menubutton with a checkbutton per octave next to Effekt; the shorter range label makes room; piano markers for extra octaves; menubutton/menu themed from the skin. 3. Tests and smoke test; readme and progress page.
+<!-- SECTION:PLAN:END -->
