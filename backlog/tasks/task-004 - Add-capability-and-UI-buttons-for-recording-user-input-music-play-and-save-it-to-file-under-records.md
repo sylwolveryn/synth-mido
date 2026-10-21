@@ -3,11 +3,11 @@ id: TASK-004
 title: >-
   Add capability and UI buttons, for recording user input music play and save it
   to file under records
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:00:00Z'
-updated_date: '2026-10-21T18:07:00Z'
+updated_date: '2026-10-21T18:18:00Z'
 labels: []
 dependencies: []
 references:
@@ -20,7 +20,7 @@ modified_files:
   - ui.py
   - .pre-commit-config.yaml
   - readme.md
-ordinal: 4000
+ordinal: 9000
 ---
 
 ## Acceptance Criteria
