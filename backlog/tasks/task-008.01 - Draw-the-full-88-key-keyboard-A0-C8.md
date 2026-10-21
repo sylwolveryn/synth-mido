@@ -14,6 +14,7 @@ references:
 modified_files:
   - piano_layout.py
   - test_piano_layout.py
+  - ui.py
 parent_task_id: TASK-008
 priority: medium
 type: feature
