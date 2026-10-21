@@ -15,6 +15,7 @@ references:
 modified_files:
   - keyboard_play.py
   - test_keyboard_play.py
+  - ui.py
 parent_task_id: TASK-008
 priority: medium
 type: feature
