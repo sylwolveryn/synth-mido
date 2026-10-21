@@ -7,7 +7,7 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T16:00:00Z'
-updated_date: '2026-10-21T18:18:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels: []
 dependencies: []
 references:
@@ -25,12 +25,12 @@ ordinal: 9000
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Recording can be started and stopped with a button, with or without a MIDI connection, and shows elapsed time and note count
-- [ ] #2 Notes from the physical MIDI input and from on-screen piano clicks are captured with start time, duration and velocity
-- [ ] #3 On stop the user can save under the default felvetel_YYYYMMDD_HHMMSS name or a custom name, or discard the take
-- [ ] #4 Records are saved as JSON under records/ containing only notes, timing and the used instrument
-- [ ] #5 A records view lists all records and can delete one or several selected records at once
-- [ ] #6 Unit tests cover record shape/format, saving, loading and deleting, and pass in pre-commit
+- [x] #1 Recording can be started and stopped with a button, with or without a MIDI connection, and shows elapsed time and note count
+- [x] #2 Notes from the physical MIDI input and from on-screen piano clicks are captured with start time, duration and velocity
+- [x] #3 On stop the user can save under the default felvetel_YYYYMMDD_HHMMSS name or a custom name, or discard the take
+- [x] #4 Records are saved as JSON under records/ containing only notes, timing and the used instrument
+- [x] #5 A records view lists all records and can delete one or several selected records at once
+- [x] #6 Unit tests cover record shape/format, saving, loading and deleting, and pass in pre-commit
 <!-- AC:END -->
 
 ## Definition of Done
