@@ -5,11 +5,25 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T23:03:00Z'
+updated_date: '2026-10-21T23:18:00Z'
 labels:
   - ui
   - fx
 dependencies: []
+modified_files:
+  - progress/README.md
+  - progress/task-022-flute.png
+  - progress/task-022-gallery-dark.png
+  - progress/task-022-gallery-light.png
+  - progress/task-022.md
+  - readme.md
+  - synth_mido/fx/instrument_art.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/common.py
+  - synth_mido/ui/connection.py
+  - synth_mido/ui/instrument_view.py
+  - synth_mido/ui/theming.py
+  - tests/test_instrument_art.py
 priority: medium
 type: feature
 ordinal: 33000
