@@ -1,9 +1,11 @@
 ---
 id: TASK-018
 title: Remove the debug playback buttons (Skála, Akkord, Bemutató, Minden hang ki)
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T22:47:00Z'
+updated_date: '2026-10-21T22:47:00Z'
 labels:
   - ui
   - chore
@@ -31,3 +33,13 @@ The Lejátszás row still has early test buttons: a C major scale, a C major cho
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Remove the four buttons from the Lejátszás actions row in ui/app.py
+2. Delete play_scale/play_demo/play_chord/_end_chord/_play_sequence/_play_index/_release_then_next and the sequence-only state (playing, play_job, _stop_sequences) from ui/playback_view.py
+3. Remove C_MAJOR_SCALE/C_MAJOR_CHORD/DEMO_MELODY from ui/common.py and events.DEMO if unused
+4. Keep Leállítás = stop_playback (player stop + pedal up + panic)
+5. Update tests/readme, run unit tests and a window smoke test
+<!-- SECTION:PLAN:END -->
