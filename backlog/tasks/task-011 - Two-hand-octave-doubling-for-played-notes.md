@@ -1,11 +1,11 @@
 ---
 id: TASK-011
 title: Two-hand octave doubling for played notes
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T20:17:00Z'
-updated_date: '2026-10-21T20:29:00Z'
+updated_date: '2026-10-21T20:30:00Z'
 labels:
   - feature
 dependencies: []
@@ -17,6 +17,10 @@ modified_files:
   - doubling.py
   - test_doubling.py
   - ui.py
+  - readme.md
+  - progress/task-011-doubling.png
+  - progress/task-011.md
+  - progress/README.md
 priority: medium
 type: feature
 ordinal: 19000
@@ -32,20 +36,20 @@ Design: an "Oktáv duplázás" selector with Ki (off, default), +1 oktáv, −1 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 An "Oktáv duplázás" selector offers Ki, +1 oktáv, −1 oktáv and ±1 oktáv; Ki is the default and the choice is remembered between runs
-- [ ] #2 With doubling on, each mouse or computer-keyboard note also plays the same note 12 semitones away in the chosen direction(s), with the same velocity
-- [ ] #3 Doubled notes are highlighted on the piano, follow the sustain pedal and stop exactly when the original note stops, with no hanging notes, including when the setting or the octave range changes while keys are held
-- [ ] #4 Doubled notes that would fall outside A0-C8 are skipped silently
-- [ ] #5 Overlapping notes (e.g. C4 held with +1 while C5 is also pressed) do not cut each other off: a note keeps sounding while any key still needs it
-- [ ] #6 A running recording stores the doubled notes too, so playback sounds the same
-- [ ] #7 Live MIDI input and record playback are not doubled
-- [ ] #8 Unit tests cover the doubling logic (directions, range edges, overlapping and shared notes, setting change while held)
-- [ ] #9 readme and a progress page describe the feature with a screenshot
+- [x] #1 An "Oktáv duplázás" selector offers Ki, +1 oktáv, −1 oktáv and ±1 oktáv; Ki is the default and the choice is remembered between runs
+- [x] #2 With doubling on, each mouse or computer-keyboard note also plays the same note 12 semitones away in the chosen direction(s), with the same velocity
+- [x] #3 Doubled notes are highlighted on the piano, follow the sustain pedal and stop exactly when the original note stops, with no hanging notes, including when the setting or the octave range changes while keys are held
+- [x] #4 Doubled notes that would fall outside A0-C8 are skipped silently
+- [x] #5 Overlapping notes (e.g. C4 held with +1 while C5 is also pressed) do not cut each other off: a note keeps sounding while any key still needs it
+- [x] #6 A running recording stores the doubled notes too, so playback sounds the same
+- [x] #7 Live MIDI input and record playback are not doubled
+- [x] #8 Unit tests cover the doubling logic (directions, range edges, overlapping and shared notes, setting change while held)
+- [x] #9 readme and a progress page describe the feature with a screenshot
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 tests have been ran and they are green
+- [x] #1 tests have been ran and they are green
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -56,3 +60,15 @@ Design: an "Oktáv duplázás" selector with Ki (off, default), +1 oktáv, −1 
 3. Tests `test_doubling.py`: directions, range edges, shared notes, mode change while held, repeated press.
 4. Smoke test (doubled sound, highlight and effect, pedal, recording, octave shift, input/playback not doubled, persistence), screenshot, readme and progress page.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Verified: 159 unit tests green (9 new doubling tests), ruff clean, real-window smoke test 17/17 (all modes, same velocity, highlight and effect, shared note, mode change while held, A0 edge, pedal, recording contains doubles, live input and playback not doubled, persistence).
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Two-hand octave doubling: new Tk-free doubling.py (targets(), OctaveDoubler) with Off / +1 / -1 / ±1 octave. It remembers which real notes each pressed key started and counts how many held keys need each note, so shared notes keep sounding and changing the setting or octave while holding never leaves notes hanging. ui.py routes mouse and computer-keyboard notes through it, so each real note uses the existing pedal, output, recorder, highlight and effect path; live MIDI input and playback stay undoubled. A Duplázás combobox in the Lejátszás row is saved as octave_doubling. 9 unit tests plus a real-window smoke test.
+<!-- SECTION:FINAL_SUMMARY:END -->
