@@ -1,11 +1,11 @@
 ---
 id: TASK-018
 title: Remove the debug playback buttons (Skála, Akkord, Bemutató, Minden hang ki)
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T22:47:00Z'
-updated_date: '2026-10-21T22:47:00Z'
+updated_date: '2026-10-21T22:48:00Z'
 labels:
   - ui
   - chore
@@ -23,10 +23,10 @@ The Lejátszás row still has early test buttons: a C major scale, a C major cho
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The Skála, Akkord, Bemutató and Minden hang ki buttons are gone from the Lejátszás section
-- [ ] #2 The scale, chord and demo sequence code and their constants are removed
-- [ ] #3 Leállítás still stops a playing record, the pedal and every sounding note
-- [ ] #4 Unit tests and the pre-commit gate pass
+- [x] #1 The Skála, Akkord, Bemutató and Minden hang ki buttons are gone from the Lejátszás section
+- [x] #2 The scale, chord and demo sequence code and their constants are removed
+- [x] #3 Leállítás still stops a playing record, the pedal and every sounding note
+- [x] #4 Unit tests and the pre-commit gate pass
 <!-- AC:END -->
 
 ## Definition of Done
@@ -43,3 +43,9 @@ The Lejátszás row still has early test buttons: a C major scale, a C major cho
 4. Keep Leállítás = stop_playback (player stop + pedal up + panic)
 5. Update tests/readme, run unit tests and a window smoke test
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Removed the Skála, Akkord, Bemutató and Minden hang ki buttons plus the sequence player, its state (playing, play_job), the scale/chord/demo constants and the DEMO note source. Leállítás (stop_playback) still stops the player, lifts the pedal and silences all notes. Verified: 196 unit tests, ruff, and a real-window smoke test (3/3).
+<!-- SECTION:FINAL_SUMMARY:END -->
