@@ -1011,7 +1011,6 @@ class PianoApp:
     # --- számítógép billentyűzet --------------------------------------------
 
     TEXT_INPUT_CLASSES = ("Entry", "TEntry", "TCombobox", "Spinbox", "TSpinbox")
-    MODIFIER_MASK = 0x0004 | 0x0008 | 0x20000  # Control, Mod1 (Alt X11-en), Alt (Windows)
 
     def _bind_keyboard(self):
         self._on_keyboard_range()
@@ -1033,7 +1032,8 @@ class PianoApp:
             return False
 
     def on_key_press(self, event):
-        if event.state & self.MODIFIER_MASK or self._is_text_input(event.widget):
+        # módosító billentyűket (Ctrl / Alt / Num Lock) nem nézünk: a hangbillentyű mindig szól
+        if self._is_text_input(event.widget):
             return None
         if self.keyboard.press(event.keysym):
             return "break"
