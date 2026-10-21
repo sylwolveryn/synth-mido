@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T18:23:00Z'
-updated_date: '2026-10-21T18:26:00Z'
+updated_date: '2026-10-21T18:27:00Z'
 labels:
   - feature
 dependencies: []
@@ -49,3 +49,15 @@ All app sounds use the fallback, not only record playback, so TASK-005/006 shoul
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. New `tone_synth.py`: `ToneSynth` — a mido-port-like object (`send(msg)`, `close()`, `name`) that mixes simple decaying sine voices (numpy) into a sounddevice OutputStream on the default audio device. Handles note_on/note_off/all-notes-off (CC 120/123), ignores program_change. `render(frames)` is pure so it can be tested without an audio device; numpy/sounddevice are imported lazily so a missing library raises a clear error instead of crashing at import.
+2. `config.py`: `FALLBACK_SYNTH_KEYWORDS` (Microsoft GS Wavetable, plus FluidSynth/TiMidity ports when a Linux user runs one).
+3. `midi_controller.py`: one output path. `active_output` = connected output port, otherwise a lazily opened fallback (OS synth port matching the keywords, else ToneSynth). If neither is available, `fallback_error` is set once, and note sending is a silent no-op. All senders (note_on/off, chord, program change, panic) go through `_send`. `connect()` closes the fallback first (Windows GS synth can be the explicit output too). `close()` returns to the fallback lazily, and `shutdown()` also closes the fallback.
+4. `ui.py`: sound buttons, on-screen piano and instrument change work without a connection; `require_output` checks for any active output. Status bar shows the active output (device name or "alapértelmezett" fallback); the fallback error is logged once; the instrument is re-applied after disconnect; on_close uses shutdown().
+5. Tests `test_audio_output.py`: ToneSynth rendering/voices/all-notes-off without a device; controller output selection (GS port preferred, tone fallback, none → no crash + single error, connected output wins, disconnect returns to fallback) with mido mocked.
+6. Pre-commit hook: run the new tests and install mido+numpy as `additional_dependencies` for the hook env. requirements.txt: numpy, sounddevice. readme: fallback section.
+7. Verify: ruff, all unit tests, pre-commit, and an audible smoke test on this PC (GS synth fallback + forced tone fallback).
+<!-- SECTION:PLAN:END -->
