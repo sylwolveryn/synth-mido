@@ -6,7 +6,7 @@ title: >-
 status: Done
 assignee: []
 created_date: '2026-10-21T15:59:00Z'
-updated_date: '2026-10-21T16:48:00Z'
+updated_date: '2026-10-21T19:49:00Z'
 labels:
   - ui theme
 dependencies: []
@@ -22,6 +22,15 @@ ordinal: 1000
 <!-- SECTION:DESCRIPTION:BEGIN -->
 The Tkinter window in ui.py still uses default ttk/vista styling plus hardcoded piano and canvas colors. There is no Light, Dark, or System appearance, so the app cannot match the OS on first launch or let the user pick a look. This parent tracks a themed UI that stays readable across ttk widgets, the canvas piano, and the MIDI log, without changing MIDI behavior.
 <!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [x] #1 The app offers Light, Dark, and System appearance modes
+- [x] #2 System is the default when no saved preference exists
+- [x] #3 Changing the mode updates the whole window, including ttk widgets, the piano canvas, and the log
+- [x] #4 The chosen mode is restored on the next launch
+- [x] #5 Connect, play, and listen behavior is unchanged
+<!-- AC:END -->
 
 ## Implementation Plan
 
@@ -39,15 +48,6 @@ Current state: all UI is in ui.py (PianoApp). run() hardcodes ttk theme "vista" 
 
 Tests: new test_theme.py (pytest) covering palette key parity, settings load/save incl. corrupt file, OS detection with mocked registry/subprocess and the fallback path. UI wiring verified manually in Light, Dark and System, including switching OS theme live. Existing test_midi.py must stay green.
 <!-- SECTION:PLAN:END -->
-
-## Acceptance Criteria
-<!-- AC:BEGIN -->
-- [ ] #1 The app offers Light, Dark, and System appearance modes
-- [ ] #2 System is the default when no saved preference exists
-- [ ] #3 Changing the mode updates the whole window, including ttk widgets, the piano canvas, and the log
-- [ ] #4 The chosen mode is restored on the next launch
-- [ ] #5 Connect, play, and listen behavior is unchanged
-<!-- AC:END -->
 
 ## Implementation Notes
 
