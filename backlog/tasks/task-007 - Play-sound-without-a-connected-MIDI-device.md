@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@claude'
 created_date: '2026-10-21T18:23:00Z'
-updated_date: '2026-10-21T18:27:00Z'
+updated_date: '2026-10-21T18:28:00Z'
 labels:
   - feature
 dependencies: []
@@ -16,6 +16,8 @@ references:
   - desktop-ui
 modified_files:
   - tone_synth.py
+  - config.py
+  - midi_controller.py
 priority: medium
 type: feature
 ordinal: 10000
