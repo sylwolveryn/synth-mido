@@ -89,6 +89,7 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.notes.subscribe(self._on_note_event)
         self.fx_enabled_var = tk.BooleanVar(value=bool(theme.load_setting("visual_fx", True)))
         self.fx_job = None
+        self.eq_window = None  # Winamp-szerű hangszínszabályzó ablak (TASK-014)
         self._fx_keys = {}
         self._fx_pool = {"rect": [], "oval": []}
         self._fx_shown = {"rect": 0, "oval": 0}
@@ -236,6 +237,7 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.record_btn = ttk.Button(toolbar, text="● Felvétel", command=self.toggle_record)
         self.record_btn.pack(side="left", padx=(8, 3))
         ttk.Button(toolbar, text="Felvételek…", command=self.open_records).pack(side="left", padx=3)
+        ttk.Button(toolbar, text="Equalizer…", command=self.open_equalizer).pack(side="left", padx=3)
         ttk.Label(toolbar, textvariable=self.record_var, style="Status.TLabel").pack(side="left", padx=8)
 
         self.log = tk.Text(listen, height=4, wrap="word", state="disabled")  # a maradék helyet kitölti
@@ -259,6 +261,8 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
 
 
     def on_close(self):
+        if self.eq_window is not None:
+            self.eq_window.close()
         self.keyboard.release_all()
         self.set_pedal(False)
         self._finish_recording()

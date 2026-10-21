@@ -66,6 +66,12 @@ A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a bill
 
 Tesztek: `python -m unittest tests.test_theme -v`
 
+### Equalizer (Winamp-szerű)
+
+Az **Equalizer…** gomb külön ablakot nyit spektrum analizátorral, ahogy a régi Winampban: 6 választható animáció (Klasszikus oszlopok LED szegmensekkel és lehulló csúcsokkal, Tükrözött oszlopok, Oszcilloszkóp, Kör spektrum, Tűz, Spektrum görbe). Minden megszólaló hangra reagál (egér, billentyűzet, MIDI bemenet, lejátszás, bemutató), a színeket a skinből veszi; a választott animáció mentődik.
+
+![Equalizer](progress/task-014-equalizer.png)
+
 ## Felvétel
 
 A "Billentyűzet figyelése" részben a **● Felvétel** gombbal indítható a felvétel, a **■ Leállítás** gombbal áll le. Felvétel közben látszik az eltelt idő és a rögzített hangok száma.

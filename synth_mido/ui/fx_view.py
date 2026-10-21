@@ -9,6 +9,7 @@ from synth_mido.ui.common import (
     FX_HEIGHT,
     PIANO_HEIGHT,
 )
+from synth_mido.ui.equalizer_window import EqualizerWindow
 
 
 class FxMixin:
@@ -88,6 +89,13 @@ class FxMixin:
                 self.fx_canvas.itemconfigure(item, state="hidden")
             self._fx_shown[kind] = used[kind]
 
+
+    def open_equalizer(self):
+        """A Winamp-szerű hangszínszabályzó ablak megnyitása (ha már nyitva van, előtérbe hozza)."""
+        if self.eq_window is not None and self.eq_window.exists():
+            self.eq_window.focus()
+            return
+        self.eq_window = EqualizerWindow(self)
 
     def on_fx_toggle(self):
         enabled = self.fx_enabled_var.get()
