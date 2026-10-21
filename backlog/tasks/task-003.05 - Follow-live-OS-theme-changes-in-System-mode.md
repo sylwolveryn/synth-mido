@@ -1,9 +1,10 @@
 ---
 id: TASK-003.05
 title: Follow live OS theme changes in System mode
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-10-21T16:12:00Z'
+updated_date: '2026-10-21T16:49:00Z'
 labels:
   - ui theme
 dependencies:
@@ -13,7 +14,7 @@ references:
 parent_task_id: TASK-003
 priority: medium
 type: feature
-ordinal: 11000
+ordinal: 6000
 ---
 
 ## Description
@@ -28,6 +29,12 @@ System as default is incomplete if the window stays on the launch-time scheme af
 - [ ] #2 Explicit Light or Dark is not overridden by later OS appearance changes
 - [ ] #3 Any OS-theme watcher is stopped when the window closes
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+ui.py: while System is selected, root.after polls the OS scheme every 2s and re-applies on change; Light/Dark cancels the poll; on_close cancels it.
+<!-- SECTION:NOTES:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
