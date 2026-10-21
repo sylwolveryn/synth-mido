@@ -1,9 +1,11 @@
 ---
 id: TASK-009
 title: Synthwave visual redesign of the GUI
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T20:17:00Z'
+updated_date: '2026-10-21T20:18:00Z'
 labels:
   - feature
   - design
@@ -51,3 +53,12 @@ Decision: Synthwave becomes a fourth "Megjelenés" option and the default when n
 <!-- DOD:BEGIN -->
 - [ ] #1 tests have been ran and they are green
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. theme.py: SYNTHWAVE_MODE with the agreed palette, plus shared tokens in every palette: accent2, section_fg, header_bg, title_fg, sun_top/sun_mid/sun_bottom and grid. MODES puts Synthwave first and DEFAULT_MODE becomes synthwave (this supersedes TASK-003). Add display_font(families), which prefers Bahnschrift, and a WCAG contrast() helper.
+2. ui.py: a header banner canvas at the top. In Synthwave: a striped sunset sun, horizon, perspective grid, letter-spaced title with a magenta shadow and subtitle. In the other themes: a compact title bar. Both redraw on resize and theme change. apply_theme in Synthwave uses Bahnschrift, uppercase section titles in neon cyan, flat neon borders, magenta primary buttons with dark text, outlined secondary buttons, cyan slider handles, and a sunset-gradient keyboard range bar. "Synthwave" is added to Megjelenés. The window grows a little (860x830, minimum 780x720) for the header.
+3. test_theme.py: default/fallback tests move to the new default, plus Synthwave palette key parity, contrast >= 4.5 for text/button pairs and the save/load round trip.
+4. Smoke test switching all four themes at runtime, the records window and save dialog in Synthwave, default and minimum size, and screenshots. readme and progress page.
+<!-- SECTION:PLAN:END -->
