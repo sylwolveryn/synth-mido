@@ -1,11 +1,11 @@
 ---
 id: TASK-007
 title: Play sound without a connected MIDI device
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T18:23:00Z'
-updated_date: '2026-10-21T18:30:00Z'
+updated_date: '2026-10-21T18:54:00Z'
 labels:
   - feature
 dependencies: []
