@@ -4,6 +4,7 @@ Feladatonként egy oldal képernyőképpel; a legújabb van legfelül.
 
 | Feladat | Tartalom | Kép |
 |---|---|---|
+| [TASK-013](task-013.md) | Skin rendszer: 17 skin × sötét / világos | <img src="task-013-gallery-dark.png" width="240"> |
 | [TASK-012](task-012.md) | Refaktorálás csomagokba (Observer, Facade, Strategy) | architektúra ábra |
 | [TASK-011](task-011.md) | Oktáv duplázás ("két kéz") | <img src="task-011-doubling.png" width="240"> |
 | [TASK-010](task-010.md) | Synthwave hangvizualizáció | <img src="task-010-fx-synthwave.png" width="240"> |

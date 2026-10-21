@@ -82,8 +82,7 @@ class InputMixin:
             self.root.bind_class(cls, "<KeyPress-space>", lambda e: self._on_space(e, True))
             self.root.bind_class(cls, "<KeyRelease-space>", lambda e: self._on_space(e, False))
         # választás után a fókusz visszakerül az ablakra, hogy a billentyűzet újra zongorázzon
-        for combo in (self.input_combo, self.output_combo, self.theme_combo, self.instrument_combo, self.speed_combo,
-                      self.doubling_combo):
+        for combo in self.comboboxes():
             combo.bind("<<ComboboxSelected>>", lambda _e: self.root.focus_set(), add="+")
 
 

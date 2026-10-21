@@ -1,7 +1,6 @@
 """A felület közös állandói és segédfüggvényei."""
 
 
-from synth_mido.skins import theme
 
 C_MAJOR_SCALE = [60, 62, 64, 65, 67, 69, 71, 72]
 C_MAJOR_CHORD = [60, 64, 67]
@@ -25,15 +24,8 @@ def speed_label(speed: float) -> str:
     return f"{speed:g}x"
 
 
-THEME_LABELS = {
-    theme.SYNTHWAVE_MODE: "Synthwave",
-    theme.SYSTEM_MODE: "Rendszer",
-    theme.LIGHT_MODE: "Világos",
-    theme.DARK_MODE: "Sötét",
-}
 THEME_POLL_MS = 2000
-HEADER_HEIGHT = 92        # Synthwave fejléc
-HEADER_HEIGHT_PLAIN = 34  # egyszerű címsor a többi témában
+HEADER_HEIGHT = 92  # a skin fejléc alapmagassága (a skin felülírhatja)
 RECORD_TICK_MS = 250
 PLAYER_TICK_MS = 100
 FX_HEIGHT = 96      # px — a hangvizualizáció sávja a zongora fölött

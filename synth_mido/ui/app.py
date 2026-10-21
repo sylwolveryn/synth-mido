@@ -8,12 +8,11 @@ from synth_mido.audio.midi_controller import VevorMIDIController
 from synth_mido.core import doubling, events, keyboard_play, playback, recorder
 from synth_mido.core.sustain import SustainPedal
 from synth_mido.fx.visualizer import Visualizer
-from synth_mido.skins import theme
+from synth_mido.skins import registry, theme
 from synth_mido.ui.common import (
     FX_HEIGHT,
     HEADER_HEIGHT,
     PIANO_HEIGHT,
-    THEME_LABELS,
     pretty_instrument,
     speed_label,
 )
@@ -57,19 +56,17 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
             on_finish=self._on_player_finish,
         )
 
-        self.theme_mode = theme.load_mode()
-        self.scheme = theme.resolve_scheme(self.theme_mode)
-        self.palette = theme.palette_for(self.scheme)
+        self._init_skin()
         self.theme_job = None
         self.style = ttk.Style(self.root)
-        self.font_family = theme.FONT_FAMILY
 
         self.input_var = tk.StringVar()
         self.output_var = tk.StringVar()
         self.instrument_var = tk.StringVar()
         self.status_var = tk.StringVar(value="Nincs csatlakozás")
         self.velocity_var = tk.IntVar(value=100)
-        self.theme_var = tk.StringVar(value=THEME_LABELS[self.theme_mode])
+        self.skin_var = tk.StringVar(value=self.skin.name)
+        self.variant_var = tk.StringVar(value=registry.VARIANT_LABELS[self.variant])
         self.record_var = tk.StringVar(value="")
         self.player_name_var = tk.StringVar(value="Nincs betöltött felvétel")
         self.player_time_var = tk.StringVar(value="00:00 / 00:00")
@@ -128,11 +125,19 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.output_combo.grid(row=1, column=1, sticky="ew", padx=4, pady=6)
 
         ttk.Label(conn, text="Megjelenés").grid(row=2, column=0, sticky="w", padx=8, pady=6)
-        self.theme_combo = ttk.Combobox(
-            conn, textvariable=self.theme_var, values=list(THEME_LABELS.values()), state="readonly", width=16
+        look = ttk.Frame(conn)
+        look.grid(row=2, column=1, sticky="w", padx=4, pady=6)
+        self.skin_combo = ttk.Combobox(
+            look, textvariable=self.skin_var, values=[s.name for s in registry.all_skins()], state="readonly", width=16
         )
-        self.theme_combo.grid(row=2, column=1, sticky="w", padx=4, pady=6)
-        self.theme_combo.bind("<<ComboboxSelected>>", self.on_theme_change)
+        self.skin_combo.pack(side="left")
+        self.skin_combo.bind("<<ComboboxSelected>>", self.on_skin_change)
+        self.variant_combo = ttk.Combobox(
+            look, textvariable=self.variant_var, values=list(registry.VARIANT_LABELS.values()), state="readonly",
+            width=10,
+        )
+        self.variant_combo.pack(side="left", padx=(6, 0))
+        self.variant_combo.bind("<<ComboboxSelected>>", self.on_variant_change)
 
         btns = ttk.Frame(conn)
         btns.grid(row=0, column=2, rowspan=2, padx=8, pady=6)
@@ -147,13 +152,13 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
 
         ttk.Label(play, text="Hangszer").grid(row=0, column=0, sticky="w", padx=8, pady=6)
         names = [pretty_instrument(n) for n in config.INSTRUMENTS]
-        self.instrument_combo = ttk.Combobox(play, textvariable=self.instrument_var, values=names, state="readonly", width=32)
+        self.instrument_combo = ttk.Combobox(play, textvariable=self.instrument_var, values=names, state="readonly", width=24)
         self.instrument_combo.grid(row=0, column=1, sticky="w", padx=4, pady=6)
         self.instrument_combo.current(0)
         self.instrument_combo.bind("<<ComboboxSelected>>", self.on_instrument_change)
 
         ttk.Label(play, text="Hangerő").grid(row=0, column=2, sticky="w", padx=8, pady=6)
-        ttk.Scale(play, from_=1, to=127, variable=self.velocity_var, orient="horizontal", length=120).grid(
+        ttk.Scale(play, from_=1, to=127, variable=self.velocity_var, orient="horizontal", length=100).grid(
             row=0, column=3, sticky="ew", padx=4, pady=6
         )
         ttk.Label(play, text="Duplázás").grid(row=0, column=4, sticky="w", padx=(12, 4), pady=6)
@@ -163,14 +168,14 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.doubling_combo.grid(row=0, column=5, sticky="w", padx=(0, 8), pady=6)
         self.doubling_combo.bind("<<ComboboxSelected>>", self.on_doubling_change)
 
-        actions = ttk.Frame(play)
+        actions = self.actions_row = ttk.Frame(play)
         actions.grid(row=1, column=0, columnspan=6, sticky="w", padx=8, pady=(0, 8))
-        ttk.Button(actions, text="C-dúr skála", command=self.play_scale).pack(side="left", padx=3)
-        ttk.Button(actions, text="C-dúr akkord", command=self.play_chord).pack(side="left", padx=3)
-        ttk.Button(actions, text="Bemutató", command=self.play_demo).pack(side="left", padx=3)
-        ttk.Button(actions, text="Felvétel lejátszása…", command=self.open_record_file).pack(side="left", padx=3)
-        ttk.Button(actions, text="Leállítás", command=self.stop_playback).pack(side="left", padx=3)
-        ttk.Button(actions, text="Minden hang ki", command=self.panic).pack(side="left", padx=3)
+        ttk.Button(actions, text="Skála", command=self.play_scale, style="Small.TButton").pack(side="left", padx=3)
+        ttk.Button(actions, text="Akkord", command=self.play_chord, style="Small.TButton").pack(side="left", padx=3)
+        ttk.Button(actions, text="Bemutató", command=self.play_demo, style="Small.TButton").pack(side="left", padx=3)
+        ttk.Button(actions, text="Megnyitás…", command=self.open_record_file, style="Small.TButton").pack(side="left", padx=3)
+        ttk.Button(actions, text="Leállítás", command=self.stop_playback, style="Small.TButton").pack(side="left", padx=3)
+        ttk.Button(actions, text="Minden hang ki", command=self.panic, style="Small.TButton").pack(side="left", padx=3)
 
         # Lejátszó sáv: betöltött felvétel vezérlése
         bar = ttk.Frame(play)
@@ -196,13 +201,13 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
 
         piano_frame = ttk.LabelFrame(self.root, text="Zongora — 88 billentyű (egérrel vagy billentyűzettel)")
         piano_frame.pack(fill="x", **pad)
-        octave_row = ttk.Frame(piano_frame)
+        octave_row = self.octave_row = ttk.Frame(piano_frame)
         octave_row.pack(fill="x", padx=8, pady=(6, 0))
-        ttk.Button(octave_row, text="◀ Oktáv (X)", command=lambda: self.shift_octave(-1)).pack(side="left")
+        ttk.Button(octave_row, text="◀ Oktáv (X)", command=lambda: self.shift_octave(-1), style="Small.TButton").pack(side="left")
         ttk.Label(octave_row, textvariable=self.kb_range_var, width=20, anchor="center").pack(side="left", padx=6)
-        ttk.Button(octave_row, text="Oktáv (C) ▶", command=lambda: self.shift_octave(1)).pack(side="left")
+        ttk.Button(octave_row, text="Oktáv (C) ▶", command=lambda: self.shift_octave(1), style="Small.TButton").pack(side="left")
         ttk.Checkbutton(
-            octave_row, text="Betűk a billentyűkön", variable=self.show_letters_var, command=self.draw_piano
+            octave_row, text="Betűk", variable=self.show_letters_var, command=self.draw_piano
         ).pack(side="left", padx=12)
         ttk.Checkbutton(
             octave_row, text="Pedál (Szóköz)", variable=self.pedal_var, style="Pedal.TCheckbutton",

@@ -26,7 +26,7 @@ class FxMixin:
         self._fx_keys = {k.note: k for k in piano_layout.layout(width, PIANO_HEIGHT)}
         c.configure(bg=p["piano_bg"])
         c.delete("floor")
-        line = theme.mix(p["piano_bg"], p["grid"], 0.28 if self.scheme == theme.SYNTHWAVE_MODE else 0.18)
+        line = theme.mix(p["piano_bg"], p["grid"], 0.28 if self.scheme == theme.DARK else 0.18)
         for k in range(1, 6):
             y = height * (k / 6) ** 1.6
             c.create_line(0, y, width, y, fill=line, tags=("floor",))

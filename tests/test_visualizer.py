@@ -134,11 +134,11 @@ class SettingsHelperTests(unittest.TestCase):
     def test_default_when_missing(self):
         self.assertTrue(theme.load_setting("visual_fx", True, self.path))
 
-    def test_roundtrip_keeps_theme(self):
-        theme.save_mode(theme.DARK_MODE, self.path)
+    def test_roundtrip_keeps_skin(self):
+        theme.save_skin("forest", theme.LIGHT, self.path)
         self.assertTrue(theme.save_setting("visual_fx", False, self.path))
         self.assertFalse(theme.load_setting("visual_fx", True, self.path))
-        self.assertEqual(theme.load_mode(self.path), theme.DARK_MODE)
+        self.assertEqual(theme.load_skin(self.path), ("forest", theme.LIGHT))
 
 
 if __name__ == "__main__":

@@ -48,17 +48,17 @@ Csatlakoztatott MIDI kimenet esetén mindig az szól; leválasztás után a prog
 
 Tesztek: `python -m unittest tests.test_audio_output -v`
 
-## Téma
+## Megjelenés (skinek)
 
-A felület négy megjelenést támogat, a "Megjelenés" legördülő listában választható, futás közben is:
+A "Megjelenés" sorban két választó van: a **skin** és a **változat** (Sötét / Világos / Rendszer — a Rendszer az operációs rendszer beállítását követi, futás közben is). Alapértelmezés: **Synthwave, sötét**.
 
-- **Synthwave** (alapértelmezett) — 80-as évek retró-futurisztikus éjszakai stílusa: lila égbolt, neon magenta és cián, naplemente nap perspektivikus neon ráccsal a fejlécben, nagybetűs neon szakaszcímek, naplemente színátmenetű billentyűzet sáv. Betűtípus: Bahnschrift (ha nincs, Segoe UI / DejaVu Sans).
-- **Rendszer** — az operációs rendszer világos/sötét beállítását követi, akár futás közben is.
-- **Világos** és **Sötét**.
+17 skin, mindegyik sötét és világos változattal: Synthwave, Klasszikus, Űrhajós, Szafari, Térkép, Matematika, Ókor, Óceán, Erdő, Szakura, Steampunk, Arcade, Art Deco, Sivatag, Sarkvidék, Vulkán, Jazz klub. Mindegyiknek saját színpalettája, betűtípusa, rajzolt fejléc jelenete és widget stílusa van (gombok alakja, kerete, minden állapot színe, csúszkák, jelölőnégyzetek, legördülők, ablakok, zongora, effekt). Minden szöveg / háttér pár legalább 4.5 : 1 kontrasztú.
 
-A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`); a korábban mentett választás megmarad.
+A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`).
 
-![Synthwave](progress/task-010-fx-synthwave.png)
+![Skin galéria](progress/task-013-gallery-dark.png)
+
+Új skin: paletta `make_palette`-tel és fejléc rajzoló a `synth_mido/skins/painters.py`-ba, majd egy `register(Skin(...))` a `synth_mido/skins/catalog.py`-ban.
 
 ### Hangvizualizáció
 
