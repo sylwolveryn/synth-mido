@@ -1,0 +1,4 @@
+# Default ruff rule set (pyflakes + core pycodestyle errors).
+# examples.py is a scratch script with a known unused import.
+[lint.per-file-ignores]
+"examples.py" = ["F401"]

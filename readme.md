@@ -1,4 +1,4 @@
-## Install 
+## Install
 ### Windows
 download and install
 https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022
@@ -22,3 +22,12 @@ A program egy egyszerű ablakos felületet nyit: MIDI eszközök csatlakoztatás
 A felület Világos, Sötét és Rendszer megjelenést támogat (alapértelmezett: Rendszer, ami az operációs rendszer világos/sötét beállítását követi, akár futás közben is). A választás a "Megjelenés" legördülő listában állítható, és a felhasználói konfigurációs mappába mentődik (`%APPDATA%\synth-mido\settings.json`, illetve `~/.config/synth-mido/settings.json`).
 
 Tesztek: `python -m unittest test_theme -v`
+
+## Fejlesztés: pre-commit
+
+Minden `git commit` előtt lefut a minőségkapu (`.pre-commit-config.yaml`): alap fájlellenőrzések, `ruff` lint és a `test_theme` unit tesztek. Egyszeri beállítás:
+
+>pip install -r requirements-dev.txt
+>pre-commit install
+
+Kézi futtatás az összes fájlon: `pre-commit run --all-files`

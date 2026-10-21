@@ -12,7 +12,7 @@ print(f"\nPython verzió: {sys.version}")
 try:
     from importlib.metadata import version
     print(f"Mido verzió: {version('mido')}")
-except:
+except Exception:
     try:
         print(f"Mido verzió: {mido.__version__}")
     except AttributeError:
@@ -52,19 +52,19 @@ except Exception as e:
 
 # Próbáljunk csatlakozni az első kimenethez
 if outputs:
-    print(f"\n--- Teszt csatlakozás ---")
+    print("\n--- Teszt csatlakozás ---")
     try:
         with mido.open_output(outputs[0]) as port:
             print(f"✅ Csatlakozva: {outputs[0]}")
-            
+
             # Teszt üzenet küldése
             msg = mido.Message('note_on', note=30, velocity=100)
             port.send(msg)
             print("✅ Note On üzenet elküldve (C4)")
-            
+
             import time
             time.sleep(0.5)
-            
+
             msg = mido.Message('note_off', note=60, velocity=0)
             port.send(msg)
             print("✅ Note Off üzenet elküldve")

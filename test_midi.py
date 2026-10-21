@@ -27,7 +27,7 @@ try:
         print("\n🎵 Hangszer váltás: Akusztikus zongora")
         port.send(mido.Message('program_change', program=57))
         time.sleep(0.5)
-        
+
         print("🎵 C-dúr skála játszása...")
         notes = [60, 62, 64, 65, 67, 69, 71, 72]
         for note in notes:
@@ -37,11 +37,11 @@ try:
             time.sleep(0.3)
             port.send(mido.Message('note_off', note=note, velocity=0))
             time.sleep(0.1)
-        
+
         print("\n🎵 Hangszer váltás: Elektromos zongora")
         port.send(mido.Message('program_change', program=4))
         time.sleep(0.5)
-        
+
         print("🎵 C-dúr akkord...")
         chord = [60, 64, 67]
         for note in chord:
@@ -49,7 +49,7 @@ try:
         time.sleep(2.0)
         for note in chord:
             port.send(mido.Message('note_off', note=note, velocity=0))
-        
+
         print("\n✅ Teszt kész!")
 
 except Exception as e:

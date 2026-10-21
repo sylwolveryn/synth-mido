@@ -1,0 +1,28 @@
+# Quality gate that runs on every `git commit`.
+# One-time setup:  pip install -r requirements-dev.txt  &&  pre-commit install
+# Run on everything manually:  pre-commit run --all-files
+exclude: ^(backlog|groma)/|\.pyc$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff # lint only, never rewrites files
+
+  - repo: local
+    hooks:
+      - id: unit-tests
+        name: unit tests (test_theme)
+        entry: python -m unittest test_theme
+        language: python
+        pass_filenames: false
+        types: [python]

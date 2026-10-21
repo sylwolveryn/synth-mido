@@ -29,7 +29,7 @@ for device in all_devices:
         print(f"\n✅ Megtalálva: {device}")
         try:
             with mido.open_output(device) as port:
-                print(f"   Csatlakozva, teszt hang küldése...")
+                print("   Csatlakozva, teszt hang küldése...")
                 port.send(mido.Message('note_on', note=60, velocity=100))
                 time.sleep(0.5)
                 port.send(mido.Message('note_off', note=60, velocity=0))
