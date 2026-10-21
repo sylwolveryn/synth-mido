@@ -4,6 +4,7 @@ Feladatonként egy oldal képernyőképpel; a legújabb van legfelül.
 
 | Feladat | Tartalom | Kép |
 |---|---|---|
+| [TASK-020](task-020.md) | Lángoló hangeffekt | <img src="task-020-flames.png" width="240"> |
 | [TASK-019](task-019.md) | Rájátszás: a felvétel mindent rögzít, 2. verziójú formátum | <img src="task-019-mix.png" width="240"> |
 | [TASK-018](task-018.md) | Hibakereső gombok eltávolítása | — |
 | [TASK-017](task-017.md) | Többoktávos játék (Oktávok) | <img src="task-017-octaves.png" width="240"> |

@@ -63,7 +63,7 @@ A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\sy
 
 ### Hangvizualizáció
 
-A zongora feletti sávban minden megszólaló hang neon oszlopot növeszt a billentyűje fölé (fehér billentyű: cián, fekete: magenta, a fényerő a hangerőtől függ); elengedéskor az oszlop tovább emelkedik és elhalványul, hangindításkor szikrák pattannak. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet, felvétel lejátszás. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
+A zongora feletti sávban minden megszólaló hang **lángot gyújt** a billentyűje fölött: puha, háromrétegű fényudvar, lobogó lángnyelv világos maggal, a csúcsáról felszálló parázs. A láng magassága és fénye a hangerőtől függ; amíg a hang szól, lobog, elengedéskor összehúzódik és kialszik. A színek a skin színátmenetéből jönnek (Synthwave: magenta–narancs–sárga, Classic: kék, Arctic: menta–lila …). Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet és felvétel lejátszás. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
 
 Tesztek: `python -m unittest tests.test_theme -v`
 

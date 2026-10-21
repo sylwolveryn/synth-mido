@@ -21,11 +21,19 @@ def span(note):
     return (k.x0, k.x1, k.black) if k else None
 
 
-def bars(shapes):
-    return [s for s in shapes if s.kind == "bar"]
+def of(kind, shapes):
+    return [s for s in shapes if s.kind == kind]
 
 
-class VisualizerTests(unittest.TestCase):
+def xs(shape):
+    return shape.points[0::2]
+
+
+def ys(shape):
+    return shape.points[1::2]
+
+
+class FlameTests(unittest.TestCase):
     def setUp(self):
         self.v = vz.Visualizer(clock=lambda: 0.0)
 
@@ -33,91 +41,110 @@ class VisualizerTests(unittest.TestCase):
         self.assertFalse(self.v.active)
         self.assertEqual(self.v.frame(0, W, H, span), [])
 
-    def test_note_on_spawns_bar_glow_and_sparks(self):
+    def test_note_on_lights_a_glowing_flame_with_embers(self):
         self.v.note_on(60, 100, t=0.0)
-        shapes = self.v.frame(0.1, W, H, span)
-        kinds = [s.kind for s in shapes]
-        self.assertEqual(kinds.count("bar"), 1)
-        self.assertEqual(kinds.count("glow"), 1)
-        self.assertEqual(kinds.count("spark"), vz.SPARKS_PER_NOTE)
+        kinds = [s.kind for s in self.v.frame(0.1, W, H, span)]
+        self.assertEqual(kinds.count("halo"), len(vz.HALO_WIDTH))   # többrétegű fényudvar
+        self.assertEqual(kinds.count("flame"), 1)
+        self.assertEqual(kinds.count("core"), 1)
+        self.assertEqual(kinds.count("ember"), vz.EMBER_BURST)
 
-    def test_bar_is_aligned_with_its_key(self):
+    def test_layers_are_drawn_back_to_front(self):
+        for note in (60, 64, 67):
+            self.v.note_on(note, 100, t=0)
+        kinds = [s.kind for s in self.v.frame(0.2, W, H, span)]
+        order = {k: i for i, k in enumerate(("halo", "ember", "flame", "core"))}
+        self.assertEqual([order[k] for k in kinds], sorted(order[k] for k in kinds))
+
+    def test_flame_stands_on_its_key(self):
         for note in (21, 60, 61, 108):
             v = vz.Visualizer()
             v.note_on(note, 100, t=0)
-            bar = bars(v.frame(0.2, W, H, span))[0]
+            flame = of("flame", v.frame(0.2, W, H, span))[0]
             k = KEYS[note]
-            self.assertEqual((bar.x0, bar.x1, bar.black), (k.x0, k.x1, k.black))
+            self.assertEqual(max(ys(flame)), H)                    # a sáv aljáról, a billentyűből nő ki
+            base = [x for x, y in zip(xs(flame), ys(flame)) if y == H]
+            self.assertAlmostEqual(sum(base) / 2, (k.x0 + k.x1) / 2)  # a billentyű közepén áll
+            self.assertTrue(flame.black == k.black)
 
-    def test_sounding_bar_grows_from_the_key(self):
+    def test_flame_flares_up_then_flickers(self):
         self.v.note_on(60, 100, t=0)
-        b1 = bars(self.v.frame(0.2, W, H, span))[0]
-        b2 = bars(self.v.frame(0.5, W, H, span))[0]
-        self.assertEqual(b1.y1, H)
-        self.assertEqual(b2.y1, H)
-        self.assertAlmostEqual(b1.y0, H - 0.2 * vz.RISE_SPEED)
-        self.assertLess(b2.y0, b1.y0)
+        heights = [H - min(ys(of("flame", self.v.frame(t, W, H, span))[0])) for t in (0.02, 0.2, 0.33, 0.47)]
+        self.assertLess(heights[0], heights[1])                 # felcsap
+        self.assertGreater(len({round(h, 1) for h in heights[1:]}), 1)  # lobog
+        self.assertTrue(all(h <= H for h in heights))
 
-    def test_released_bar_detaches_rises_and_fades(self):
+    def test_core_is_inside_the_flame(self):
         self.v.note_on(60, 100, t=0)
-        self.v.note_off(60, t=0.3)
-        b = bars(self.v.frame(0.5, W, H, span))[0]
-        self.assertAlmostEqual(b.y1, H - 0.2 * vz.RISE_SPEED)
-        self.assertLess(b.intensity, vz._base_intensity(100))
-        glows = [s for s in self.v.frame(0.5, W, H, span) if s.kind == "glow"]
-        self.assertEqual(glows, [])  # csak a szóló hang ragyog
+        shapes = self.v.frame(0.3, W, H, span)
+        flame, core = of("flame", shapes)[0], of("core", shapes)[0]
+        self.assertGreater(min(ys(core)), min(ys(flame)))
+        self.assertLess(max(xs(core)) - min(xs(core)), max(xs(flame)) - min(xs(flame)))
 
-    def test_trail_is_removed_after_leaving_or_fading(self):
-        self.v.note_on(60, 100, t=0)
-        self.v.note_off(60, t=0.1)
-        self.v.frame(5.0, W, H, span)
-        self.assertFalse(self.v.active)
+    def test_velocity_sets_height_and_brightness(self):
+        self.v.note_on(60, 20, t=0)
+        self.v.note_on(72, 127, t=0)
+        flames = {round(sum(xs(f)) / len(xs(f)) // 30): f for f in of("flame", self.v.frame(0.2, W, H, span))}
+        quiet, loud = sorted(flames.values(), key=lambda f: f.intensity)
+        self.assertLess(H - min(ys(quiet)), H - min(ys(loud)))
+        self.assertAlmostEqual(loud.intensity, 1.0)
 
-    def test_sounding_bar_stays_while_held(self):
+    def test_held_note_keeps_burning_and_sheds_embers(self):
         self.v.note_on(60, 100, t=0)
-        self.assertEqual(len(bars(self.v.frame(30.0, W, H, span))), 1)
+        for i in range(1, 61):                     # 2 mp, ~30 fps
+            shapes = self.v.frame(i / 30, W, H, span)
+        self.assertEqual(len(of("flame", shapes)), 1)
+        self.assertGreater(len(of("ember", shapes)), 0)   # a gyújtási parázs rég kialudt, ezek újak
         self.assertTrue(self.v.active)
 
-    def test_velocity_sets_brightness(self):
-        self.v.note_on(60, 20, t=0)
-        self.v.note_on(64, 127, t=0)
-        b = {s.x0: s.intensity for s in bars(self.v.frame(0.1, W, H, span))}
-        self.assertLess(b[KEYS[60].x0], b[KEYS[64].x0])
-        self.assertAlmostEqual(b[KEYS[64].x0], 1.0)
+    def test_release_dies_down_and_goes_out(self):
+        self.v.note_on(60, 100, t=0)
+        self.v.frame(0.3, W, H, span)
+        self.v.note_off(60, t=0.3)
+        before = of("flame", self.v.frame(0.31, W, H, span))[0]
+        after = of("flame", self.v.frame(0.3 + vz.FADE * 0.7, W, H, span))[0]
+        self.assertLess(after.intensity, before.intensity)
+        self.assertLess(H - min(ys(after)), H - min(ys(before)))
+        self.v.frame(0.3 + vz.FADE + vz.EMBER_LIFE + 0.1, W, H, span)
+        self.assertFalse(self.v.active)
 
-    def test_retrigger_detaches_previous_bar(self):
+    def test_retrigger_lights_a_new_flame(self):
         self.v.note_on(60, 100, t=0)
         self.v.note_on(60, 100, t=0.2)
-        self.v.note_off(60, t=0.4)
-        shapes = bars(self.v.frame(0.5, W, H, span))
-        self.assertEqual(len(shapes), 2)
-        self.assertTrue(all(s.y1 < H for s in shapes))
+        self.assertEqual(len(of("flame", self.v.frame(0.25, W, H, span))), 2)
+        self.v.frame(0.2 + vz.FADE + 0.05, W, H, span)
+        self.assertEqual(len(self.v.flames), 1)
 
-    def test_sparks_expire(self):
+    def test_embers_rise_and_expire(self):
         self.v.note_on(60, 100, t=0)
-        self.v.frame(vz.SPARK_LIFE + 0.01, W, H, span)
-        self.assertEqual(self.v.sparks, [])
+        e1 = of("ember", self.v.frame(0.1, W, H, span))
+        e2 = of("ember", self.v.frame(0.3, W, H, span))
+        self.assertLess(sum(ys(e2[0])), sum(ys(e1[0])))
+        self.v.note_off(60, t=0.3)
+        self.v.frame(0.3 + vz.EMBER_LIFE + 0.05, W, H, span)
+        self.assertEqual(self.v.embers, [])
 
     def test_caps_limit_objects(self):
         for i in range(400):
             note = 21 + i % 88
             self.v.note_on(note, 100, t=i * 0.001)
-            self.v.note_off(note, t=i * 0.001 + 0.0005)
-        self.assertLessEqual(len(self.v.bars), vz.MAX_BARS)
-        self.assertLessEqual(len(self.v.sparks), vz.MAX_SPARKS)
-        shapes = self.v.frame(0.5, W, H, span)
-        self.assertLessEqual(len(shapes), 2 * vz.MAX_BARS + vz.MAX_SPARKS)
+            if i % 3:
+                self.v.note_off(note, t=i * 0.001 + 0.0005)
+        self.assertLessEqual(len(self.v.flames), vz.MAX_FLAMES)
+        self.assertLessEqual(len(self.v.embers), vz.MAX_EMBERS)
+        shapes = self.v.frame(0.45, W, H, span)
+        self.assertLessEqual(len(shapes), (len(vz.HALO_WIDTH) + 2) * vz.MAX_FLAMES + vz.MAX_EMBERS)
 
     def test_caps_keep_sounding_notes_first(self):
         self.v.note_on(60, 100, t=0)  # végig szól
-        for i in range(vz.MAX_BARS + 20):
+        for i in range(vz.MAX_FLAMES + 20):
             self.v.note_on(70, 100, t=0.001 * i)
             self.v.note_off(70, t=0.001 * i)
-        self.assertIn(60, [b.note for b in self.v.bars])
+        self.assertIn(60, [f.note for f in self.v.flames])
 
     def test_notes_outside_keyboard_are_ignored_in_frame(self):
         self.v.note_on(12, 100, t=0)
-        self.assertEqual(bars(self.v.frame(0.1, W, H, span)), [])
+        self.assertEqual(self.v.frame(0.1, W, H, span), [])
 
     def test_clear(self):
         self.v.note_on(60, 100, t=0)

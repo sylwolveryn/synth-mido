@@ -17,7 +17,7 @@ from synth_mido.ui.common import (
     speed_label,
 )
 from synth_mido.ui.connection import ConnectionMixin
-from synth_mido.ui.fx_view import FxMixin
+from synth_mido.ui.fx_view import FX_LAYERS, FxMixin
 from synth_mido.ui.input import InputMixin
 from synth_mido.ui.piano_view import PianoViewMixin
 from synth_mido.ui.playback_view import PlaybackMixin
@@ -90,8 +90,8 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.fx_job = None
         self.eq_window = None  # Winamp-szerű hangszínszabályzó ablak (TASK-014)
         self._fx_keys = {}
-        self._fx_pool = {"rect": [], "oval": []}
-        self._fx_shown = {"rect": 0, "oval": 0}
+        self._fx_pool = {layer: [] for layer in FX_LAYERS}
+        self._fx_shown = dict.fromkeys(FX_LAYERS, 0)
         saved_doubling = theme.load_setting("octave_doubling", doubling.DEFAULT_MODE)
         self.doubler = doubling.OctaveDoubler(saved_doubling)
         self.doubling_var = tk.StringVar(value=doubling.LABELS[self.doubler.mode])

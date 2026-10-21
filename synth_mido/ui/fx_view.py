@@ -1,4 +1,4 @@
-"""Hangvizualizáció sáv a zongora fölött."""
+"""Hangvizualizáció sáv a zongora fölött: lángok a szóló hangok billentyűi fölött."""
 
 import time
 
@@ -10,6 +10,26 @@ from synth_mido.ui.common import (
     PIANO_HEIGHT,
 )
 from synth_mido.ui.equalizer_window import EqualizerWindow
+
+FX_LAYERS = ("halo", "ember", "flame", "core")  # rajzolási sorrend hátulról előre
+
+
+def flame_colors(p: dict, dark: bool) -> dict:
+    """Rétegenkénti színek (fehér, fekete billentyű) a skin "nap" színátmenetéből: így minden skinnek
+    saját lángja van (Synthwave: magenta–narancs–sárga, Classic: kék, Arctic: menta–lila …)."""
+    if dark:
+        return {
+            "halo": (p["sun_bottom"], p["accent2"]),
+            "flame": (p["sun_mid"], p["sun_bottom"]),
+            "core": (theme.mix(p["sun_top"], "#ffffff", 0.35), p["sun_top"]),
+            "ember": (p["sun_top"], p["sun_mid"]),
+        }
+    return {
+        "halo": (p["sun_mid"], p["accent2"]),
+        "flame": (p["sun_bottom"], p["accent"]),
+        "core": (p["sun_top"], p["sun_mid"]),
+        "ember": (p["sun_bottom"], p["accent"]),
+    }
 
 
 class FxMixin:
@@ -57,24 +77,31 @@ class FxMixin:
         self.fx_job = None
         started = time.monotonic()
         if not self.fx_enabled_var.get():
-            self._fx_hide_from({"rect": 0, "oval": 0})
+            self._fx_hide_from(dict.fromkeys(FX_LAYERS, 0))
             return
         c, p = self.fx_canvas, self.palette
         bg = p["piano_bg"]
-        colors = {False: p["key_white_active"], True: p["key_black_active"]}
+        colors = flame_colors(p, self.scheme == theme.DARK)
         width = max(c.winfo_width(), 100)
         # a vászon elemeit újrahasznosítjuk (mozgatás + átszínezés), nem töröljük / hozzuk létre minden képkockán
-        used = {"rect": 0, "oval": 0}
+        used = dict.fromkeys(FX_LAYERS, 0)
+        created = False
         for s in self.visualizer.frame(time.monotonic(), width, FX_HEIGHT, self._fx_key_span):
-            kind = "oval" if s.kind == "spark" else "rect"
-            pool = self._fx_pool[kind]
-            if used[kind] == len(pool):
-                create = c.create_oval if kind == "oval" else c.create_rectangle
-                pool.append(create(0, 0, 0, 0, outline="", tags=("fx",)))
-            item = pool[used[kind]]
-            used[kind] += 1
-            c.coords(item, s.x0, s.y0, s.x1, s.y1)
-            c.itemconfigure(item, fill=theme.mix(bg, colors[s.black], min(max(s.intensity, 0.0), 1.0)), state="normal")
+            pool = self._fx_pool[s.kind]
+            if used[s.kind] == len(pool):
+                if s.kind in ("flame", "core"):
+                    pool.append(c.create_polygon(0, 0, 0, 0, 0, 0, outline="", smooth=True, tags=("fx", "fx-" + s.kind)))
+                else:
+                    pool.append(c.create_oval(0, 0, 0, 0, outline="", tags=("fx", "fx-" + s.kind)))
+                created = True
+            item = pool[used[s.kind]]
+            used[s.kind] += 1
+            c.coords(item, *s.points)
+            fill = theme.mix(bg, colors[s.kind][s.black], min(max(s.intensity, 0.0), 1.0))
+            c.itemconfigure(item, fill=fill, state="normal")
+        if created:  # új elem a tetejére kerül — a rétegek sorrendjét helyreállítjuk
+            for layer in FX_LAYERS[1:]:
+                c.tag_raise("fx-" + layer)
         self._fx_hide_from(used)
         if self.visualizer.active:
             # ha egy képkocka mégis sokáig tart, ritkábban rajzolunk — a hangok időzítése az első
@@ -102,10 +129,10 @@ class FxMixin:
         theme.save_setting("visual_fx", enabled)
         if enabled:
             self.fx_canvas.pack(fill="x", padx=8, pady=(6, 0), before=self.canvas)
-            for note in self.active_notes:  # a már szóló hangok is kapjanak oszlopot
+            for note in self.active_notes:  # a már szóló hangok is kapjanak lángot
                 self.visualizer.note_on(note, 100)
             self._start_fx()
         else:
             self.visualizer.clear()
-            self._fx_hide_from({"rect": 0, "oval": 0})
+            self._fx_hide_from(dict.fromkeys(FX_LAYERS, 0))
             self.fx_canvas.pack_forget()
