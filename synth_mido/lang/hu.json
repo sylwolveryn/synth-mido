@@ -2,6 +2,7 @@
   "language.name": "Magyar",
 
   "app.title": "VEVOR MIDI vezérlő",
+
   "header.subtitle": "VEVOR MIDI vezérlő · 88 billentyű",
 
   "section.connection": "Csatlakozás",
@@ -13,6 +14,7 @@
   "conn.output": "Kimenet",
   "conn.look": "Megjelenés",
   "conn.language": "Nyelv",
+  "conn.effect": "Effekt",
 
   "play.instrument": "Hangszer",
   "play.velocity": "Hangerő",
@@ -176,6 +178,21 @@
   "eq.radial": "Kör spektrum",
   "eq.fire": "Tűz",
   "eq.area": "Spektrum görbe",
+
+  "fx.neon": "Neon oszlopok",
+  "fx.flames": "Lángok",
+  "fx.petals": "Cseresznyeszirmok",
+  "fx.leaves": "Falevelek",
+  "fx.steam": "Gőz",
+  "fx.dust": "Homokpor",
+  "fx.bubbles": "Buborékok",
+  "fx.snow": "Hópelyhek",
+  "fx.stars": "Csillagok",
+  "fx.pixels": "Pixelek",
+  "fx.math": "Matematikai jelek",
+  "fx.roman": "Római számok",
+  "fx.notes": "Hangjegyek",
+  "fx.compass": "Iránytű csillagok",
 
   "art.piano": "Cica a zongoránál",
   "art.chromatic": "Pingvin a xilofonon",

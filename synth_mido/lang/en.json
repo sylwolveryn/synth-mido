@@ -2,6 +2,7 @@
   "language.name": "English",
 
   "app.title": "VEVOR MIDI controller",
+
   "header.subtitle": "VEVOR MIDI controller · 88 keys",
 
   "section.connection": "Connection",
@@ -13,6 +14,7 @@
   "conn.output": "Output",
   "conn.look": "Appearance",
   "conn.language": "Language",
+  "conn.effect": "Effect",
 
   "play.instrument": "Instrument",
   "play.velocity": "Volume",
@@ -176,6 +178,21 @@
   "eq.radial": "Radial spectrum",
   "eq.fire": "Fire",
   "eq.area": "Spectrum curve",
+
+  "fx.neon": "Neon bars",
+  "fx.flames": "Flames",
+  "fx.petals": "Cherry petals",
+  "fx.leaves": "Leaves",
+  "fx.steam": "Steam",
+  "fx.dust": "Sand dust",
+  "fx.bubbles": "Bubbles",
+  "fx.snow": "Snowflakes",
+  "fx.stars": "Stars",
+  "fx.pixels": "Pixels",
+  "fx.math": "Math symbols",
+  "fx.roman": "Roman numerals",
+  "fx.notes": "Music notes",
+  "fx.compass": "Compass stars",
 
   "art.piano": "Kitty at the piano",
   "art.chromatic": "Penguin on the xylophone",

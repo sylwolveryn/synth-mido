@@ -2,6 +2,7 @@
   "language.name": "tlhIngan Hol",
 
   "app.title": "VEVOR MIDI SeHlaw",
+
   "header.subtitle": "VEVOR MIDI SeHlaw · 88 leQ",
 
   "section.connection": "rar",
@@ -13,6 +14,7 @@
   "conn.output": "mej",
   "conn.look": "mIllogh",
   "conn.language": "Hol",
+  "conn.effect": "wovmoH",
 
   "play.instrument": "QoQ jan",
   "play.velocity": "wab HoS",
@@ -176,6 +178,21 @@
   "eq.radial": "gho wab",
   "eq.fire": "qul",
   "eq.area": "wab tlhegh",
+
+  "fx.neon": "wov tlhegh",
+  "fx.flames": "qul",
+  "fx.petals": "Sakura por",
+  "fx.leaves": "por",
+  "fx.steam": "SIp",
+  "fx.dust": "Deb lam",
+  "fx.bubbles": "bIQ moQ",
+  "fx.snow": "chuch",
+  "fx.stars": "Hovmey",
+  "fx.pixels": "mIllogh ngutlh",
+  "fx.math": "mI' ngutlh",
+  "fx.roman": "ngo' mI'",
+  "fx.notes": "QoQ ngutlh",
+  "fx.compass": "Hov SIrgh",
 
   "art.piano": "QoQ jan chu' vIghro'",
   "art.chromatic": "Sor QoQ jan qIp bIQ bo'Degh",

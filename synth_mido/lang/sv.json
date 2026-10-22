@@ -2,6 +2,7 @@
   "language.name": "Svenska",
 
   "app.title": "VEVOR MIDI-styrning",
+
   "header.subtitle": "VEVOR MIDI-styrning · 88 tangenter",
 
   "section.connection": "Anslutning",
@@ -13,6 +14,7 @@
   "conn.output": "Utgång",
   "conn.look": "Utseende",
   "conn.language": "Språk",
+  "conn.effect": "Effekt",
 
   "play.instrument": "Instrument",
   "play.velocity": "Volym",
@@ -176,6 +178,21 @@
   "eq.radial": "Cirkelspektrum",
   "eq.fire": "Eld",
   "eq.area": "Spektrumkurva",
+
+  "fx.neon": "Neonstaplar",
+  "fx.flames": "Lågor",
+  "fx.petals": "Körsbärsblad",
+  "fx.leaves": "Löv",
+  "fx.steam": "Ånga",
+  "fx.dust": "Sanddamm",
+  "fx.bubbles": "Bubblor",
+  "fx.snow": "Snöflingor",
+  "fx.stars": "Stjärnor",
+  "fx.pixels": "Pixlar",
+  "fx.math": "Matematiska tecken",
+  "fx.roman": "Romerska siffror",
+  "fx.notes": "Noter",
+  "fx.compass": "Kompasstjärnor",
 
   "art.piano": "Kattunge vid pianot",
   "art.chromatic": "Pingvin vid xylofonen",

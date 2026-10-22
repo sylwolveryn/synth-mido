@@ -22,3 +22,4 @@ Synthwave, Classic and 15 themed skins: palettes, fonts, widget shapes and heade
 | [synth_mido/skins/catalog.py](../../../../../../synth_mido/skins/catalog.py) | [synth_mido/skins/palette.py](../../../../../../synth_mido/skins/palette.py) | Builds palettes | Python call |
 | [synth_mido/skins/catalog.py](../../../../../../synth_mido/skins/catalog.py) | [synth_mido/skins/painters.py](../../../../../../synth_mido/skins/painters.py) | Assigns header painters | Python call |
 | [synth_mido/skins/catalog.py](../../../../../../synth_mido/skins/catalog.py) | [synth_mido/skins/registry.py](../../../../../../synth_mido/skins/registry.py) | Registers skins | Python call |
+| [synth_mido/skins/catalog.py](../../../../../../synth_mido/skins/catalog.py) | [synth_mido/fx/effects/base.py](../../../../../../synth_mido/fx/effects/base.py) | Names each skin's matching effect | Python call |

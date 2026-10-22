@@ -10,10 +10,10 @@ groma:
       file: synth_mido/ui/fx_view.py
   group: Visual effects
   technology: Tkinter canvas
-description: Draws the flame effect above the piano and opens the equalizer
+description: Draws the selected effect above the piano with pooled canvas items; effect selector and auto-switch on skin change
 ---
 
-Subscribes to the note bus, animates at ~30 fps only while something burns, with pooled canvas items per layer and colours from the skin's sun gradient; can be switched off (saved).
+Subscribes to the note bus and animates at ~30 fps only while something is visible. Renders any registered effect generically: canvas items are pooled per role, layer order is restored only when new items appear, text glyph fonts are pre-loaded off-screen. The effect follows the skin's matching effect on every skin change, can be chosen by hand in the selector next to the appearance, and the choice is saved; Effekt switches it off.
 
 ## Relationships
 

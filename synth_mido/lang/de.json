@@ -2,6 +2,7 @@
   "language.name": "Deutsch",
 
   "app.title": "VEVOR MIDI-Steuerung",
+
   "header.subtitle": "VEVOR MIDI-Steuerung · 88 Tasten",
 
   "section.connection": "Verbindung",
@@ -13,6 +14,7 @@
   "conn.output": "Ausgang",
   "conn.look": "Aussehen",
   "conn.language": "Sprache",
+  "conn.effect": "Effekt",
 
   "play.instrument": "Instrument",
   "play.velocity": "Lautstärke",
@@ -176,6 +178,21 @@
   "eq.radial": "Kreisspektrum",
   "eq.fire": "Feuer",
   "eq.area": "Spektrumkurve",
+
+  "fx.neon": "Neonbalken",
+  "fx.flames": "Flammen",
+  "fx.petals": "Kirschblüten",
+  "fx.leaves": "Blätter",
+  "fx.steam": "Dampf",
+  "fx.dust": "Sandstaub",
+  "fx.bubbles": "Blasen",
+  "fx.snow": "Schneeflocken",
+  "fx.stars": "Sterne",
+  "fx.pixels": "Pixel",
+  "fx.math": "Mathe-Zeichen",
+  "fx.roman": "Römische Zahlen",
+  "fx.notes": "Noten",
+  "fx.compass": "Kompasssterne",
 
   "art.piano": "Kätzchen am Klavier",
   "art.chromatic": "Pinguin am Xylofon",

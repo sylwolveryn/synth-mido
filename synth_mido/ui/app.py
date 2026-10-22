@@ -8,7 +8,7 @@ from synth_mido.audio.midi_controller import VevorMIDIController
 from synth_mido.core import doubling, events, i18n, keyboard_play, playback, recorder
 from synth_mido.core.i18n import t
 from synth_mido.core.sustain import SustainPedal
-from synth_mido.fx.visualizer import Visualizer
+from synth_mido.fx import effects
 from synth_mido.skins import registry, theme
 from synth_mido.ui.common import (
     ART_SIZE,
@@ -19,7 +19,7 @@ from synth_mido.ui.common import (
     speed_label,
 )
 from synth_mido.ui.connection import ConnectionMixin
-from synth_mido.ui.fx_view import FX_LAYERS, FxMixin
+from synth_mido.ui.fx_view import FxMixin
 from synth_mido.ui.input import InputMixin
 from synth_mido.ui.instrument_view import InstrumentArtMixin
 from synth_mido.ui.language import LanguageMixin
@@ -90,7 +90,8 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         )
         self.pedal = SustainPedal(self._stop_note)
         self.pedal_var = tk.BooleanVar(value=False)
-        self.visualizer = Visualizer()
+        self._init_effect()  # a mentett vagy a skinhez illő hangeffekt (TASK-023)
+        self.effect_var = tk.StringVar(value=effects.label(self.effect_id))
         # Observer: minden hang a NoteBus-on megy át; a nézetek feliratkoznak
         self.notes = events.NoteBus()
         self.notes.subscribe(self._paint_key)
@@ -99,8 +100,6 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         self.fx_job = None
         self.eq_window = None  # Winamp-szerű hangszínszabályzó ablak (TASK-014)
         self._fx_keys = {}
-        self._fx_pool = {layer: [] for layer in FX_LAYERS}
-        self._fx_shown = dict.fromkeys(FX_LAYERS, 0)
         saved_doubling = theme.load_setting("octave_doubling", doubling.DEFAULT_MODE)
         self.doubler = doubling.OctaveDoubler(saved_doubling)
         self.doubling_var = tk.StringVar(value=doubling.label(self.doubler.mode))
@@ -151,13 +150,20 @@ class PianoApp(ThemingMixin, ConnectionMixin, PlaybackMixin, PianoViewMixin, Inp
         )
         self.variant_combo.pack(side="left", padx=(6, 0))
         self.variant_combo.bind("<<ComboboxSelected>>", self.on_variant_change)
-        # nyelvválasztó (TASK-021): a nyelvek a saját nevükön
-        tr(ttk.Label(look), "conn.language").pack(side="left", padx=(12, 4))
+        # hangeffekt (TASK-023): skinváltáskor a hozzá illőre vált, de kézzel is választható
+        tr(ttk.Label(look), "conn.effect").pack(side="left", padx=(12, 4))
+        self.effect_combo = ttk.Combobox(
+            look, textvariable=self.effect_var, values=[effects.label(e) for e in effects.ids()], state="readonly",
+            width=14,
+        )
+        self.effect_combo.pack(side="left")
+        self.effect_combo.bind("<<ComboboxSelected>>", self.on_effect_change)
+        # nyelvválasztó (TASK-021) a gombok alatt: a nyelvek a saját nevükön szerepelnek
         self.language_combo = ttk.Combobox(
-            look, textvariable=self.language_var, values=[i18n.language_name(c) for c in i18n.LANGUAGES],
+            conn, textvariable=self.language_var, values=[i18n.language_name(c) for c in i18n.LANGUAGES],
             state="readonly", width=12,
         )
-        self.language_combo.pack(side="left")
+        self.language_combo.grid(row=2, column=2, sticky="ew", padx=8, pady=6)
         self.language_combo.bind("<<ComboboxSelected>>", self.on_language_change)
 
         btns = ttk.Frame(conn)

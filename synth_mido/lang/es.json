@@ -2,6 +2,7 @@
   "language.name": "Español",
 
   "app.title": "Controlador MIDI VEVOR",
+
   "header.subtitle": "Controlador MIDI VEVOR · 88 teclas",
 
   "section.connection": "Conexión",
@@ -13,6 +14,7 @@
   "conn.output": "Salida",
   "conn.look": "Apariencia",
   "conn.language": "Idioma",
+  "conn.effect": "Efecto",
 
   "play.instrument": "Instrumento",
   "play.velocity": "Volumen",
@@ -176,6 +178,21 @@
   "eq.radial": "Espectro circular",
   "eq.fire": "Fuego",
   "eq.area": "Curva del espectro",
+
+  "fx.neon": "Barras de neón",
+  "fx.flames": "Llamas",
+  "fx.petals": "Pétalos de cerezo",
+  "fx.leaves": "Hojas",
+  "fx.steam": "Vapor",
+  "fx.dust": "Polvo de arena",
+  "fx.bubbles": "Burbujas",
+  "fx.snow": "Copos de nieve",
+  "fx.stars": "Estrellas",
+  "fx.pixels": "Píxeles",
+  "fx.math": "Símbolos matemáticos",
+  "fx.roman": "Números romanos",
+  "fx.notes": "Notas musicales",
+  "fx.compass": "Estrellas de brújula",
 
   "art.piano": "Gatito al piano",
   "art.chromatic": "Pingüino al xilófono",

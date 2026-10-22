@@ -63,7 +63,28 @@ A választás a felhasználói konfigurációs mappába mentődik (`%APPDATA%\sy
 
 ### Hangvizualizáció
 
-A zongora feletti sávban minden megszólaló hang **lángot gyújt** a billentyűje fölött: puha, háromrétegű fényudvar, lobogó lángnyelv világos maggal, a csúcsáról felszálló parázs. A láng magassága és fénye a hangerőtől függ; amíg a hang szól, lobog, elengedéskor összehúzódik és kialszik. A színek a skin színátmenetéből jönnek (Synthwave: magenta–narancs–sárga, Classic: kék, Arctic: menta–lila …). Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet és felvétel lejátszás. Az **Effekt** kapcsolóval ki- és bekapcsolható, a választás mentődik.
+A zongora feletti sávban minden megszólaló hang **effektet** indít a billentyűje fölött. Az effekt a **Csatlakozás** részben, a Megjelenés mellett választható, és **skinváltáskor a skinhez illőre vált**:
+
+| Effekt | Skin |
+|---|---|
+| Neon oszlopok | Synthwave, Klasszikus |
+| Lángok (fényudvar, lobogó láng, parázs) | Vulkán |
+| Cseresznyeszirmok, lassan elsodródnak a billentyűkről | Szakura |
+| Gőz („pfff” lenyomáskor, pára amíg szól) | Steampunk |
+| Falevelek | Erdő, Szafari |
+| Homokpor | Sivatag |
+| Buborékok | Óceán |
+| Hópelyhek | Sarkvidék |
+| Csillagok | Űrhajós, Art Deco |
+| Pixelek (8 bites) | Arcade |
+| Matematikai jelek | Matematika |
+| Római számok | Ókor |
+| Hangjegyek | Jazz klub |
+| Iránytű csillagok | Térkép |
+
+A hangerő az effekt erejét adja, a színek a skinből jönnek. Kézzel bármelyik effekt választható (sötét / világos váltáskor megmarad, a következő skinváltáskor a skinhez illőre áll vissza); a választás mentődik. Minden hangforrásra reagál: egér, billentyűzet, MIDI bemenet és felvétel lejátszás. Az **Effekt** jelölővel (a zongora felett) ki- és bekapcsolható.
+
+Új effekt: egy `NoteEffect` alosztály a `synth_mido/fx/effects/` csomagban (szerepek, színek, rajzolás), a `register` hívás, a neve a nyelvi fájlokba (`fx.<id>`), és a skin `effect` mezője — a felülethez nem kell hozzányúlni.
 
 Tesztek: `python -m unittest tests.test_theme -v`
 
@@ -175,7 +196,7 @@ synth_mido/
     i18n.py             többnyelvűség: kulcs → szöveg az aktuális nyelven
   audio/                MIDI kimenet / bemenet és tartalék hanggenerátor
   skins/                témák / skinek (paletták, fejléc rajzolók)
-  fx/                   vizuális effektek: lángok, spektrum, equalizer animációk, hangszer illusztrációk
+  fx/                   vizuális effektek: hangeffektek (effects/), spektrum, equalizer animációk, hangszer illusztrációk
   lang/                 nyelvi fájlok (hu, en, fr, ja, de, sv, fi, es, tlh) — kulcs–érték JSON
   ui/                   Tk felület: app.py összerakja a részeket (mixinek)
 tests/                  unit tesztek (+ fakes.py: közös hamis időzítő / port)

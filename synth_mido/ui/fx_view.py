@@ -1,8 +1,14 @@
-"""Hangvizualizáció sáv a zongora fölött: lángok a szóló hangok billentyűi fölött."""
+"""Hangeffekt sáv a zongora fölött: a választott effekt (Strategy) általános, készletező rajzolója.
+
+A rajzoló nem ismeri az egyes effekteket: az effekt szerepeket ad (`LAYERS`), szerepenként
+vászon elem fajtát (`KINDS`) és színt (`colors`); a vászon elemeit szerepenként
+újrahasznosítjuk (mozgatás + átszínezés), nem töröljük és hozzuk létre minden képkockán.
+"""
 
 import time
 
 from synth_mido.core import piano_layout
+from synth_mido.fx import effects
 from synth_mido.skins import theme
 from synth_mido.ui.common import (
     FX_FRAME_MS,
@@ -11,28 +17,54 @@ from synth_mido.ui.common import (
 )
 from synth_mido.ui.equalizer_window import EqualizerWindow
 
-FX_LAYERS = ("halo", "ember", "flame", "core")  # rajzolási sorrend hátulról előre
-
-
-def flame_colors(p: dict, dark: bool) -> dict:
-    """Rétegenkénti színek (fehér, fekete billentyű) a skin "nap" színátmenetéből: így minden skinnek
-    saját lángja van (Synthwave: magenta–narancs–sárga, Classic: kék, Arctic: menta–lila …)."""
-    if dark:
-        return {
-            "halo": (p["sun_bottom"], p["accent2"]),
-            "flame": (p["sun_mid"], p["sun_bottom"]),
-            "core": (theme.mix(p["sun_top"], "#ffffff", 0.35), p["sun_top"]),
-            "ember": (p["sun_top"], p["sun_mid"]),
-        }
-    return {
-        "halo": (p["sun_mid"], p["accent2"]),
-        "flame": (p["sun_bottom"], p["accent"]),
-        "core": (p["sun_top"], p["sun_mid"]),
-        "ember": (p["sun_bottom"], p["accent"]),
-    }
+SETTING_KEY = "fx_effect"
 
 
 class FxMixin:
+
+    def _init_effect(self):
+        """Indításkor: a mentett effekt, különben a skinhez illő."""
+        self.effect_id = theme.load_setting(SETTING_KEY, self.skin.effect)
+        if self.effect_id not in effects.EFFECTS:
+            self.effect_id = self.skin.effect
+        self.visualizer = effects.create(self.effect_id)
+        self._fx_pool, self._fx_shown, self._fx_fonts = {}, {}, {}
+
+
+    def set_effect(self, effect_id: str, save: bool = True):
+        """Effekt váltása: az eddigi elemek törlődnek, a már szóló hangok az új effekttel folytatódnak."""
+        if effect_id not in effects.EFFECTS:
+            effect_id = effects.DEFAULT
+        self.effect_id = effect_id
+        self.visualizer = effects.create(effect_id)
+        self.fx_canvas.delete("fx")
+        self._fx_pool, self._fx_shown, self._fx_fonts = {}, {}, {}
+        self._fx_warm_fonts()
+        self.effect_var.set(effects.label(effect_id))
+        if save:
+            theme.save_setting(SETTING_KEY, effect_id)
+        if self.fx_enabled_var.get():
+            for note in sorted(self.active_notes):
+                self.visualizer.note_on(note, 100)
+            self._start_fx()
+
+
+    def _fx_warm_fonts(self):
+        """A jeles effektek (hópehely, ♪, π …) jeleinek betűtípusát előre betöltjük a látható területen kívül:
+        az első megjelenítés (tartalék betűtípus keresése) különben egy képkockát akár 100 ms-ig is megakaszt."""
+        fx, c = self.visualizer, self.fx_canvas
+        for size in fx.TEXT_SIZES:
+            c.create_text(-1000, -1000, text=fx.TEXT_SAMPLE, font=(self.font_family, size), tags=("fx-warm",))
+        if fx.TEXT_SIZES:
+            c.bbox("fx-warm")   # a mérés kényszeríti a betöltést
+            c.delete("fx-warm")
+
+
+    def on_effect_change(self, _event=None):
+        index = self.effect_combo.current()  # index szerint: a név nyelvfüggő
+        ids = effects.ids()
+        self.set_effect(ids[index] if 0 <= index < len(ids) else effects.DEFAULT)
+
 
     def _fx_key_span(self, note: int):
         key = self._fx_keys.get(note)
@@ -55,6 +87,7 @@ class FxMixin:
         for i in range(-16, 17):
             c.create_line(vx + i * width / 50, 0, vx + i * width / 14, height, fill=line, tags=("floor",))
         c.tag_lower("floor")
+        self._fx_warm_fonts()  # skinváltáskor a betűtípus is változhat
 
 
     def _on_note_event(self, event):
@@ -72,38 +105,59 @@ class FxMixin:
             self.fx_job = self.root.after(FX_FRAME_MS, self._fx_tick)
 
 
+    def _fx_new_item(self, role: str, size: float):
+        c, fx = self.fx_canvas, self.visualizer
+        kind, tags = fx.KINDS[role], ("fx", "fx-" + role)
+        if kind == "poly":
+            return c.create_polygon(0, 0, 0, 0, 0, 0, outline="", smooth=role in fx.SMOOTH, tags=tags)
+        if kind == "rect":
+            return c.create_rectangle(0, 0, 0, 0, outline="", tags=tags)
+        if kind == "ring":
+            return c.create_oval(0, 0, 0, 0, fill="", width=1.5, tags=tags)
+        if kind == "text":
+            return c.create_text(0, 0, text="", tags=tags)
+        return c.create_oval(0, 0, 0, 0, outline="", tags=tags)
+
+
     def _fx_tick(self):
         """Egy képkocka; csak addig fut, amíg van mit rajzolni."""
         self.fx_job = None
         started = time.monotonic()
         if not self.fx_enabled_var.get():
-            self._fx_hide_from(dict.fromkeys(FX_LAYERS, 0))
+            self._fx_hide_from({})
             return
-        c, p = self.fx_canvas, self.palette
+        c, p, fx = self.fx_canvas, self.palette, self.visualizer
         bg = p["piano_bg"]
-        colors = flame_colors(p, self.scheme == theme.DARK)
+        colors = fx.colors(p, self.scheme == theme.DARK)
         width = max(c.winfo_width(), 100)
-        # a vászon elemeit újrahasznosítjuk (mozgatás + átszínezés), nem töröljük / hozzuk létre minden képkockán
-        used = dict.fromkeys(FX_LAYERS, 0)
+        used = {}
         created = False
-        for s in self.visualizer.frame(time.monotonic(), width, FX_HEIGHT, self._fx_key_span):
-            pool = self._fx_pool[s.kind]
-            if used[s.kind] == len(pool):
-                if s.kind in ("flame", "core"):
-                    pool.append(c.create_polygon(0, 0, 0, 0, 0, 0, outline="", smooth=True, tags=("fx", "fx-" + s.kind)))
-                else:
-                    pool.append(c.create_oval(0, 0, 0, 0, outline="", tags=("fx", "fx-" + s.kind)))
+        for s in fx.frame(time.monotonic(), width, FX_HEIGHT, self._fx_key_span):
+            pool = self._fx_pool.setdefault(s.role, [])
+            n = used.get(s.role, 0)
+            if n == len(pool):
+                pool.append(self._fx_new_item(s.role, s.size))
                 created = True
-            item = pool[used[s.kind]]
-            used[s.kind] += 1
+            item = pool[n]
+            used[s.role] = n + 1
             c.coords(item, *s.points)
-            fill = theme.mix(bg, colors[s.kind][s.black], min(max(s.intensity, 0.0), 1.0))
-            c.itemconfigure(item, fill=fill, state="normal")
+            color = theme.mix(bg, colors[s.role][s.black], min(max(s.intensity, 0.0), 1.0))
+            kind = fx.KINDS[s.role]
+            if kind == "ring":
+                c.itemconfigure(item, outline=color, state="normal")
+            elif kind == "text":
+                font = (self.font_family, int(s.size))
+                if self._fx_fonts.get(item) != (font, s.text):  # betűtípus / jel csak ha változik (drága)
+                    self._fx_fonts[item] = (font, s.text)
+                    c.itemconfigure(item, font=font, text=s.text)
+                c.itemconfigure(item, fill=color, state="normal")
+            else:
+                c.itemconfigure(item, fill=color, state="normal")
         if created:  # új elem a tetejére kerül — a rétegek sorrendjét helyreállítjuk
-            for layer in FX_LAYERS[1:]:
-                c.tag_raise("fx-" + layer)
+            for role in fx.LAYERS[1:]:
+                c.tag_raise("fx-" + role)
         self._fx_hide_from(used)
-        if self.visualizer.active:
+        if fx.active:
             # ha egy képkocka mégis sokáig tart, ritkábban rajzolunk — a hangok időzítése az első
             elapsed_ms = (time.monotonic() - started) * 1000
             self.fx_job = self.root.after(max(FX_FRAME_MS, int(2 * elapsed_ms)), self._fx_tick)
@@ -111,10 +165,11 @@ class FxMixin:
 
     def _fx_hide_from(self, used):
         """A most nem használt (de előző képkockán látható) elemek elrejtése."""
-        for kind, pool in self._fx_pool.items():
-            for item in pool[used[kind]:self._fx_shown[kind]]:
+        for role, pool in self._fx_pool.items():
+            n = used.get(role, 0)
+            for item in pool[n:self._fx_shown.get(role, 0)]:
                 self.fx_canvas.itemconfigure(item, state="hidden")
-            self._fx_shown[kind] = used[kind]
+            self._fx_shown[role] = n
 
 
     def open_equalizer(self):
@@ -129,10 +184,10 @@ class FxMixin:
         theme.save_setting("visual_fx", enabled)
         if enabled:
             self.fx_canvas.pack(fill="x", padx=8, pady=(6, 0), before=self.canvas)
-            for note in self.active_notes:  # a már szóló hangok is kapjanak lángot
+            for note in self.active_notes:  # a már szóló hangok is kapjanak effektet
                 self.visualizer.note_on(note, 100)
             self._start_fx()
         else:
             self.visualizer.clear()
-            self._fx_hide_from(dict.fromkeys(FX_LAYERS, 0))
+            self._fx_hide_from({})
             self.fx_canvas.pack_forget()

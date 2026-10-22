@@ -2,6 +2,7 @@
 
 from synth_mido.core import doubling, i18n
 from synth_mido.core.i18n import t
+from synth_mido.fx import effects
 from synth_mido.skins import registry, theme
 
 
@@ -69,6 +70,8 @@ class LanguageMixin:
         self.skin_var.set(self.skin.label)
         self.variant_combo.configure(values=[registry.variant_label(v) for v in registry.VARIANTS_ORDER])
         self.variant_var.set(registry.variant_label(self.variant))
+        self.effect_combo.configure(values=[effects.label(e) for e in effects.ids()])
+        self.effect_var.set(effects.label(self.effect_id))
         self.doubling_combo.configure(values=[doubling.label(m) for m in doubling.MODES])
         self.doubling_var.set(doubling.label(self.doubler.mode))
         self.octave_label_var.set(t("piano.octaves", octaves=self.octaves.label()))

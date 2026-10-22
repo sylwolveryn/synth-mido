@@ -2,6 +2,7 @@
   "language.name": "Suomi",
 
   "app.title": "VEVOR MIDI -ohjain",
+
   "header.subtitle": "VEVOR MIDI -ohjain · 88 kosketinta",
 
   "section.connection": "Yhteys",
@@ -13,6 +14,7 @@
   "conn.output": "Lähtö",
   "conn.look": "Ulkoasu",
   "conn.language": "Kieli",
+  "conn.effect": "Efekti",
 
   "play.instrument": "Soitin",
   "play.velocity": "Voimakkuus",
@@ -176,6 +178,21 @@
   "eq.radial": "Ympyräspektri",
   "eq.fire": "Tuli",
   "eq.area": "Spektrikäyrä",
+
+  "fx.neon": "Neonpalkit",
+  "fx.flames": "Liekit",
+  "fx.petals": "Kirsikankukat",
+  "fx.leaves": "Lehdet",
+  "fx.steam": "Höyry",
+  "fx.dust": "Hiekkapöly",
+  "fx.bubbles": "Kuplat",
+  "fx.snow": "Lumihiutaleet",
+  "fx.stars": "Tähdet",
+  "fx.pixels": "Pikselit",
+  "fx.math": "Matematiikan merkit",
+  "fx.roman": "Roomalaiset numerot",
+  "fx.notes": "Nuotit",
+  "fx.compass": "Kompassitähdet",
 
   "art.piano": "Kissanpentu pianon ääressä",
   "art.chromatic": "Pingviini ja ksylofoni",

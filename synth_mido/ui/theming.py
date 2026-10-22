@@ -23,6 +23,7 @@ class ThemingMixin:
         self.skin_listeners = []  # további ablakok (pl. hangszínszabályzó), amelyek skin váltáskor újrastílusoznak
 
     def set_skin(self, skin_id: str, variant: str, save: bool = True):
+        new_skin = getattr(self, "skin_id", None) != registry.get(skin_id).id
         self.skin = registry.get(skin_id)
         self.skin_id, self.variant = self.skin.id, variant
         self.skin_var.set(self.skin.label)
@@ -33,6 +34,8 @@ class ThemingMixin:
             theme.save_skin(self.skin_id, self.variant)
         self.apply_theme()
         self._schedule_theme_poll()
+        if new_skin and hasattr(self, "effect_combo"):
+            self.set_effect(self.skin.effect, save=save)  # a skinhez illő hangeffekt (kézzel átállítható)
 
     def on_skin_change(self, _event=None):
         index = self.skin_combo.current()  # index szerint: a név nyelvfüggő
@@ -198,7 +201,7 @@ class ThemingMixin:
 
     def comboboxes(self):
         return [getattr(self, n) for n in ("input_combo", "output_combo", "skin_combo", "variant_combo",
-                                           "language_combo", "instrument_combo", "speed_combo", "doubling_combo")
+                                           "language_combo", "effect_combo", "instrument_combo", "speed_combo", "doubling_combo")
                 if hasattr(self, n)]
 
     # --- rendszer téma figyelése ------------------------------------------------------

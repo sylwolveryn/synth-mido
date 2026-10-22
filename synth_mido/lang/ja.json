@@ -2,6 +2,7 @@
   "language.name": "日本語",
 
   "app.title": "VEVOR MIDI コントローラー",
+
   "header.subtitle": "VEVOR MIDI コントローラー · 88鍵",
 
   "section.connection": "接続",
@@ -13,6 +14,7 @@
   "conn.output": "出力",
   "conn.look": "外観",
   "conn.language": "言語",
+  "conn.effect": "効果",
 
   "play.instrument": "楽器",
   "play.velocity": "音量",
@@ -176,6 +178,21 @@
   "eq.radial": "円形スペクトラム",
   "eq.fire": "炎",
   "eq.area": "スペクトラム曲線",
+
+  "fx.neon": "ネオンバー",
+  "fx.flames": "炎",
+  "fx.petals": "桜の花びら",
+  "fx.leaves": "木の葉",
+  "fx.steam": "蒸気",
+  "fx.dust": "砂ぼこり",
+  "fx.bubbles": "泡",
+  "fx.snow": "雪の結晶",
+  "fx.stars": "星",
+  "fx.pixels": "ピクセル",
+  "fx.math": "数学記号",
+  "fx.roman": "ローマ数字",
+  "fx.notes": "音符",
+  "fx.compass": "コンパスの星",
 
   "art.piano": "ピアノを弾く子猫",
   "art.chromatic": "木琴を叩くペンギン",

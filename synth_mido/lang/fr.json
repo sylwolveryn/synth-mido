@@ -2,6 +2,7 @@
   "language.name": "Français",
 
   "app.title": "Contrôleur MIDI VEVOR",
+
   "header.subtitle": "Contrôleur MIDI VEVOR · 88 touches",
 
   "section.connection": "Connexion",
@@ -13,6 +14,7 @@
   "conn.output": "Sortie",
   "conn.look": "Apparence",
   "conn.language": "Langue",
+  "conn.effect": "Effet",
 
   "play.instrument": "Instrument",
   "play.velocity": "Volume",
@@ -176,6 +178,21 @@
   "eq.radial": "Spectre circulaire",
   "eq.fire": "Feu",
   "eq.area": "Courbe du spectre",
+
+  "fx.neon": "Barres néon",
+  "fx.flames": "Flammes",
+  "fx.petals": "Pétales de cerisier",
+  "fx.leaves": "Feuilles",
+  "fx.steam": "Vapeur",
+  "fx.dust": "Poussière de sable",
+  "fx.bubbles": "Bulles",
+  "fx.snow": "Flocons de neige",
+  "fx.stars": "Étoiles",
+  "fx.pixels": "Pixels",
+  "fx.math": "Symboles mathématiques",
+  "fx.roman": "Chiffres romains",
+  "fx.notes": "Notes de musique",
+  "fx.compass": "Étoiles de boussole",
 
   "art.piano": "Chaton au piano",
   "art.chromatic": "Pingouin au xylophone",

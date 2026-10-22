@@ -48,6 +48,7 @@ class Skin:
     style: WidgetStyle = field(default_factory=WidgetStyle)
     painter: Optional[Callable] = None       # fejléc rajzoló: painter(canvas, width, height, palette, font, dark)
     header_height: int = 92
+    effect: str = "flames"                  # a hozzá illő hangeffekt (fx.effects azonosító)
 
     def palette(self, scheme: str) -> dict:
         return self.light if scheme == LIGHT else self.dark
