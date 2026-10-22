@@ -20,6 +20,13 @@
   "play.velocity": "wab HoS",
   "play.doubling": "cha'logh",
 
+  "ctrl.tab_keyboard": "1 · leQmey",
+  "ctrl.tab": "{number} · Quj SeHlaw",
+  "ctrl.none": "Quj SeHlaw rarbe'lu'",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Quj SeHlaw: leQ = wab · ↑↓ oktav, ←→ wab mIw · ghop naQ Dung / bIng = wab HoS · baH leQ = qam leQ",
+  "ctrl.error": "Quj SeHlaw Qagh: {error}",
+
   "btn.refresh": "chu'moH",
   "btn.connect": "yIrar",
   "btn.disconnect": "yIchev",
@@ -109,6 +116,8 @@
   "log.discarded": "qonta' chuHlu'pu'",
   "log.deleted": "{count} qonta' Qaw'lu'pu'",
   "log.language": "Hol: {name}",
+  "log.ctrl_added": "Quj SeHlaw rarpu' ({number}DIch QoQ jan): {name}",
+  "log.ctrl_removed": "{number}DIch QoQ jan SeHlaw chevlu'pu'",
 
   "rec.counter": "● {time} · {count} wab",
 

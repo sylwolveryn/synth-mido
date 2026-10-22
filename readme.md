@@ -94,6 +94,22 @@ Az **Equalizer…** gomb külön ablakot nyit spektrum analizátorral, ahogy a r
 
 ![Equalizer](progress/task-014-equalizer.png)
 
+## Játékvezérlők (több hangszer egyszerre)
+
+A **Lejátszás** rész hangszer sora füles: **1 · Billentyűzet** (egér, számítógép billentyűzet, MIDI zongora), **2 · Kontroller**, és minden további csatlakoztatott játékvezérlőhöz egy újabb fül. A 2. fül vezérlő nélkül is látszik, de le van tiltva. A vezérlőket a program menet közben is észleli (USB és Bluetooth; Windowson a beépített joystick API-val, új függőség nélkül).
+
+Minden fül saját hangszert választ, a vezérlők saját MIDI csatornán szólnak, így többen játszhatnak egyszerre más-más hangszeren:
+
+| Vezérlő | Mit csinál |
+|---|---|
+| 12 gomb | a dúr skála fokai (alapból C4–G5) |
+| D-pad ↑ / ↓ | oktáv fel / le |
+| D-pad ← / → | hangnem egy félhanggal le / fel |
+| bal kar fel / le | hangerő |
+| ravasz | kitartó pedál |
+
+A billentyűk **forrásonként más színnel** világítanak: billentyűzet / MIDI, lejátszás (mindig eltér az élő játéktól) és vezérlőnként egy szín; a fülekben és a lejátszó sávban színminta mutatja, melyik kié. A felvétel a vezérlők hangjait is rögzíti a saját hangszerükkel.
+
 ## Nyelvek
 
 A **Csatlakozás** rész „Nyelv” listájában választható a felület nyelve: **Magyar**, English, Français, 日本語, Deutsch, Svenska, Suomi, Español és **tlhIngan Hol** (klingon). Váltáskor azonnal minden felirat átíródik — a főablak, a nyitott Felvételek és Equalizer ablak, az állapotsor, a listák és a hibaüzenetek is —, a választás mentődik.
@@ -193,6 +209,7 @@ synth_mido/
     keyboard_play.py    számítógép billentyűzet, oktávváltás, pedál gomb
     sustain.py          kitartó pedál
     doubling.py         oktáv duplázás
+    gamepad.py          játékvezérlők: észlelés, gombkiosztás, slotok
     i18n.py             többnyelvűség: kulcs → szöveg az aktuális nyelven
   audio/                MIDI kimenet / bemenet és tartalék hanggenerátor
   skins/                témák / skinek (paletták, fejléc rajzolók)

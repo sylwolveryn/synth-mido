@@ -20,6 +20,13 @@
   "play.velocity": "Volume",
   "play.doubling": "Doubling",
 
+  "ctrl.tab_keyboard": "1 · Keyboard",
+  "ctrl.tab": "{number} · Controller",
+  "ctrl.none": "No game controller connected",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Controller: buttons = notes · D-pad ↑↓ octave, ←→ key · left stick up / down = volume · trigger = pedal",
+  "ctrl.error": "Game controller error: {error}",
+
   "btn.refresh": "Refresh",
   "btn.connect": "Connect",
   "btn.disconnect": "Disconnect",
@@ -109,6 +116,8 @@
   "log.discarded": "Recording discarded",
   "log.deleted": "{count} recordings deleted",
   "log.language": "Language: {name}",
+  "log.ctrl_added": "Game controller connected (instrument {number}): {name}",
+  "log.ctrl_removed": "The controller of instrument {number} was disconnected",
 
   "rec.counter": "● {time} · {count} notes",
 

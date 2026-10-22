@@ -83,12 +83,13 @@ def default_instrument(record: dict, instruments: Dict[str, int]) -> str:
 
 
 DRUM_CHANNEL = 9   # General MIDI: a 10. csatorna dob, hangszernek nem használjuk
-RECORD_CHANNELS = tuple(c for c in range(1, 16) if c != DRUM_CHANNEL)
+# a 12–15. csatorna a játékvezérlőké (gamepad.CONTROLLER_CHANNELS), így felvétel lejátszása közben sem ütköznek
+RECORD_CHANNELS = tuple(c for c in range(1, 12) if c != DRUM_CHANNEL)
 
 
 def assign_channels(instruments: List[dict]) -> Dict[int, int]:
     """Program -> MIDI csatorna egy több hangszeres felvételhez. A 0. csatorna a felhasználóé
-    (a választott hangszer), így rájátszáskor nem keverednek; 14-nél több hangszer csatornát oszt."""
+    (a választott hangszer), így rájátszáskor nem keverednek; 10-nél több hangszer csatornát oszt."""
     channels: Dict[int, int] = {}
     for instrument in instruments:
         program = instrument["program"]

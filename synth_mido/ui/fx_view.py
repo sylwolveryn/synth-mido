@@ -66,6 +66,12 @@ class FxMixin:
         self.set_effect(ids[index] if 0 <= index < len(ids) else effects.DEFAULT)
 
 
+    def _fx_height(self) -> int:
+        """Az effekt sáv tényleges magassága: kis ablakban kisebb lehet a kértnél (FX_HEIGHT)."""
+        h = self.fx_canvas.winfo_height()
+        return h if h > 1 else FX_HEIGHT
+
+
     def _fx_key_span(self, note: int):
         key = self._fx_keys.get(note)
         return (key.x0, key.x1, key.black) if key else None
@@ -75,7 +81,7 @@ class FxMixin:
         """Az effekt sáv statikus háttere: halvány perspektivikus rács (Synthwave-ben neon)."""
         c, p = self.fx_canvas, self.palette
         width = max(c.winfo_width(), 100)
-        height = FX_HEIGHT
+        height = self._fx_height()
         self._fx_keys = {k.note: k for k in piano_layout.layout(width, PIANO_HEIGHT)}
         c.configure(bg=p["piano_bg"])
         c.delete("floor")
@@ -132,7 +138,7 @@ class FxMixin:
         width = max(c.winfo_width(), 100)
         used = {}
         created = False
-        for s in fx.frame(time.monotonic(), width, FX_HEIGHT, self._fx_key_span):
+        for s in fx.frame(time.monotonic(), width, self._fx_height(), self._fx_key_span):
             pool = self._fx_pool.setdefault(s.role, [])
             n = used.get(s.role, 0)
             if n == len(pool):
@@ -183,11 +189,11 @@ class FxMixin:
         enabled = self.fx_enabled_var.get()
         theme.save_setting("visual_fx", enabled)
         if enabled:
-            self.fx_canvas.pack(fill="x", padx=8, pady=(6, 0), before=self.canvas)
+            self.fx_canvas.grid()
             for note in self.active_notes:  # a már szóló hangok is kapjanak effektet
                 self.visualizer.note_on(note, 100)
             self._start_fx()
         else:
             self.visualizer.clear()
             self._fx_hide_from({})
-            self.fx_canvas.pack_forget()
+            self.fx_canvas.grid_remove()

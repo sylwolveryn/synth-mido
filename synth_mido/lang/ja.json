@@ -20,6 +20,13 @@
   "play.velocity": "音量",
   "play.doubling": "重ね",
 
+  "ctrl.tab_keyboard": "1 · キーボード",
+  "ctrl.tab": "{number} · コントローラー",
+  "ctrl.none": "ゲームコントローラーが接続されていません",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "コントローラー: ボタン = 音 · 十字キー ↑↓ オクターブ、←→ 調 · 左スティック上下 = 音量 · トリガー = ペダル",
+  "ctrl.error": "ゲームコントローラーのエラー: {error}",
+
   "btn.refresh": "更新",
   "btn.connect": "接続",
   "btn.disconnect": "切断",
@@ -109,6 +116,8 @@
   "log.discarded": "録音を破棄しました",
   "log.deleted": "{count} 件の録音を削除しました",
   "log.language": "言語: {name}",
+  "log.ctrl_added": "ゲームコントローラーを接続しました（楽器 {number}）: {name}",
+  "log.ctrl_removed": "楽器 {number} のコントローラーが切断されました",
 
   "rec.counter": "● {time} · {count} 音",
 

@@ -20,6 +20,13 @@
   "play.velocity": "Voimakkuus",
   "play.doubling": "Kahdennus",
 
+  "ctrl.tab_keyboard": "1 · Näppäimistö",
+  "ctrl.tab": "{number} · Peliohjain",
+  "ctrl.none": "Peliohjainta ei ole yhdistetty",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Peliohjain: painikkeet = äänet · ristiohjain ↑↓ oktaavi, ←→ sävellaji · vasen tikku ylös / alas = voimakkuus · liipaisin = pedaali",
+  "ctrl.error": "Peliohjaimen virhe: {error}",
+
   "btn.refresh": "Päivitä",
   "btn.connect": "Yhdistä",
   "btn.disconnect": "Katkaise",
@@ -109,6 +116,8 @@
   "log.discarded": "Tallenne hylätty",
   "log.deleted": "{count} tallennetta poistettu",
   "log.language": "Kieli: {name}",
+  "log.ctrl_added": "Peliohjain yhdistetty (soitin {number}): {name}",
+  "log.ctrl_removed": "Soittimen {number} peliohjain irrotettiin",
 
   "rec.counter": "● {time} · {count} ääntä",
 

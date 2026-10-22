@@ -6,7 +6,7 @@ Futtatás:  python -m unittest test_playback -v
 
 import unittest
 
-from synth_mido.core import playback
+from synth_mido.core import gamepad, playback
 from synth_mido.core.playback import Event, Player, build_schedule, default_instrument
 from tests.fakes import FakeTimer
 
@@ -315,7 +315,8 @@ class MultiInstrumentTests(unittest.TestCase):
         self.assertEqual(channels[0], 1)
         self.assertNotIn(0, channels.values())
         self.assertNotIn(playback.DRUM_CHANNEL, channels.values())
-        self.assertEqual(len(set(list(channels.values())[:14])), 14)  # 14 hangszerig mind külön csatorna
+        self.assertEqual(len(set(list(channels.values())[:10])), 10)  # 10 hangszerig mind külön csatorna
+        self.assertFalse(set(channels.values()) & set(gamepad.CONTROLLER_CHANNELS))  # a vezérlőkéivel nem ütközik
         self.assertEqual(playback.assign_channels([FLUTE, FLUTE]), {73: 1})
 
     def test_v1_events_have_no_instrument(self):

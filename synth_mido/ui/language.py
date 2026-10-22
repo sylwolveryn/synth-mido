@@ -77,6 +77,7 @@ class LanguageMixin:
         self.octave_label_var.set(t("piano.octaves", octaves=self.octaves.label()))
         # szakaszcímek, fejléc felirat, illusztráció felirata
         self.apply_theme()
+        self._sync_controller_tabs()   # vezérlő fülek felirata és állapota
         # állapotsor és lejátszó sáv
         self._refresh_base_status()
         self._player_changed()

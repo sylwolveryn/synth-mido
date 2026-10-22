@@ -20,6 +20,13 @@
   "play.velocity": "Volume",
   "play.doubling": "Doublage",
 
+  "ctrl.tab_keyboard": "1 · Clavier",
+  "ctrl.tab": "{number} · Manette",
+  "ctrl.none": "Aucune manette connectée",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Manette : boutons = notes · croix ↑↓ octave, ←→ tonalité · stick gauche haut / bas = volume · gâchette = pédale",
+  "ctrl.error": "Erreur de manette : {error}",
+
   "btn.refresh": "Actualiser",
   "btn.connect": "Connecter",
   "btn.disconnect": "Déconnecter",
@@ -109,6 +116,8 @@
   "log.discarded": "Enregistrement abandonné",
   "log.deleted": "{count} enregistrements supprimés",
   "log.language": "Langue : {name}",
+  "log.ctrl_added": "Manette connectée (instrument {number}) : {name}",
+  "log.ctrl_removed": "La manette de l’instrument {number} a été déconnectée",
 
   "rec.counter": "● {time} · {count} notes",
 

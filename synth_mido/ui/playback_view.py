@@ -26,6 +26,7 @@ class PlaybackMixin:
         self.player.stop()
         self.set_pedal(False)
         self.controller.panic()
+        self.key_sources.clear()   # vészleállítás: minden forrás elenged
         for note in list(self.active_notes):
             self.highlight(note, False)
         self.active_notes.clear()

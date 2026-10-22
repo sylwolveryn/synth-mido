@@ -20,6 +20,13 @@
   "play.velocity": "Volym",
   "play.doubling": "Dubblering",
 
+  "ctrl.tab_keyboard": "1 · Tangentbord",
+  "ctrl.tab": "{number} · Handkontroll",
+  "ctrl.none": "Ingen spelkontroll ansluten",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Handkontroll: knappar = toner · styrkors ↑↓ oktav, ←→ tonart · vänster spak upp / ner = volym · avtryckare = pedal",
+  "ctrl.error": "Fel i spelkontrollen: {error}",
+
   "btn.refresh": "Uppdatera",
   "btn.connect": "Anslut",
   "btn.disconnect": "Koppla från",
@@ -109,6 +116,8 @@
   "log.discarded": "Inspelningen kastad",
   "log.deleted": "{count} inspelningar borttagna",
   "log.language": "Språk: {name}",
+  "log.ctrl_added": "Spelkontroll ansluten (instrument {number}): {name}",
+  "log.ctrl_removed": "Kontrollen för instrument {number} kopplades från",
 
   "rec.counter": "● {time} · {count} toner",
 

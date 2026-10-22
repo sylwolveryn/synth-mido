@@ -20,6 +20,13 @@
   "play.velocity": "Volumen",
   "play.doubling": "Duplicado",
 
+  "ctrl.tab_keyboard": "1 · Teclado",
+  "ctrl.tab": "{number} · Mando",
+  "ctrl.none": "No hay ningún mando conectado",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Mando: botones = notas · cruceta ↑↓ octava, ←→ tonalidad · stick izquierdo arriba / abajo = volumen · gatillo = pedal",
+  "ctrl.error": "Error del mando: {error}",
+
   "btn.refresh": "Actualizar",
   "btn.connect": "Conectar",
   "btn.disconnect": "Desconectar",
@@ -109,6 +116,8 @@
   "log.discarded": "Grabación descartada",
   "log.deleted": "{count} grabaciones eliminadas",
   "log.language": "Idioma: {name}",
+  "log.ctrl_added": "Mando conectado (instrumento {number}): {name}",
+  "log.ctrl_removed": "El mando del instrumento {number} se desconectó",
 
   "rec.counter": "● {time} · {count} notas",
 

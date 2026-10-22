@@ -4,6 +4,7 @@ Feladatonként egy oldal képernyőképpel; a legújabb van legfelül.
 
 | Feladat | Tartalom | Kép |
 |---|---|---|
+| [TASK-024](task-024.md) | Játékvezérlők mint hangszerek, forrásonkénti billentyű színek | <img src="task-024-controllers.png" width="240"> |
 | [TASK-023](task-023.md) | Választható, skinhez illő hangeffektek (14) | <img src="task-023-effects.png" width="240"> |
 | [TASK-021](task-021.md) | Nyelvválasztó: 9 nyelv (klingonnal) | <img src="task-021-languages.png" width="240"> |
 | [TASK-022](task-022.md) | Hangszer illusztráció (16 állat a hangszerével) | <img src="task-022-gallery-dark.png" width="240"> |

@@ -20,6 +20,13 @@
   "play.velocity": "Lautstärke",
   "play.doubling": "Verdopplung",
 
+  "ctrl.tab_keyboard": "1 · Tastatur",
+  "ctrl.tab": "{number} · Controller",
+  "ctrl.none": "Kein Gamecontroller verbunden",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Controller: Tasten = Töne · Steuerkreuz ↑↓ Oktave, ←→ Tonart · linker Stick hoch / runter = Lautstärke · Trigger = Pedal",
+  "ctrl.error": "Gamecontroller-Fehler: {error}",
+
   "btn.refresh": "Aktualisieren",
   "btn.connect": "Verbinden",
   "btn.disconnect": "Trennen",
@@ -109,6 +116,8 @@
   "log.discarded": "Aufnahme verworfen",
   "log.deleted": "{count} Aufnahmen gelöscht",
   "log.language": "Sprache: {name}",
+  "log.ctrl_added": "Gamecontroller verbunden (Instrument {number}): {name}",
+  "log.ctrl_removed": "Der Controller von Instrument {number} wurde getrennt",
 
   "rec.counter": "● {time} · {count} Töne",
 

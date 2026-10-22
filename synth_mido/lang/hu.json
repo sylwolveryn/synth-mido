@@ -20,6 +20,13 @@
   "play.velocity": "Hangerő",
   "play.doubling": "Duplázás",
 
+  "ctrl.tab_keyboard": "1 · Billentyűzet",
+  "ctrl.tab": "{number} · Kontroller",
+  "ctrl.none": "Nincs csatlakoztatott játékvezérlő",
+  "ctrl.status": "{name} · {low}–{high}",
+  "ctrl.hint": "Kontroller: gombok = hangok · D-pad ↑↓ oktáv, ←→ hangnem · bal kar fel / le = hangerő · ravasz = pedál",
+  "ctrl.error": "Játékvezérlő hiba: {error}",
+
   "btn.refresh": "Frissítés",
   "btn.connect": "Csatlakozás",
   "btn.disconnect": "Leválasztás",
@@ -109,6 +116,8 @@
   "log.discarded": "Felvétel elvetve",
   "log.deleted": "{count} felvétel törölve",
   "log.language": "Nyelv: {name}",
+  "log.ctrl_added": "Játékvezérlő csatlakozott ({number}. hangszer): {name}",
+  "log.ctrl_removed": "A(z) {number}. hangszer vezérlője levált",
 
   "rec.counter": "● {time} · {count} hang",
 

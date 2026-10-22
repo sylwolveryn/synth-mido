@@ -137,6 +137,13 @@ class ThemingMixin:
         style.map("TCombobox", fieldbackground=[("readonly", p["surface"])], foreground=[("readonly", p["fg"])],
                   selectbackground=[("readonly", p["surface"])], selectforeground=[("readonly", p["fg"])],
                   background=[("active", p["select_bg"])], bordercolor=[("focus", p["accent"]), ("active", p["accent2"])])
+        # hangszer fülek (TASK-024): a választott fül kiemelve, a letiltott tompítva
+        style.configure("TNotebook", background=p["bg"], bordercolor=p["border"], tabmargins=(2, 2, 2, 0))
+        style.configure("TNotebook.Tab", background=p["surface"], foreground=p["muted"], bordercolor=p["border"],
+                        lightcolor=p["border"], padding=(10, 1))
+        style.map("TNotebook.Tab", background=[("selected", p["select_bg"]), ("active", p["select_bg"])],
+                  foreground=[("selected", p["fg"]), ("disabled", p["border"])],
+                  lightcolor=[("selected", p["accent"])], bordercolor=[("selected", p["accent2"])])
         style.configure("Horizontal.TScale", background=p["accent2"], troughcolor=mix(p["bg"], p["border"], 0.7),
                         bordercolor=p["border"], lightcolor=p["accent2"], darkcolor=p["accent2"])
         style.map("Horizontal.TScale", background=[("disabled", p["border"]), ("active", p["accent"])])
@@ -174,6 +181,7 @@ class ThemingMixin:
         self.draw_fx_floor()
         self.draw_piano()
         self.draw_instrument_art()
+        self.refresh_swatches()
         for listener in list(self.skin_listeners):
             listener()
 

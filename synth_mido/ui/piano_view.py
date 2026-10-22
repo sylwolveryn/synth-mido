@@ -4,7 +4,7 @@
 from synth_mido.core import events, piano_layout
 from synth_mido.core.i18n import t
 from synth_mido.core.piano_layout import note_label
-from synth_mido.skins import theme
+from synth_mido.skins import key_colors, theme
 from synth_mido.ui.common import (
     PIANO_HEIGHT,
 )
@@ -17,13 +17,12 @@ class PianoViewMixin:
         self.canvas.delete("all")
         self.key_ids.clear()
         width = max(self.canvas.winfo_width(), 100)
-        height = PIANO_HEIGHT
+        h = self.canvas.winfo_height()
+        height = h if h > 1 else PIANO_HEIGHT   # kis ablakban a billentyűk alacsonyabbak (nem levágva)
+        k = height / PIANO_HEIGHT   # a jelölők helye a magassággal arányos
         labels = set(piano_layout.label_notes())
         for key in piano_layout.layout(width, height):
-            if key.black:
-                color = p["key_black_active"] if key.note in self.active_notes else p["key_black"]
-            else:
-                color = p["key_white_active"] if key.note in self.active_notes else p["key_white"]
+            color = self._key_fill(key.note, key.black)
             kid = self.canvas.create_rectangle(
                 key.x0, key.y0, key.x1, key.y1, fill=color, outline=p["key_outline"], width=1,
                 tags=("key", f"n{key.note}"),
@@ -37,13 +36,14 @@ class PianoViewMixin:
                     font=(self.font_family, 7, "bold" if middle else "normal"), state="disabled",
                 )
                 if middle:
-                    self.canvas.create_oval(cx - 3, height - 30, cx + 3, height - 24, fill=p["accent"], outline="",
+                    self.canvas.create_oval(cx - 3, height - 30 * k, cx + 3, height - 30 * k + 6, fill=p["accent"], outline="",
                                             state="disabled")
         self._draw_keyboard_range(width, height)
 
 
     def _draw_keyboard_range(self, width, height):
         """A számítógép-billentyűzettel elérhető tartomány: sáv felül + betűk (ha be van kapcsolva)."""
+        k = height / PIANO_HEIGHT
         p = self.palette
         low, high = self.keyboard.range_notes()
         keys = {k.note: k for k in piano_layout.layout(width, height)}
@@ -71,7 +71,7 @@ class PianoViewMixin:
             if key.black:
                 y, color = key.y1 - 9, p["key_white"]
             else:
-                y, color = height - 44, p["accent"]
+                y, color = height - 44 * k, p["accent"]
             self.canvas.create_text(cx, y, text=letter, fill=color, font=(self.font_family, 7, "bold"),
                                     state="disabled", tags=("letter",))
 
@@ -138,15 +138,20 @@ class PianoViewMixin:
         """NoteBus feliratkozó: a billentyű színe és az aktív hangok halmaza."""
         note, on = event.note, event.on
         if on:
+            self.key_sources.press(note, event.source)
             self.active_notes.add(note)
-        else:
+        elif self.key_sources.release(note, event.source) is None:
             self.active_notes.discard(note)
         kid = self.key_ids.get(note)
-        if not kid:
-            return
-        is_black = piano_layout.is_black(note)
-        p = self.palette
-        if on:
-            self.canvas.itemconfigure(kid, fill=p["key_black_active"] if is_black else p["key_white_active"])
-        else:
-            self.canvas.itemconfigure(kid, fill=p["key_black"] if is_black else p["key_white"])
+        if kid:
+            self.canvas.itemconfigure(kid, fill=self._key_fill(note, piano_layout.is_black(note)))
+
+    def _key_fill(self, note: int, black: bool) -> str:
+        """A billentyű színe: alapszín, vagy a legutóbb lenyomó forrás színe (billentyűzet, lejátszás, vezérlők)."""
+        source = self.key_sources.top(note)
+        if source is None:
+            return self.palette["key_black" if black else "key_white"]
+        if self._key_colors_for is not self.palette:  # skinváltáskor újraszámoljuk
+            self._key_colors_for = self.palette
+            self._key_colors = key_colors.source_colors(self.palette)
+        return key_colors.color_for(self._key_colors, source, black)
