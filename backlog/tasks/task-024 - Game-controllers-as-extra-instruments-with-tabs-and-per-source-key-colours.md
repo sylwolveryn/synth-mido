@@ -1,9 +1,11 @@
 ---
 id: TASK-024
 title: Game controllers as extra instruments with tabs and per-source key colours
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@claude'
 created_date: '2026-10-21T23:58:00Z'
+updated_date: '2026-10-22T00:12:00Z'
 labels:
   - input
   - ui
