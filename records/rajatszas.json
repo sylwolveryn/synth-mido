@@ -1,0 +1,120 @@
+{
+  "format": "synth-mido-record",
+  "version": 1,
+  "created": "2026-10-22T00:25:53",
+  "instrument": {
+    "name": "electric_piano_1",
+    "program": 4
+  },
+  "duration": 8.51,
+  "notes": [
+    {
+      "note": 47,
+      "velocity": 100,
+      "start": 1.176,
+      "duration": 0.211
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 1.177,
+      "duration": 0.211
+    },
+    {
+      "note": 47,
+      "velocity": 100,
+      "start": 2.072,
+      "duration": 0.23
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 2.072,
+      "duration": 0.23
+    },
+    {
+      "note": 47,
+      "velocity": 100,
+      "start": 2.947,
+      "duration": 0.228
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 2.947,
+      "duration": 0.228
+    },
+    {
+      "note": 43,
+      "velocity": 100,
+      "start": 3.873,
+      "duration": 0.218
+    },
+    {
+      "note": 55,
+      "velocity": 100,
+      "start": 3.874,
+      "duration": 0.218
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 4.481,
+      "duration": 0.181
+    },
+    {
+      "note": 62,
+      "velocity": 100,
+      "start": 4.481,
+      "duration": 0.181
+    },
+    {
+      "note": 47,
+      "velocity": 100,
+      "start": 4.848,
+      "duration": 0.265
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 4.849,
+      "duration": 0.265
+    },
+    {
+      "note": 43,
+      "velocity": 100,
+      "start": 5.872,
+      "duration": 0.197
+    },
+    {
+      "note": 55,
+      "velocity": 100,
+      "start": 5.872,
+      "duration": 0.197
+    },
+    {
+      "note": 50,
+      "velocity": 100,
+      "start": 6.504,
+      "duration": 0.188
+    },
+    {
+      "note": 62,
+      "velocity": 100,
+      "start": 6.504,
+      "duration": 0.188
+    },
+    {
+      "note": 47,
+      "velocity": 100,
+      "start": 6.952,
+      "duration": 0.249
+    },
+    {
+      "note": 59,
+      "velocity": 100,
+      "start": 6.952,
+      "duration": 0.249
+    }
+  ]
+}

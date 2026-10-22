@@ -1,0 +1,232 @@
+{
+  "format": "synth-mido-record",
+  "version": 2,
+  "created": "2026-10-22T01:41:44",
+  "instrument": {
+    "name": "acoustic_grand_piano",
+    "program": 0
+  },
+  "duration": 3.498,
+  "notes": [
+    {
+      "note": 30,
+      "velocity": 50,
+      "start": 0.0,
+      "duration": 0.217,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 42,
+      "velocity": 50,
+      "start": 0.0,
+      "duration": 0.217,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 62,
+      "velocity": 55,
+      "start": 0.0,
+      "duration": 0.031,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 66,
+      "velocity": 55,
+      "start": 0.078,
+      "duration": 0.328,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 32,
+      "velocity": 50,
+      "start": 0.438,
+      "duration": 3.059,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 44,
+      "velocity": 50,
+      "start": 0.439,
+      "duration": 3.059,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 56,
+      "velocity": 55,
+      "start": 0.439,
+      "duration": 0.345,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 60,
+      "velocity": 55,
+      "start": 0.815,
+      "duration": 0.34,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 67,
+      "velocity": 127,
+      "start": 1.136,
+      "duration": 0.13,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 66,
+      "velocity": 55,
+      "start": 1.179,
+      "duration": 0.347,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 56,
+      "velocity": 55,
+      "start": 1.55,
+      "duration": 0.333,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 64,
+      "velocity": 127,
+      "start": 1.602,
+      "duration": 0.09,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 61,
+      "velocity": 55,
+      "start": 1.92,
+      "duration": 0.338,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 64,
+      "velocity": 127,
+      "start": 2.01,
+      "duration": 0.049,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 62,
+      "velocity": 127,
+      "start": 2.267,
+      "duration": 0.166,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 64,
+      "velocity": 55,
+      "start": 2.29,
+      "duration": 0.337,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 62,
+      "velocity": 127,
+      "start": 2.579,
+      "duration": 0.217,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 56,
+      "velocity": 55,
+      "start": 2.671,
+      "duration": 0.323,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 64,
+      "velocity": 127,
+      "start": 2.797,
+      "duration": 0.107,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 65,
+      "velocity": 127,
+      "start": 2.852,
+      "duration": 0.18,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 61,
+      "velocity": 55,
+      "start": 3.032,
+      "duration": 0.339,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    },
+    {
+      "note": 63,
+      "velocity": 55,
+      "start": 3.401,
+      "duration": 0.096,
+      "instrument": {
+        "name": "acoustic_grand_piano",
+        "program": 0
+      }
+    }
+  ]
+}
