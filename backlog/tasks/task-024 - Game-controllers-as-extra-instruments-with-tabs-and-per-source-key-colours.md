@@ -1,11 +1,11 @@
 ---
 id: TASK-024
 title: Game controllers as extra instruments with tabs and per-source key colours
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T23:58:00Z'
-updated_date: '2026-10-22T00:12:00Z'
+updated_date: '2026-10-22T00:25:00Z'
 labels:
   - input
   - ui
@@ -24,12 +24,12 @@ Players want to jam with friends on game controllers next to the computer keyboa
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Game controllers are detected at start and while running (hot-plug), without new required dependencies
-- [ ] #2 The instrument area has tabs: Instrument 1 for keyboard/mouse, Instrument 2 always visible (disabled without a controller), and a further tab per extra connected controller
-- [ ] #3 Each controller tab chooses its own instrument; the controller's buttons play notes, the D-pad shifts octave/key, and stick/trigger control velocity and sustain
-- [ ] #4 Controller notes sound on their own MIDI channel, are recorded with their instrument and appear on the note bus
-- [ ] #5 Keys are lit in a distinct colour per source: keyboard/mouse, each controller, MIDI input and playback; playback differs from live playing in every skin
-- [ ] #6 Tests cover detection with a fake backend, button/axis mapping, channels, recording and the colour assignment
+- [x] #1 Game controllers are detected at start and while running (hot-plug), without new required dependencies
+- [x] #2 The instrument area has tabs: Instrument 1 for keyboard/mouse, Instrument 2 always visible (disabled without a controller), and a further tab per extra connected controller
+- [x] #3 Each controller tab chooses its own instrument; the controller's buttons play notes, the D-pad shifts octave/key, and stick/trigger control velocity and sustain
+- [x] #4 Controller notes sound on their own MIDI channel, are recorded with their instrument and appear on the note bus
+- [x] #5 Keys are lit in a distinct colour per source: keyboard/mouse, each controller, MIDI input and playback; playback differs from live playing in every skin
+- [x] #6 Tests cover detection with a fake backend, button/axis mapping, channels, recording and the colour assignment
 <!-- AC:END -->
 
 ## Definition of Done
@@ -46,3 +46,15 @@ Players want to jam with friends on game controllers next to the computer keyboa
 4. skins/key_colors.py: distinct key colours per source (keyboard/MIDI, playback, controller 1-4) from the palette with a minimum distance; piano view keeps a per-key source stack and paints the newest; swatches in the tabs and the player bar.
 5. i18n keys in 9 languages; tests (fake backend detection + hot-plug, mapping, channels, recording, colours in all skins); real-window smoke with a fake backend; docs + Groma.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+No game controller is attached to the development machine, so the winmm backend was only verified to load and return an empty list; all behaviour was tested through a fake backend. Controllers do not send CC64; their sustain defers note-offs (works on every output). Record playback channels reduced to 1-8,10,11 so controller channels 12-15 never collide. Also fixed a layout bug present since TASK-022: at 780x800 the listen section (Record/Recordings/Equalizer) was pushed off-screen; earlier fit checks read stale heights. The listen section is now packed first, the piano section uses grid weights so the effect band and keys shrink proportionally, and keys/effects draw at the canvas's real height. Log minimum height lowered to 2 lines.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Every detected game controller (winmm via ctypes, USB/Bluetooth, hot-plug, no new dependency) becomes an extra instrument: the instrument area is now tabbed (1 keyboard/mouse, 2 always visible and disabled without a controller, more tabs per connected controller), each tab picks its own instrument and plays on its own MIDI channel. Buttons play a major scale, the D-pad shifts octave and key, the stick sets velocity and the trigger is a per-controller sustain pedal; notes are recorded with their instrument and published on the note bus. Keys are lit in a distinct, visible colour per source (keyboard/MIDI, playback, each controller) in all 34 looks, with a per-key source stack. Also fixed the minimum-size layout so the record controls are always visible. Verified by 19 unit tests with a fake backend and a real-window smoke test (24/24); not verified with physical controller hardware.
+<!-- SECTION:FINAL_SUMMARY:END -->
