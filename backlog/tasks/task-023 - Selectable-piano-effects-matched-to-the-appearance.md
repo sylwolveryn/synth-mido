@@ -10,6 +10,38 @@ labels:
   - fx
   - ui
 dependencies: []
+modified_files:
+  - groma/systems/synth-mido/containers/desktop-app/components/catalog.md
+  - >-
+    groma/systems/synth-mido/containers/desktop-app/components/note-effect-view.md
+  - groma/systems/synth-mido/containers/desktop-app/components/note-effect.md
+  - progress/README.md
+  - progress/task-023-effects.png
+  - progress/task-023-sakura.png
+  - progress/task-023.md
+  - readme.md
+  - synth_mido/fx/effects/__init__.py
+  - synth_mido/fx/effects/base.py
+  - synth_mido/fx/effects/fire.py
+  - synth_mido/fx/effects/nature.py
+  - synth_mido/fx/effects/retro.py
+  - synth_mido/fx/visualizer.py
+  - synth_mido/lang/de.json
+  - synth_mido/lang/en.json
+  - synth_mido/lang/es.json
+  - synth_mido/lang/fi.json
+  - synth_mido/lang/fr.json
+  - synth_mido/lang/hu.json
+  - synth_mido/lang/ja.json
+  - synth_mido/lang/sv.json
+  - synth_mido/lang/tlh.json
+  - synth_mido/skins/catalog.py
+  - synth_mido/skins/registry.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/fx_view.py
+  - synth_mido/ui/language.py
+  - synth_mido/ui/theming.py
+  - tests/test_effects.py
 priority: medium
 type: feature
 ordinal: 34000
