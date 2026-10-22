@@ -11,6 +11,40 @@ labels:
   - ui
   - audio
 dependencies: []
+modified_files:
+  - groma/actors/player.md
+  - groma/systems/synth-mido/containers/desktop-app/components/controllers.md
+  - groma/systems/synth-mido/containers/desktop-app/components/gamepad.md
+  - groma/systems/synth-mido/containers/desktop-app/components/key-colors.md
+  - groma/systems/synth-mido/containers/desktop-app/components/piano-view.md
+  - progress/README.md
+  - progress/task-024-controllers.png
+  - progress/task-024.md
+  - readme.md
+  - synth_mido/core/events.py
+  - synth_mido/core/gamepad.py
+  - synth_mido/core/playback.py
+  - synth_mido/lang/de.json
+  - synth_mido/lang/en.json
+  - synth_mido/lang/es.json
+  - synth_mido/lang/fi.json
+  - synth_mido/lang/fr.json
+  - synth_mido/lang/hu.json
+  - synth_mido/lang/ja.json
+  - synth_mido/lang/sv.json
+  - synth_mido/lang/tlh.json
+  - synth_mido/skins/key_colors.py
+  - synth_mido/ui/app.py
+  - synth_mido/ui/common.py
+  - synth_mido/ui/controllers.py
+  - synth_mido/ui/fx_view.py
+  - synth_mido/ui/language.py
+  - synth_mido/ui/piano_view.py
+  - synth_mido/ui/playback_view.py
+  - synth_mido/ui/theming.py
+  - tests/fakes_pad.py
+  - tests/test_gamepad.py
+  - tests/test_playback.py
 priority: medium
 type: feature
 ordinal: 35000
