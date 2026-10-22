@@ -1,11 +1,11 @@
 ---
 id: TASK-023
 title: Selectable piano effects matched to the appearance
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-10-21T23:58:00Z'
-updated_date: '2026-10-21T23:58:00Z'
+updated_date: '2026-10-22T00:11:00Z'
 labels:
   - fx
   - ui
@@ -23,12 +23,12 @@ The note effect above the keys is always the same flame. Each appearance should 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 An effect selector sits next to the appearance selectors and lists every registered effect
-- [ ] #2 Changing the appearance switches to that skin's matching effect; the user can still pick another one
-- [ ] #3 Volcano uses the current fire, Sakura drifting petals, Steampunk steam, and every one of the 17 skins has a matching effect
-- [ ] #4 Effects are strategies in a registry with a shared interface, and a skin names its effect, so adding one needs no change to the view
-- [ ] #5 Every effect stays within the frame budget (capped shapes, pooled canvas items) and works with the Effekt on/off switch
-- [ ] #6 Tests cover the registry, the skin mapping and the behaviour of each effect
+- [x] #1 An effect selector sits next to the appearance selectors and lists every registered effect
+- [x] #2 Changing the appearance switches to that skin's matching effect; the user can still pick another one
+- [x] #3 Volcano uses the current fire, Sakura drifting petals, Steampunk steam, and every one of the 17 skins has a matching effect
+- [x] #4 Effects are strategies in a registry with a shared interface, and a skin names its effect, so adding one needs no change to the view
+- [x] #5 Every effect stays within the frame budget (capped shapes, pooled canvas items) and works with the Effekt on/off switch
+- [x] #6 Tests cover the registry, the skin mapping and the behaviour of each effect
 <!-- AC:END -->
 
 ## Definition of Done
@@ -45,3 +45,15 @@ The note effect above the keys is always the same flame. Each appearance should 
 4. View: generic pooled renderer per role, rebuilt on effect switch; effect combobox next to the appearance selectors (language moves to its own row); skin change auto-switches; choice saved; i18n keys for effect names in all 9 languages.
 5. Tests for registry, mapping, shared behaviour of every effect, specific petal/steam motion; smoke for switching, frame cost per effect, fit at 780x800; docs.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Language selector moved under the Refresh/Connect buttons so the effect selector fits the appearance row without extra height. A manual choice survives a dark/light change; a skin change switches to the skin effect. Glyph fonts are pre-loaded off-screen to avoid first-render stalls (up to 106 ms before). Groma: effect files combined into the note-effect component, stale visualizer.py detached.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Replaced the single flame visualizer with a registry of 14 note effects (Strategy): neon, flames, petals, leaves, steam, dust, bubbles, snow, stars, pixels and four glyph sets. A shared NoteEffect base handles voices, particle emission, release and caps; effects only declare roles (layer, canvas kind, palette colour) and shapes, so the view renders any effect generically with pooled items. Every skin names its matching effect (Volcano flames, Sakura drifting petals, Steampunk steam, and so on); an effect selector next to the appearance switches automatically on skin change and can be overridden; names are translated in all 9 languages. Verified by 21 unit tests and a real-window smoke test (16/16) including frame cost per effect and a gallery.
+<!-- SECTION:FINAL_SUMMARY:END -->
